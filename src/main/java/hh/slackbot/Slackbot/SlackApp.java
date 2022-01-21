@@ -1,6 +1,12 @@
 package hh.slackbot.Slackbot;
 
+import java.io.IOException;
+
+import com.slack.api.app_backend.events.payload.EventsApiPayload;
 import com.slack.api.bolt.App;
+import com.slack.api.bolt.context.builtin.EventContext;
+import com.slack.api.bolt.response.Response;
+import com.slack.api.methods.SlackApiException;
 import com.slack.api.model.event.AppMentionEvent;
 
 import org.springframework.context.annotation.Bean;
@@ -15,13 +21,16 @@ public class SlackApp {
             return ctx.ack(":wave: World");
         });
 
-        app.event(AppMentionEvent.class, (req, ctx) -> {
-            ctx.say("Greetings :wave:");
-            System.out.println(ctx.getRequestUserId());
-            System.out.println(ctx.getRequestUserToken());
-            return ctx.ack();
-        });
+        app.event(AppMentionEvent.class, (req, ctx) -> mentionResponse(req, ctx));
 
         return app;
+    }
+
+    public static Response mentionResponse(EventsApiPayload<AppMentionEvent> req, EventContext ctx)
+            throws IOException, SlackApiException {
+        ctx.say("Greetings :wave:");
+        System.out.println(req);
+        System.out.println(ctx);
+        return ctx.ack();
     }
 }
