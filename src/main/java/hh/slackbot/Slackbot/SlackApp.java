@@ -1,7 +1,5 @@
 package hh.slackbot.Slackbot;
 
-import java.io.IOException;
-
 import com.slack.api.bolt.App;
 
 import org.springframework.context.annotation.Bean;
