@@ -40,6 +40,6 @@ jobs:
         with:
           push: true
           tags: <CHANGE_ME>
-          secrets: |
+          build-args: |
             "SLACK_BOT_TOKEN=${{ secrets.SLACK_BOT_TOKEN }}"
             "SLACK_SIGNING_SECRET=${{ secrets.SLACK_SIGNING_SECRET }}"
