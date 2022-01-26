@@ -24,5 +24,4 @@ COPY --from=build .env .
 
 EXPOSE 3000
 
-ENTRYPOINT SLACK_BOT_TOKEN=$(cat .env/token) SLACK_SIGNING_SECRET=$(cat .env/secret) java
-CMD -jar Slackbot-0.0.1-SNAPSHOT.jar
+ENTRYPOINT SLACK_BOT_TOKEN=$(cat .env/token) SLACK_SIGNING_SECRET=$(cat .env/secret) java -jar Slackbot-0.0.1-SNAPSHOT.jar
