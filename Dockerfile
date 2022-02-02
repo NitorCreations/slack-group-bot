@@ -4,27 +4,24 @@ COPY .mvn .mvn
 COPY mvnw .
 COPY pom.xml .
 
-RUN chmod +x mvnw && ./mvnw -B dependency:go-offline
+# Needed for docker to be able to recognise the file if it's been
+# modified on a Windows machine
+RUN sed -i 's/\r$//' mvnw
+RUN chmod +x mvnw && ./mvnw -B dependency:go-offline -ntp -q
 
 COPY src src
 
-ARG TOKEN
-ARG SECRET
-ENV SLACK_BOT_TOKEN=${TOKEN}
-ENV SLACK_SIGNING_SECRET=${SECRET}
-
-RUN ./mvnw -B package
+# skip tests because they are tested in the workflow
+RUN ./mvnw -B package -DskipTests -ntp
 
 FROM openjdk:11-jre-slim-buster
 
 COPY --from=build target/*.jar .
-COPY --from=build .env .
 
 EXPOSE 3000
 
-ARG TOKEN
-ARG SECRET
-ENV SLACK_BOT_TOKEN=${TOKEN}
-ENV SLACK_SIGNING_SECRET=${SECRET}
+RUN useradd -m botuser
+USER botuser
 
-CMD java -jar Slackbot-0.0.1-SNAPSHOT.jar
+# jar file needs to be named according to build target name in pom.xml
+CMD java -jar -Dserver.port=$PORT Slackbot-0.0.1-SNAPSHOT.jar
