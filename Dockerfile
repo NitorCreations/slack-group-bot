@@ -18,8 +18,6 @@ FROM openjdk:11-jre-slim-buster
 
 COPY --from=build target/*.jar .
 
-EXPOSE 3000
-
 RUN useradd -m botuser
 USER botuser
 
