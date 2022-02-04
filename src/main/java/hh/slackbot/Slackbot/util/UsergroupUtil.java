@@ -1,7 +1,6 @@
 package hh.slackbot.Slackbot.util;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.slack.api.Slack;
@@ -23,8 +22,13 @@ public class UsergroupUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(UsergroupUtil.class);
 
+    /**
+     * Tries to retrieve a list of enabled usergroups in the workspace.
+     * @return A list containing all usergroup objects or an empty list.
+     * Returns null in case of an error.
+     */
     public List<Usergroup> getUserGroups() {
-        List<Usergroup> usergroups = new ArrayList<>();
+        List<Usergroup> usergroups = null;
         logger.info("Retrieving user groups");
 
         try {
@@ -43,13 +47,18 @@ public class UsergroupUtil {
         return usergroups;
     }
 
+    /**
+     * Tries to retrieve the users given a usergroups id.
+     * @param groupId
+     * @return A list of user id strings. Returns null in case of an error.
+     */
     public List<String> getUsergroupUsers(String groupId) {
-        List<String> users = new ArrayList<>();
+        List<String> users = null;
         try {
             UsergroupsUsersListResponse resp = slack.methods().usergroupsUsersList(
                 UsergroupsUsersListRequest.builder()
                     .token(System.getenv("SLACK_BOT_TOKEN"))
-                    .teamId(groupId)
+                    .usergroup(groupId)
                     .build()
             );
 
