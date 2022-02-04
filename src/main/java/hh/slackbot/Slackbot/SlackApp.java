@@ -17,7 +17,10 @@ public class SlackApp {
     @Bean
     public App initSlackApp() {
         App app = new App();
+		UsergroupHandler handler = new UsergroupHandler();
         app.command("/test", (req, ctx) -> ctx.ack(":wave: World"));
+
+		app.command("/groups", handler::handleUsergroupCommand);
 
         app.event(AppMentionEvent.class, SlackApp::mentionResponse);
 
