@@ -16,8 +16,9 @@ import org.slf4j.LoggerFactory;
 
 
 public class UsergroupUtil {
+    private UsergroupUtil() {}
 
-    private Slack slack = Slack.getInstance();
+    private static final Slack slack = Slack.getInstance();
 
     private static final Logger logger = LoggerFactory.getLogger(UsergroupUtil.class);
 
@@ -27,27 +28,22 @@ public class UsergroupUtil {
      * @return A list containing all usergroup objects or an empty list.
      *         Returns null in case of an error.
      */
-    public List<Usergroup> getUserGroups() {
+    public static List<Usergroup> getUserGroups() {
         List<Usergroup> usergroups = null;
         logger.info("Retrieving user groups");
 
         try {
-            logger.info("building groupslistrequest: " + slack.getClass().toString());
             UsergroupsListResponse resp = slack.methods().usergroupsList(
                     UsergroupsListRequest.builder()
                             .token(System.getenv("SLACK_BOT_TOKEN"))
                             .build());
-            logger.info("response got");
             return resp.getUsergroups();
         } catch (IOException e) {
             logger.error(String.format("IO Error while getting usergroups%n %s", e.getMessage()));
         } catch (SlackApiException e) {
             logger.error(String.format("Slack API Error while getting usergroups%n %s", e.getMessage()));
-        } catch (NullPointerException e) {
-            logger.error(String.format("Null pointer exception while getting usergroups%n %s", e.getMessage()));
         }
 
-        logger.info("End of getUsergroups");
         return usergroups;
     }
 
@@ -57,7 +53,7 @@ public class UsergroupUtil {
      * @param name
      * @return Found id or null.
      */
-    public String getGroupIdByName(String name) {
+    public static String getGroupIdByName(String name) {
         String id = null;
         List<Usergroup> usergroups = getUserGroups();
         if (!(usergroups == null || usergroups.isEmpty())) {
@@ -76,7 +72,7 @@ public class UsergroupUtil {
      * @param groupId
      * @return A list of user id strings. Returns null in case of an error.
      */
-    public List<String> getUsergroupUsers(String groupId) {
+    public static List<String> getUsergroupUsers(String groupId) {
         List<String> users = null;
         try {
             UsergroupsUsersListResponse resp = slack.methods().usergroupsUsersList(
