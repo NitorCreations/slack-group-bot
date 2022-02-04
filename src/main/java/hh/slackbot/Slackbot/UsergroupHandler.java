@@ -33,11 +33,13 @@ public class UsergroupHandler {
         }
         String command = params[0];
         String usergroupName = params[1];
+        // TODO: handle usergroup not found
         String usergroupId = UsergroupUtil.getGroupIdByName(usergroupName);
 
         String userId = payload.getUserId();
         boolean result = false;
 
+        // TODO: handle wrong command or create different slash commands for both cases
         if (command.equalsIgnoreCase("join")) {
             result = addUserToGroup(userId, usergroupId);
         } else if (command.equalsIgnoreCase("leave")) {
