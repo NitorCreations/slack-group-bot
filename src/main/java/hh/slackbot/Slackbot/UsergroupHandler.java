@@ -1,6 +1,7 @@
 package hh.slackbot.Slackbot;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,6 +12,7 @@ import com.slack.api.bolt.request.builtin.SlashCommandRequest;
 import com.slack.api.bolt.response.Response;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.request.usergroups.users.UsergroupsUsersUpdateRequest;
+import com.slack.api.model.Usergroup;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,48 +35,70 @@ public class UsergroupHandler {
         }
         String command = params[0];
         String usergroupName = params[1];
-        // TODO: handle usergroup not found
-        String usergroupId = UsergroupUtil.getGroupIdByName(usergroupName);
+
+        Usergroup usergroup = UsergroupUtil.getGroupByName(usergroupName);
 
         String userId = payload.getUserId();
-        boolean result = false;
 
-        // TODO: handle wrong command or create different slash commands for both cases
         if (command.equalsIgnoreCase("join")) {
-            result = addUserToGroup(userId, usergroupId);
+            if (usergroup == null)
+                usergroup = UsergroupUtil.createUsergroup(usergroupName);
+
+            if (addUserToGroup(userId, usergroup)) {
+                return ctx.ack(String.format("You have been added to usergoup %s", usergroupName));
+            } else {
+                return ctx.ack(String.format("Failed to add you to usergroup %s", usergroupName));
+            }
+
         } else if (command.equalsIgnoreCase("leave")) {
-            result = removeUserFromGroup(userId, usergroupId);
+            if (usergroup == null)
+                return ctx.ack(String.format("Usergroup %s was not found", usergroupName));
+
+            if (removeUserFromGroup(userId, usergroup)) {
+                return ctx.ack(String.format("You have been removed from usergroup %s", usergroupName));
+            } else {
+                return ctx.ack(String.format("Failed to remove you from usergroup %s", usergroupName));
+            }
+
         }
 
-        if (result) {
-            return ctx.ack("Your command ran successfully");
-        } else {
-            return ctx.ack("An error occurred while running your command");
-        }
+        return ctx.ack("Your request could not be fulfilled at this time.");
     }
 
-    // TODO: disable group when no users are left because last user can't be removed
-    public static boolean removeUserFromGroup(String userId, String groupId) {
-        List<String> users = UsergroupUtil.getUsergroupUsers(groupId);
+    public static boolean removeUserFromGroup(String userId, Usergroup group) {
+        logger.info("getting user group users");
+        List<String> users = UsergroupUtil.getUsergroupUsers(group.getId());
         if (users == null)
             return false;
 
         List<String> modifiedUsers = users.stream()
-            .filter(u -> !u.equals(userId))
-            .collect(Collectors.toList());
+                .filter(u -> !u.equals(userId))
+                .collect(Collectors.toList());
 
-        return updateUsergroupUserlist(modifiedUsers, groupId);
+        if (modifiedUsers.isEmpty()) {
+            return UsergroupUtil.disableUsergroup(group.getId());
+        } else {
+            return updateUsergroupUserlist(modifiedUsers, group.getId());
+        }
     }
 
-    // TODO: consider creating a new group if it is not already created
-    public static boolean addUserToGroup(String userId, String groupId) {
-        List<String> users = UsergroupUtil.getUsergroupUsers(groupId);
+    public static boolean addUserToGroup(String userId, Usergroup group) {
+        List<String> users;
+        // checking if group was disabled and if it was,
+        // don't keep the leftover user from it
+        if (group.getDateDelete() != 0) {
+            users = new ArrayList<>();
+            UsergroupUtil.enableUsergroup(group.getId());
+        } else {
+            users = UsergroupUtil.getUsergroupUsers(group.getId());
+        }
+    
         if (users == null)
             return false;
 
         users.add(userId);
 
-        return updateUsergroupUserlist(users, groupId);
+        return updateUsergroupUserlist(users, group.getId());
     }
 
     public static boolean updateUsergroupUserlist(List<String> users, String groupId) {
