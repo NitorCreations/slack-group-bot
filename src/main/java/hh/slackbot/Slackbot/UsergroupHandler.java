@@ -40,6 +40,14 @@ public class UsergroupHandler {
 
         String userId = payload.getUserId();
 
+        /* slack.methods().chatPostEphemeral(
+            ChatPostEphemeralRequest.builder()
+                .blocks(
+                    asBlocks()
+                )
+                .build()
+        ); */
+
         if (command.equalsIgnoreCase("join")) {
             if (usergroup == null)
                 usergroup = UsergroupUtil.createUsergroup(usergroupName);
@@ -75,6 +83,11 @@ public class UsergroupHandler {
                 .filter(u -> !u.equals(userId))
                 .collect(Collectors.toList());
 
+        if (!UsergroupUtil.userInGroup(group, userId)) {
+            // TODO: send error message
+            return false;
+        }
+
         if (modifiedUsers.isEmpty()) {
             return UsergroupUtil.disableUsergroup(group.getId());
         } else {
@@ -95,6 +108,11 @@ public class UsergroupHandler {
     
         if (users == null)
             return false;
+
+        if (UsergroupUtil.userInGroup(group, userId)) {
+            // TODO: send error message
+            return false;
+        }
 
         users.add(userId);
 

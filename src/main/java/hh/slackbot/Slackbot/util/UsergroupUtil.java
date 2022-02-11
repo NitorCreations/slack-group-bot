@@ -124,6 +124,21 @@ public class UsergroupUtil {
         return group;
     }
 
+    public static boolean userInGroup(Usergroup group, String userId) {
+        boolean found = false;
+        List<String> users = group.getUsers();
+
+        if (users.isEmpty()) return false;
+
+        for (String u : users) {
+            if (u.equals(userId)) {
+                found = true;
+            }
+        }
+
+        return found;
+    }
+
     public static boolean enableUsergroup(String id) {
         try {
             UsergroupsEnableResponse resp = slack.methods().usergroupsEnable(
