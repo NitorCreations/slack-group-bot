@@ -4,8 +4,8 @@
 
 ### Using commands
 
-- Add to group: /bot add_me [group_name]
-- Remove from group: /bot remove_me [group_name]
+- Add to group: /groups join [group_name]
+- Remove from group: /groups leave [group_name]
 
 ## Git practices
 
