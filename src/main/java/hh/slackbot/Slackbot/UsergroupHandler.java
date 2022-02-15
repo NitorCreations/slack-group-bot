@@ -85,7 +85,7 @@ public class UsergroupHandler {
     private static String finalizeUsergroupCommand(String userId, String command, String usergroupName) {
     	
     	// This contains the message that will be sent to handleUsergroupCommand
-    	String answer = "";
+    	String answer = "The command can not be done";
     	
     	// This creates a new Usergroup object that uses the getGroupByName command to get
     	// the same values as the user group with the same name as usergroupName's value
