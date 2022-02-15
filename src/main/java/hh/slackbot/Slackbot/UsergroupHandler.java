@@ -16,6 +16,7 @@ import com.slack.api.model.Usergroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hh.slackbot.Slackbot.util.MessageUtil;
 import hh.slackbot.Slackbot.util.UsergroupUtil;
 
 public class UsergroupHandler {
@@ -40,6 +41,9 @@ public class UsergroupHandler {
         // Takes the playload (user input data)
         SlashCommandPayload payload = req.getPayload();
 
+        // Contains the userId from the current user
+        String userId = payload.getUserId();
+
         // Try-catch is used to check if the text part of payload
         // can be split into two String variables
         try {
@@ -56,9 +60,6 @@ public class UsergroupHandler {
             // (usergroup's name)
             String usergroupName = params[1];
 
-            // Contains the userId from the current user
-            String userId = payload.getUserId();
-
             // Calls the method finalizeUsergroupCommand and
             // returns a message of the command's failure/success
             message = finalizeUsergroupCommand(userId, command, usergroupName);
@@ -70,14 +71,13 @@ public class UsergroupHandler {
             message = "Invalid command parameters";
 
         } finally {
-
             // IMPORTANT
             // THIS CALLS THE MESSAGES OBJECT AND SENDS THE MESSAGE TO THE USER
-            // Messager.help(message); //
+            MessageUtil.sendDirectMessage(message, userId);
             // <----------------------------------------IMPORTANT!!!
         }
 
-        return ctx.ack(message); // <--- THIS IS ONLY FOR TESTING: THE MESSAGE PARAMETER CAN BE REMOVED
+        return ctx.ack();
     }
 
     /**

@@ -18,7 +18,7 @@ public class SlackApp {
     public App initSlackApp() {
         App app = new App();
 
-		app.command("/groups", UsergroupHandler::handleUsergroupCommand);
+		app.command("/juusogroups", UsergroupHandler::handleUsergroupCommand);
 
         app.event(AppMentionEvent.class, SlackApp::mentionResponse);
 
