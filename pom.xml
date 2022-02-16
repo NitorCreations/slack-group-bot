@@ -39,6 +39,11 @@
 			<artifactId>bolt-servlet</artifactId>
 			<version>1.17.0</version>
 		</dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>4.3.1</version>
+    </dependency>
 	</dependencies>
 
 	<build>

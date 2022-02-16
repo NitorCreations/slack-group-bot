@@ -1,6 +1,7 @@
 package hh.slackbot.Slackbot.util;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.slack.api.Slack;
@@ -57,7 +58,7 @@ public class UsergroupUtil {
     }
 
     /**
-     * Tries to fetch a usergroup id based on a given name.
+     * Tries to fetch a usergroup's id based on a given name.
      * 
      * @param name
      * @return Found id or null.
@@ -76,7 +77,7 @@ public class UsergroupUtil {
     }
 
     /**
-     * Tries to retrieve the users given a usergroups id.
+     * Tries to retrieve the users given a usergroup's id.
      * 
      * @param groupId
      * @return A list of user id strings. Returns null in case of an error.
@@ -101,6 +102,13 @@ public class UsergroupUtil {
         return users;
     }
 
+    /**
+     * Creates the user group
+     * 
+     * @param name
+     * @returns Usergroup object. Returns null in case of an error.
+     */
+
     public static Usergroup createUsergroup(String name) {
         Usergroup group = null;
 
@@ -124,6 +132,33 @@ public class UsergroupUtil {
         return group;
     }
 
+    /**
+     * Checks if the user is in the user group
+     * 
+     * @params group, userId, users
+     * @returns true or false
+     * 
+     */
+    public static boolean userInGroup(String userId, List<String> users) {
+
+        if (users == null || users.isEmpty()) {
+            return false;
+        } else {
+            for (String u : users) {
+                if (u.equals(userId)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Enables the user group
+     * 
+     * @param id
+     * @returns true. Returns false in case of an error.
+     */
     public static boolean enableUsergroup(String id) {
         try {
             UsergroupsEnableResponse resp = slack.methods().usergroupsEnable(
@@ -143,6 +178,12 @@ public class UsergroupUtil {
         return false;
     }
 
+    /**
+     * Disables the user group
+     * 
+     * @param id
+     * @returns true. Returns false in case of an error.
+     */
     public static boolean disableUsergroup(String id) {
         try {
             UsergroupsDisableResponse resp = slack.methods().usergroupsDisable(
@@ -162,4 +203,51 @@ public class UsergroupUtil {
         return false;
     }
 
+    /**
+     * Checks if the user group is null
+     * - If YES (and command is "join"),
+     * A new user group is created
+     * and true is returned
+     * - If YES (and command is "leave"),
+     * false is returned
+     * - If NO (with any command),
+     * true is returned
+     * 
+     * @param usergroup, command, usergroupName
+     * @returns true or false
+     */
+    public static boolean checkUsergroup(Usergroup usergroup, String command, String usergroupName) {
+
+        if (usergroup == null) {
+            if (command.equalsIgnoreCase("join")) {
+                UsergroupUtil.createUsergroup(usergroupName);
+                return true;
+
+            } else if (command.equalsIgnoreCase("leave")) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if the user group is currently disabled
+     * - If YES, the usergroup is enabled,
+     * and an empty userlist is returned
+     * - If NOT, the current userlist
+     * of the group is returned
+     * 
+     * @param Usergroup
+     * @returns an ArrayList
+     */
+    public static List<String> checkIfDisabled(Usergroup group) {
+
+        if (group.getDateDelete() != 0) {
+            enableUsergroup(group.getId());
+            return new ArrayList<>();
+        } else {
+            return getUsergroupUsers(group.getId());
+        }
+    }
 }
