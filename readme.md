@@ -1,15 +1,17 @@
-## Running on Linux
-- requires
-    - maven
-    - ngrok
-    - ability to change app command url
-- export token and secret to path
+# Slack bot project
 
-    - export SLACK_BOT_TOKEN="token"
-    - export SLACK_SIGNING_SECRET="secret"
+## Plan for bot interface
 
-- run app
-    - "mvn spring-boot:run"
-- run ngrok
-    - ngrok http 3000
-    - check the URL that is generated and add it to the app command on Slack's app settings
+### Using commands
+
+- Add to group: /groups join [group_name]
+- Remove from group: /groups leave [group_name]
+
+## Git practices
+
+- Git commit naming convention: https://cbea.ms/git-commit/
+- Name branches by feature name
+
+## Linter
+
+-SonarLint (eclipse) (default settings)
