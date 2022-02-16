@@ -5,6 +5,8 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.slack.api.model.Usergroup;
 
 @SpringBootTest
+@TestInstance(Lifecycle.PER_CLASS)
 class UsergroupHandlerTest {	
 	private Usergroup falseBlankUsergroup = new Usergroup();
 
