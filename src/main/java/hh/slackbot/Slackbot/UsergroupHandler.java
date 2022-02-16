@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.slack.api.Slack;
 import com.slack.api.app_backend.slash_commands.payload.SlashCommandPayload;
 import com.slack.api.bolt.context.builtin.SlashCommandContext;
@@ -13,14 +16,11 @@ import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.request.usergroups.users.UsergroupsUsersUpdateRequest;
 import com.slack.api.model.Usergroup;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import hh.slackbot.Slackbot.util.MessageUtil;
 import hh.slackbot.Slackbot.util.UsergroupUtil;
 
 public class UsergroupHandler {
-    private UsergroupHandler() {
+    public UsergroupHandler() {
     }
 
     private static Slack slack = Slack.getInstance();
@@ -104,19 +104,26 @@ public class UsergroupHandler {
         // FALSE: if the user group is null AND the command was "leave" --> can't leave
         // a non-existing group
         if (UsergroupUtil.checkUsergroup(usergroup, command, usergroupName)) {
-
+        	UsergroupHandler groupHandler = new UsergroupHandler();
+        	
             // If the checkUsegroup returned TRUE, the usergroup variable is updated
             // (in case the new user group was created inside the checkUsergroup method)
             usergroup = UsergroupUtil.getGroupByName(usergroupName);
 
             // If the command was "join", the addUserToGroup is called
-            // and the response is stored inside answer
             if (command.equalsIgnoreCase("join")) {
-                answer = addUserToGroup(userId, usergroup);
+            	boolean addedUserToGroupSuccessfully = groupHandler.addUserToGroup(userId, usergroup);
+            	
+            	if (addedUserToGroupSuccessfully) {
+            		answer = "You have successfully joined the user group " + usergroup.getName();
+            	} else {
+            		answer = "You already are in the usergroup " + usergroup.getName();
+            	}
+            	
                 // If the command was "leave", the removeUserFromGroup is called
                 // and the response is stored inside answer
             } else if (command.equalsIgnoreCase("leave")) {
-                answer = removeUserFromGroup(userId, usergroup);
+                answer = groupHandler.removeUserFromGroup(userId, usergroup);
             }
 
             // However, if the checkUsergroup method returned FALSE
@@ -136,7 +143,7 @@ public class UsergroupHandler {
      * FUNCTION:
      * - JOIN THE USER GROUP
      */
-    public static String addUserToGroup(String userId, Usergroup group) {
+    public boolean addUserToGroup(String userId, Usergroup group) {
 
         // The user list (users) is based on the current condition of the group:
         // --> If the user group is disabled, an empty list is returned
@@ -145,22 +152,22 @@ public class UsergroupHandler {
 
         // This checks if the user is already in the user group they want to join:
         if (UsergroupUtil.userInGroup(userId, users)) {
-            // If YES, this String is returned to finalizeUsergroupCommand
-            return "You already are in the usergroup " + group.getName();
+            // If YES, return false
+            return false;
         } else {
             // If NOT, the user will be added to the group's user list
             users.add(userId);
             updateUsergroupUserlist(users, group.getId());
         }
-        // If all went well, this String is returned to finalizeUsergroupCommand:
-        return "You have successfully joined the user group " + group.getName();
+        // If all went well, return true
+        return true;
     }
 
     /**
      * FUNCTION:
      * - LEAVE THE USER GROUP
      */
-    public static String removeUserFromGroup(String userId, Usergroup group) {
+    public String removeUserFromGroup(String userId, Usergroup group) {
         logger.info("getting user group users");
 
         // ArrayList users will have its value based on getUsergroupUsers
@@ -196,7 +203,7 @@ public class UsergroupHandler {
      * FUNCTION:
      * - UPDATES THE USER LIST OF AN USER GROUP
      */
-    public static boolean updateUsergroupUserlist(List<String> users, String groupId) {
+    public boolean updateUsergroupUserlist(List<String> users, String groupId) {
         try {
             slack.methods().usergroupsUsersUpdate(
                     UsergroupsUsersUpdateRequest.builder()
