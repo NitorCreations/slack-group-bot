@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>hh.slackbot</groupId>
-	<artifactId>Slackbot</artifactId>
+	<artifactId>slackbot</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Slackbot</name>
+	<name>slackbot</name>
 	<description>A slackbot for Nitor</description>
 	<properties>
 		<java.version>11</java.version>
