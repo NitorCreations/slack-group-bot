@@ -132,7 +132,7 @@ public class UsergroupUtil {
   /**
    * Checks if the user is in the user group.
    *
-   * @param userId of checkaable user
+   * @param userId of checkable user
    * @param users list
    * @returns true or false
    * 
@@ -196,29 +196,18 @@ public class UsergroupUtil {
   }
 
   /**
-   * Checks if the user group is null - If YES (and command is "join"), A new user
-   * group is
-   * created and true is returned - If YES (and command is "leave"), false is
-   * returned - If NO
-   * (with any command), true is returned.
+   * Checks if usergroup is available and creates it if it is not.
    *
    * @param usergroup object
-   * @param command made by user
    * @param usergroupName target of commnd
-   * @returns true or false
+   * @returns group or null in case of error
    */
-  public boolean checkUsergroup(Usergroup usergroup, String command, String usergroupName) {
+  public Usergroup checkUsergroup(Usergroup usergroup, String usergroupName) {
     if (usergroup == null) {
-      if (command.equalsIgnoreCase("join")) {
-        createUsergroup(usergroupName);
-        return true;
-
-      } else if (command.equalsIgnoreCase("leave")) {
-        return false;
-      }
+      return createUsergroup(usergroupName);
     }
 
-    return true;
+    return usergroup;
   }
 
   /**

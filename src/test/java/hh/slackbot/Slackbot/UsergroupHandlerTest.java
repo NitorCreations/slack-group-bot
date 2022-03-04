@@ -1,34 +1,68 @@
 package hh.slackbot.slackbot;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.slack.api.app_backend.slash_commands.payload.SlashCommandPayload;
+import com.slack.api.bolt.context.builtin.SlashCommandContext;
+import com.slack.api.bolt.request.builtin.SlashCommandRequest;
 import com.slack.api.model.Usergroup;
+import hh.slackbot.slackbot.util.MessageUtil;
+import hh.slackbot.slackbot.util.UsergroupUtil;
+import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest
-@TestInstance(Lifecycle.PER_CLASS)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UsergroupHandlerTest {
-  private Usergroup falseBlankUsergroup = new Usergroup();
-
-  @Mock
+  @Autowired
   UsergroupHandler groupHandler;
+
+  @MockBean
+  private UsergroupUtil groupUtil;
+
+  @MockBean
+  private MessageUtil msgUtil;
 
   @BeforeAll
   public void init() {
     MockitoAnnotations.openMocks(this);
+
+    Usergroup emptyGroup = mock(Usergroup.class);
+    when(emptyGroup.getId()).thenReturn("54321");
+    when(groupUtil.getGroupByName("testgroup")).thenReturn(null);
+    when(groupUtil.checkUsergroup(null, "testgroup")).thenReturn(emptyGroup);
+    when(groupUtil.checkIfDisabled(emptyGroup)).thenReturn(new ArrayList<String>());
+    when(groupUtil.userInGroup(eq("12345"), anyList())).thenReturn(false);
+    when(groupUtil.updateUsergroupUserlist(any(), eq("54321"))).thenReturn(true);
+    when(groupUtil.getUserGroups()).thenReturn(new ArrayList<Usergroup>());
   }
 
   @Test
-  @DisplayName("addUserToGroup returns true")
+  @DisplayName("add user to empty group")
   void addUserToGroupReturnsTrue() {
-    when(groupHandler.addUserToGroup("123", falseBlankUsergroup)).thenReturn(true);
+    SlashCommandPayload mockPayload = mock(SlashCommandPayload.class);
+    when(mockPayload.getUserId()).thenReturn("12345");
+    when(mockPayload.getText()).thenReturn("join testgroup");
+    SlashCommandRequest mockReq = mock(SlashCommandRequest.class);
+    when(mockReq.getPayload()).thenReturn(mockPayload);
+    SlashCommandContext mockCtx = mock(SlashCommandContext.class);
+
+    groupHandler.handleUsergroupCommand(mockReq, mockCtx);
+
+    verify(mockCtx).ack();
   }
 
   @Test

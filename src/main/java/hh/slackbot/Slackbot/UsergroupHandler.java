@@ -44,6 +44,7 @@ public class UsergroupHandler {
     String command = params[0];
     String usergroupName = params[1];
 
+    logger.info("asdasdasd");
     if (finalizeUsergroupCommand(userId, command, usergroupName)) {
       return ctx.ack();
     } else {
@@ -62,23 +63,20 @@ public class UsergroupHandler {
    */
   private boolean finalizeUsergroupCommand(String userId, String command, String usergroupName) {
 
-    Usergroup usergroupId = usergroupUtil.getGroupByName(usergroupName);
+    logger.info("asdasdasd 2");
+    Usergroup usergroup = usergroupUtil.getGroupByName(usergroupName);
+    usergroup = usergroupUtil.checkUsergroup(usergroup, usergroupName);
+    logger.info("asdasdasd 3");
 
-    if (!usergroupUtil.checkUsergroup(usergroupId, command, usergroupName)) {
-      messageUtil.sendDirectMessage("usergroup not available", userId);
-      return false;
-    }
-
-    usergroupId = usergroupUtil.getGroupByName(usergroupName);
-    if (usergroupId == null) {
+    if (usergroup == null) {
       messageUtil.sendDirectMessage("usergroup not available", userId);
       return false;
     }
 
     if (command.equalsIgnoreCase("join")) {
-      return addUserToGroup(userId, usergroupId);
+      return addUserToGroup(userId, usergroup);
     } else if (command.equalsIgnoreCase("leave")) {
-      return removeUserFromGroup(userId, usergroupId);
+      return removeUserFromGroup(userId, usergroup);
     } else {
       return false;
     }
