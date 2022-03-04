@@ -7,6 +7,7 @@ import com.slack.api.methods.request.usergroups.UsergroupsDisableRequest;
 import com.slack.api.methods.request.usergroups.UsergroupsEnableRequest;
 import com.slack.api.methods.request.usergroups.UsergroupsListRequest;
 import com.slack.api.methods.request.usergroups.users.UsergroupsUsersListRequest;
+import com.slack.api.methods.request.usergroups.users.UsergroupsUsersUpdateRequest;
 import com.slack.api.methods.response.usergroups.UsergroupsCreateResponse;
 import com.slack.api.methods.response.usergroups.UsergroupsDisableResponse;
 import com.slack.api.methods.response.usergroups.UsergroupsEnableResponse;
@@ -237,5 +238,28 @@ public class UsergroupUtil {
     } else {
       return getUsergroupUsers(group.getId());
     }
+  }
+
+  /**
+   * Updates the user group's user list (the last step of joining/leaving the user
+   * group).
+   *
+   * @param users   list containing new active users in group
+   * @param groupId of the group to be modified
+   * @return true, if the Slack API's updateUsergroupUserlist method is
+   *         successful. Returns false if the method fails
+   */
+  public boolean updateUsergroupUserlist(List<String> users, String groupId) {
+    try {
+      slack.methods().usergroupsUsersUpdate(UsergroupsUsersUpdateRequest.builder()
+          .token(System.getenv("SLACK_BOT_TOKEN")).usergroup(groupId).users(users).build());
+      return true;
+    } catch (IOException e) {
+      logger.error(String.format("IO Error while updating usergroup%n %s", e.getMessage()));
+    } catch (SlackApiException e) {
+      logger.error(String.format("Slack API Error while updating usergroup%n %s", e.getMessage()));
+    }
+
+    return false;
   }
 }
