@@ -40,6 +40,7 @@ class UsergroupHandlerTest {
   public void init() {
     MockitoAnnotations.openMocks(this);
 
+    // configuring what mocked items should return
     Usergroup emptyGroup = mock(Usergroup.class);
     when(emptyGroup.getId()).thenReturn("54321");
     when(groupUtil.getGroupByName("testgroup")).thenReturn(null);
@@ -62,6 +63,7 @@ class UsergroupHandlerTest {
 
     groupHandler.handleUsergroupCommand(mockReq, mockCtx);
 
+    // check that ack() was called with no params
     verify(mockCtx).ack();
   }
 
