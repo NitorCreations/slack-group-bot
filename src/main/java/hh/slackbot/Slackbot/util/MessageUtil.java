@@ -7,12 +7,14 @@ import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MessageUtil {
-  private MessageUtil() {
-  }
 
-  private static final Slack slack = Slack.getInstance();
+  @Autowired
+  private Slack slack;
 
   private static final Logger logger = LoggerFactory.getLogger(MessageUtil.class);
 
@@ -25,7 +27,7 @@ public class MessageUtil {
    * @param userId  of the receiving user
    * @return whether the message was sent successfully.
    */
-  public static boolean sendDirectMessage(String message, String userId) {
+  public boolean sendDirectMessage(String message, String userId) {
     try {
       slack.methods().chatPostMessage(
           ChatPostMessageRequest.builder()
@@ -53,7 +55,7 @@ public class MessageUtil {
    * @param channelId of the chaannel where the message will be visible
    * @return whether the message was sent successfully.
    */
-  public static boolean sendEphemeralResponse(String message, String userId, String channelId) {
+  public boolean sendEphemeralResponse(String message, String userId, String channelId) {
     try {
       slack.methods().chatPostEphemeral(
           ChatPostEphemeralRequest.builder()

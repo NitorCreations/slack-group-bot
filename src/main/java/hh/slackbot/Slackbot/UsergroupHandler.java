@@ -15,12 +15,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UsergroupHandler {
   public UsergroupHandler() {
   }
 
-  private static Slack slack = Slack.getInstance();
+  @Autowired
+  private Slack slack;
+
+  @Autowired
+  private MessageUtil messageUtil;
+
+  @Autowired
+  private UsergroupUtil usergroupUtil;
 
   private static final Logger logger = LoggerFactory.getLogger(UsergroupHandler.class);
 
@@ -33,8 +43,7 @@ public class UsergroupHandler {
    * @param ctx slack context object
    * @return ctx.ack()
    */
-  public static Response handleUsergroupCommand(SlashCommandRequest req,
-      SlashCommandContext ctx) {
+  public Response handleUsergroupCommand(SlashCommandRequest req, SlashCommandContext ctx) {
 
     String message = "";
 
@@ -57,7 +66,7 @@ public class UsergroupHandler {
       message = "Invalid command parameters";
 
     } finally {
-      MessageUtil.sendDirectMessage(message, userId);
+      messageUtil.sendDirectMessage(message, userId);
     }
 
     return ctx.ack();
@@ -72,20 +81,19 @@ public class UsergroupHandler {
    * @param usergroupName name of groups to use the command on
    * @return message based on the success/error of the user group method
    */
-  private static String finalizeUsergroupCommand(String userId, String command,
+  private  String finalizeUsergroupCommand(String userId, String command,
       String usergroupName) {
 
     String answer = "The command can not be done";
 
-    Usergroup usergroup = UsergroupUtil.getGroupByName(usergroupName);
+    Usergroup usergroup = usergroupUtil.getGroupByName(usergroupName);
 
-    if (UsergroupUtil.checkUsergroup(usergroup, command, usergroupName)) {
-      UsergroupHandler groupHandler = new UsergroupHandler();
+    if (usergroupUtil.checkUsergroup(usergroup, command, usergroupName)) {
 
-      usergroup = UsergroupUtil.getGroupByName(usergroupName);
+      usergroup = usergroupUtil.getGroupByName(usergroupName);
 
       if (command.equalsIgnoreCase("join")) {
-        boolean addedUserToGroupSuccessfully = groupHandler.addUserToGroup(userId, usergroup);
+        boolean addedUserToGroupSuccessfully = addUserToGroup(userId, usergroup);
 
         if (addedUserToGroupSuccessfully) {
           answer = "You have successfully joined the user group " + usergroup.getName();
@@ -94,7 +102,7 @@ public class UsergroupHandler {
         }
 
       } else if (command.equalsIgnoreCase("leave")) {
-        answer = groupHandler.removeUserFromGroup(userId, usergroup);
+        answer = removeUserFromGroup(userId, usergroup);
       }
 
     } else {
@@ -115,9 +123,9 @@ public class UsergroupHandler {
    */
   public boolean addUserToGroup(String userId, Usergroup group) {
 
-    List<String> users = UsergroupUtil.checkIfDisabled(group);
+    List<String> users = usergroupUtil.checkIfDisabled(group);
 
-    if (UsergroupUtil.userInGroup(userId, users)) {
+    if (usergroupUtil.userInGroup(userId, users)) {
       return false;
     } else {
       users.add(userId);
@@ -136,9 +144,9 @@ public class UsergroupHandler {
   public String removeUserFromGroup(String userId, Usergroup group) {
     logger.info("getting user group users");
 
-    List<String> users = UsergroupUtil.getUsergroupUsers(group.getId());
+    List<String> users = usergroupUtil.getUsergroupUsers(group.getId());
 
-    if (!UsergroupUtil.userInGroup(userId, users)) {
+    if (!usergroupUtil.userInGroup(userId, users)) {
       return "You are not a member of the user group " + group.getName();
     }
 
@@ -146,7 +154,7 @@ public class UsergroupHandler {
         = users.stream().filter(u -> !u.equals(userId)).collect(Collectors.toList());
 
     if (modifiedUsers.isEmpty()) {
-      UsergroupUtil.disableUsergroup(group.getId());
+      usergroupUtil.disableUsergroup(group.getId());
     } else {
       updateUsergroupUserlist(modifiedUsers, group.getId());
     }

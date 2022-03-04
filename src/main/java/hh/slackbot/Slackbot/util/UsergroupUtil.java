@@ -18,12 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UsergroupUtil {
-  private UsergroupUtil() {
-  }
 
-  private static final Slack slack = Slack.getInstance();
+  @Autowired
+  private Slack slack;
 
   private static final Logger logger = LoggerFactory.getLogger(UsergroupUtil.class);
 
@@ -36,7 +38,7 @@ public class UsergroupUtil {
    *         null in case of an
    *         error.
    */
-  public static List<Usergroup> getUserGroups() {
+  public List<Usergroup> getUserGroups() {
     List<Usergroup> usergroups = null;
     logger.info("Retrieving user groups");
 
@@ -60,7 +62,7 @@ public class UsergroupUtil {
    * @param name of the group
    * @return Found id or null.
    */
-  public static Usergroup getGroupByName(String name) {
+  public Usergroup getGroupByName(String name) {
     Usergroup group = null;
     List<Usergroup> usergroups = getUserGroups();
     if (!(usergroups == null || usergroups.isEmpty())) {
@@ -79,7 +81,7 @@ public class UsergroupUtil {
    * @param groupId of usergroup
    * @return A list of user id strings. Returns null in case of an error.
    */
-  public static List<String> getUsergroupUsers(String groupId) {
+  public List<String> getUsergroupUsers(String groupId) {
     List<String> users = null;
     try {
       UsergroupsUsersListResponse resp = slack.methods().usergroupsUsersList(
@@ -105,7 +107,7 @@ public class UsergroupUtil {
    * @returns Usergroup object. Returns null in case of an error.
    */
 
-  public static Usergroup createUsergroup(String name) {
+  public Usergroup createUsergroup(String name) {
     Usergroup group = null;
 
     try {
@@ -134,7 +136,7 @@ public class UsergroupUtil {
    * @returns true or false
    * 
    */
-  public static boolean userInGroup(String userId, List<String> users) {
+  public boolean userInGroup(String userId, List<String> users) {
 
     if (users == null || users.isEmpty()) {
       return false;
@@ -154,7 +156,7 @@ public class UsergroupUtil {
    * @param id of usergroup
    * @returns true. Returns false in case of an error.
    */
-  public static boolean enableUsergroup(String id) {
+  public boolean enableUsergroup(String id) {
     try {
       UsergroupsEnableResponse resp = slack.methods().usergroupsEnable(
           UsergroupsEnableRequest.builder().token(TOKEN).usergroup(id).build());
@@ -176,7 +178,7 @@ public class UsergroupUtil {
    * @param id of usergroup
    * @returns true. Returns false in case of an error.
    */
-  public static boolean disableUsergroup(String id) {
+  public boolean disableUsergroup(String id) {
     try {
       UsergroupsDisableResponse resp = slack.methods().usergroupsDisable(
           UsergroupsDisableRequest.builder().token(TOKEN).usergroup(id).build());
@@ -204,10 +206,10 @@ public class UsergroupUtil {
    * @param usergroupName target of commnd
    * @returns true or false
    */
-  public static boolean checkUsergroup(Usergroup usergroup, String command, String usergroupName) {
+  public boolean checkUsergroup(Usergroup usergroup, String command, String usergroupName) {
     if (usergroup == null) {
       if (command.equalsIgnoreCase("join")) {
-        UsergroupUtil.createUsergroup(usergroupName);
+        createUsergroup(usergroupName);
         return true;
 
       } else if (command.equalsIgnoreCase("leave")) {
@@ -227,7 +229,7 @@ public class UsergroupUtil {
    * @param group to be checked
    * @returns an ArrayList
    */
-  public static List<String> checkIfDisabled(Usergroup group) {
+  public List<String> checkIfDisabled(Usergroup group) {
 
     if (group.getDateDelete() != 0) {
       enableUsergroup(group.getId());
