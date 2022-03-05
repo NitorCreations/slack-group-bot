@@ -62,11 +62,8 @@ public class UsergroupHandler {
    * @return message based on the success/error of the user group method
    */
   private boolean finalizeUsergroupCommand(String userId, String command, String usergroupName) {
-
-    logger.info("asdasdasd 2");
     Usergroup usergroup = usergroupUtil.getGroupByName(usergroupName);
     usergroup = usergroupUtil.checkUsergroup(usergroup, usergroupName);
-    logger.info("asdasdasd 3");
 
     if (usergroup == null) {
       messageUtil.sendDirectMessage("usergroup not available", userId);
@@ -91,8 +88,11 @@ public class UsergroupHandler {
    *         if the user already is in the user group.
    */
   public boolean addUserToGroup(String userId, Usergroup group) {
-
-    List<String> users = usergroupUtil.checkIfDisabled(group);
+    if (!usergroupUtil.checkIfAvailable(group)) {
+      // message about error maybe
+      return false;
+    }
+    List<String> users = group.getUsers();
 
     if (usergroupUtil.userInGroup(userId, users)) {
       messageUtil.sendDirectMessage(
@@ -118,9 +118,7 @@ public class UsergroupHandler {
    * @returns whether the operation was successful.
    */
   public boolean removeUserFromGroup(String userId, Usergroup group) {
-    logger.info("getting user group users");
-
-    List<String> users = usergroupUtil.getUsergroupUsers(group.getId());
+    List<String> users = group.getUsers();
 
     if (!usergroupUtil.userInGroup(userId, users)) {
       messageUtil.sendDirectMessage(
@@ -130,6 +128,8 @@ public class UsergroupHandler {
 
     List<String> modifiedUsers = users.stream().filter(u -> !u.equals(userId))
         .collect(Collectors.toList());
+
+    logger.info(modifiedUsers.toString());
 
     if (modifiedUsers.isEmpty()) {
       // maybe send error message to user if fails

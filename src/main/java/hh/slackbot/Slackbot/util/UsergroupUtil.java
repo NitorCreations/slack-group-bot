@@ -45,7 +45,11 @@ public class UsergroupUtil {
 
     try {
       UsergroupsListResponse resp = slack.methods().usergroupsList(
-          UsergroupsListRequest.builder().token(TOKEN).includeDisabled(true).build());
+          UsergroupsListRequest.builder()
+              .token(TOKEN)
+              .includeDisabled(true)
+              .includeUsers(true)
+              .build());
       return resp.getUsergroups();
     } catch (IOException e) {
       logger.error(String.format("IO Error while getting usergroups%n %s", e.getMessage()));
@@ -58,10 +62,10 @@ public class UsergroupUtil {
   }
 
   /**
-   * Tries to fetch a usergroup's id based on a given name.
+   * Tries to fetch a usergroup based on a given name.
    *
    * @param name of the group
-   * @return Found id or null.
+   * @return Found group or null.
    */
   public Usergroup getGroupByName(String name) {
     Usergroup group = null;
@@ -211,22 +215,18 @@ public class UsergroupUtil {
   }
 
   /**
-   * Checks if the user group is currently disabled - If YES, the usergroup is
-   * enabled, and an
-   * empty userlist is returned - If NOT, the current userlist of the group is
-   * returned.
+   * Checks if the user group is currently enabled and if not,
+   * try to enable it and return status.
    *
    * @param group to be checked
    * @returns an ArrayList
    */
-  public List<String> checkIfDisabled(Usergroup group) {
-
+  public boolean checkIfAvailable(Usergroup group) {
     if (group.getDateDelete() != 0) {
-      enableUsergroup(group.getId());
-      return new ArrayList<>();
-    } else {
-      return getUsergroupUsers(group.getId());
+      return enableUsergroup(group.getId());
     }
+
+    return true;
   }
 
   /**
