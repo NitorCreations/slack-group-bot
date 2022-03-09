@@ -46,5 +46,5 @@ jobs:
       - name: codecov coverage report
         uses: codecov/codecov-action@v2
         with:
-          files: ./jacoco.xml
+          files: ./target/site/jacoco/jacoco.xml
           directory: ./target/site/jacoco/
