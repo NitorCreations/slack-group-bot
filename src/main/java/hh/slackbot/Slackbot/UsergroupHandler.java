@@ -124,7 +124,7 @@ public class UsergroupHandler {
   public boolean removeUserFromGroup(String userId, Usergroup group) {
     List<String> users = group.getUsers();
 
-    if (!usergroupUtil.userInGroup(userId, users)) {
+    if (!usergroupUtil.userInGroup(userId, users) || group.getDateDelete() != 0) {
       messageUtil.sendDirectMessage(String.format("You are not in the group %s", group.getName()),
           userId);
       return false;
@@ -134,7 +134,7 @@ public class UsergroupHandler {
         .collect(Collectors.toList());
 
     if (modifiedUsers.isEmpty()) {
-      // maybe send error message to user if fails
+      // maybe send error message to user if fails or when the group is disabled
       return usergroupUtil.disableUsergroup(group.getId());
     } else {
       // maybe send error message to user if fails

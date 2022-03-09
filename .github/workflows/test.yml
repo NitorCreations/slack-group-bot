@@ -42,3 +42,9 @@ jobs:
         env:
           SLACK_BOT_TOKEN: ${{ secrets.DEV_BOT_TOKEN }}
           SLACK_SIGNING_SECRET: ${{ secrets.DEV_SIGNING_SECRET }}
+
+      - name: codecov coverage report
+        uses: codecov/codecov-action@v2
+        with:
+          files: ./jacoco.xml
+          directory: ./target/site/jacoco/
