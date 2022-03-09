@@ -54,8 +54,7 @@ public class UsergroupUtil {
     } catch (IOException e) {
       logger.error(String.format("IO Error while getting usergroups%n %s", e.getMessage()));
     } catch (SlackApiException e) {
-      logger.error(
-          String.format("Slack API Error while getting usergroups%n %s", e.getMessage()));
+      logger.error(String.format("Slack API Error while getting usergroups%n %s", e.getMessage()));
     }
 
     return usergroups;

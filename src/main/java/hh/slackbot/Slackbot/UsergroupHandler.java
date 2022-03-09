@@ -121,8 +121,8 @@ public class UsergroupHandler {
     List<String> users = group.getUsers();
 
     if (!usergroupUtil.userInGroup(userId, users)) {
-      messageUtil.sendDirectMessage(
-            String.format("You are not in the group %s", group.getName()), userId);
+      messageUtil.sendDirectMessage(String.format("You are not in the group %s", group.getName()),
+          userId);
       return false;
     }
 
@@ -133,9 +133,13 @@ public class UsergroupHandler {
 
     if (modifiedUsers.isEmpty()) {
       // maybe send error message to user if fails
+      logger.info("empy");
+
       return usergroupUtil.disableUsergroup(group.getId());
     } else {
       // maybe send error message to user if fails
+      logger.info("not empy");
+
       return usergroupUtil.updateUsergroupUserlist(modifiedUsers, group.getId());
     }
   }

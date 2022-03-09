@@ -32,7 +32,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UsergroupHandlerTest {
-  // TODO: change usergroup mocks to real objects
   @Autowired
   UsergroupHandler groupHandler;
 
@@ -45,52 +44,48 @@ class UsergroupHandlerTest {
   @BeforeAll
   public void init() {
     MockitoAnnotations.openMocks(this);
-
-    // TODO: move to tests that use specific configs
-    // configuring what mocked items should return
-    Usergroup emptyGroup = mock(Usergroup.class);
-    when(emptyGroup.getId()).thenReturn("54321");
-
-    when(groupUtil.getGroupByName("empty group")).thenReturn(null);
-    when(groupUtil.checkUsergroup(null, "empty group")).thenReturn(emptyGroup);
-    when(groupUtil.checkIfAvailable(emptyGroup)).thenReturn(true);
-    when(groupUtil.userInGroup(eq("12345"), anyList())).thenReturn(false);
-    when(groupUtil.updateUsergroupUserlist(any(), eq("54321"))).thenReturn(true);
-    when(groupUtil.getUserGroups()).thenReturn(new ArrayList<Usergroup>());
   }
 
   @Test
   @DisplayName("Remove user from group they are not in returns false")
   void removeUserFromGroupInvalid() {
     List<String> users = Arrays.asList("123", "234", "345");
-    
-    Usergroup group = mock(Usergroup.class);
-    when(group.getName()).thenReturn("invalid group");
-    when(group.getUsers()).thenReturn(users);
-    
+
+    Usergroup group = Usergroup.builder()
+        .id("54321")
+        .users(users)
+        .name("user not in group")
+        .build();
+
     String userId = "12345";
+
     assertFalse(groupHandler.removeUserFromGroup(userId, group));
-    verify(msgUtil).sendDirectMessage("You are not in the group invalid group", userId);
+    verify(msgUtil).sendDirectMessage(
+        String.format("You are not in the group %s", group.getName()), userId);
   }
 
   @Test
   @DisplayName("Remove user from group they are not in returns false")
   void removeUserFromGroupValid() {
     List<String> users = Arrays.asList("22345", "234", "345");
-    
-    Usergroup group = mock(Usergroup.class);
-    when(group.getName()).thenReturn("valid group");
-    when(group.getUsers()).thenReturn(users);
-    when(group.getId()).thenReturn("54321");
+
+    Usergroup group = Usergroup.builder()
+        .id("54321")
+        .users(users)
+        .name("user in group")
+        .build();
+
+    when(groupUtil.updateUsergroupUserlist(any(), eq("54321"))).thenReturn(true);
     when(groupUtil.userInGroup(eq("22345"), eq(users))).thenReturn(true);
-    
+
     String userId = "22345";
+    boolean res = groupHandler.removeUserFromGroup(userId, group);
     verifyNoInteractions(msgUtil);
-    assertTrue(groupHandler.removeUserFromGroup(userId, group));
 
     List<String> modifiedUsers = users.stream().filter(u -> !u.equals(userId))
         .collect(Collectors.toList());
     verify(groupUtil).updateUsergroupUserlist(eq(modifiedUsers), eq("54321"));
+    assertTrue(res);
   }
 
   @Test
@@ -99,19 +94,26 @@ class UsergroupHandlerTest {
     SlashCommandPayload mockPayload = mock(SlashCommandPayload.class);
     when(mockPayload.getUserId()).thenReturn("12345");
     when(mockPayload.getText()).thenReturn("join empty group");
+
     SlashCommandRequest mockReq = mock(SlashCommandRequest.class);
     when(mockReq.getPayload()).thenReturn(mockPayload);
+    
+    Usergroup group = Usergroup.builder()
+        .id("54321")
+        .users(new ArrayList<String>())
+        .name("empty group")
+        .build();
+
+    when(groupUtil.getGroupByName("empty group")).thenReturn(null);
+    when(groupUtil.checkUsergroup(null, "empty group")).thenReturn(group);
+    when(groupUtil.checkIfAvailable(group)).thenReturn(true);
+    when(groupUtil.userInGroup(eq("12345"), anyList())).thenReturn(false);
+    when(groupUtil.updateUsergroupUserlist(anyList(), eq("54321"))).thenReturn(true);
+    
     SlashCommandContext mockCtx = mock(SlashCommandContext.class);
-
     groupHandler.handleUsergroupCommand(mockReq, mockCtx);
-
+    
     // check that ack() was called with no params
     verify(mockCtx).ack();
-  }
-
-  @Test
-  @DisplayName("createUsergroup responds OK and returns group")
-  void createUsergroupRespondsOkAndReturnsGroup() {
-
   }
 }
