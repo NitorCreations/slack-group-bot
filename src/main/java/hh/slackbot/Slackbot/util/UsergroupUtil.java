@@ -36,20 +36,15 @@ public class UsergroupUtil {
    * Tries to retrieve a list of enabled usergroups in the workspace.
    *
    * @return A list containing all usergroup objects or an empty list. Returns
-   *         null in case of an
-   *         error.
+   *         null in case of an error.
    */
   public List<Usergroup> getUserGroups() {
     List<Usergroup> usergroups = null;
     logger.info("Retrieving user groups");
 
     try {
-      UsergroupsListResponse resp = slack.methods().usergroupsList(
-          UsergroupsListRequest.builder()
-              .token(TOKEN)
-              .includeDisabled(true)
-              .includeUsers(true)
-              .build());
+      UsergroupsListResponse resp = slack.methods().usergroupsList(UsergroupsListRequest.builder()
+          .token(TOKEN).includeDisabled(true).includeUsers(true).build());
       return resp.getUsergroups();
     } catch (IOException e) {
       logger.error(String.format("IO Error while getting usergroups%n %s", e.getMessage()));
@@ -69,6 +64,8 @@ public class UsergroupUtil {
   public Usergroup getGroupByName(String name) {
     Usergroup group = null;
     List<Usergroup> usergroups = getUserGroups();
+    logger.info(String.format("group name: %s", name));
+    logger.info(String.format("groups: %s", usergroups.toString()));
     if (!(usergroups == null || usergroups.isEmpty())) {
       for (Usergroup g : usergroups) {
         if (g.getName().equalsIgnoreCase(name)) {
@@ -94,11 +91,10 @@ public class UsergroupUtil {
       users = resp.getUsers();
 
     } catch (IOException e) {
-      logger.error(
-          String.format("IO Error while getting usergroups users%n %s", e.getMessage()));
+      logger.error(String.format("IO Error while getting usergroups users%n %s", e.getMessage()));
     } catch (SlackApiException e) {
-      logger.error(String.format("Slack API Error while getting usergroups users%n %s",
-          e.getMessage()));
+      logger.error(
+          String.format("Slack API Error while getting usergroups users%n %s", e.getMessage()));
     }
 
     return users;
@@ -115,18 +111,17 @@ public class UsergroupUtil {
     Usergroup group = null;
 
     try {
-      UsergroupsCreateResponse resp = slack.methods().usergroupsCreate(
-          UsergroupsCreateRequest.builder().token(TOKEN).name(name).build());
+      UsergroupsCreateResponse resp = slack.methods()
+          .usergroupsCreate(UsergroupsCreateRequest.builder().token(TOKEN).name(name).build());
 
       if (resp.isOk()) {
         group = resp.getUsergroup();
       }
     } catch (IOException e) {
-      logger.error(
-          String.format("IO Error while getting usergroups users%n %s", e.getMessage()));
+      logger.error(String.format("IO Error while getting usergroups users%n %s", e.getMessage()));
     } catch (SlackApiException e) {
-      logger.error(String.format("Slack API Error while getting usergroups users%n %s",
-          e.getMessage()));
+      logger.error(
+          String.format("Slack API Error while getting usergroups users%n %s", e.getMessage()));
     }
 
     return group;
@@ -136,7 +131,7 @@ public class UsergroupUtil {
    * Checks if the user is in the user group.
    *
    * @param userId of checkable user
-   * @param users list
+   * @param users  list
    * @returns true or false
    * 
    */
@@ -162,15 +157,14 @@ public class UsergroupUtil {
    */
   public boolean enableUsergroup(String id) {
     try {
-      UsergroupsEnableResponse resp = slack.methods().usergroupsEnable(
-          UsergroupsEnableRequest.builder().token(TOKEN).usergroup(id).build());
+      UsergroupsEnableResponse resp = slack.methods()
+          .usergroupsEnable(UsergroupsEnableRequest.builder().token(TOKEN).usergroup(id).build());
 
       return resp.isOk();
     } catch (IOException e) {
       logger.error(String.format("IO Error while enabling usergroup%n %s", e.getMessage()));
     } catch (SlackApiException e) {
-      logger.error(
-          String.format("Slack API Error while enabling usergroup%n %s", e.getMessage()));
+      logger.error(String.format("Slack API Error while enabling usergroup%n %s", e.getMessage()));
     }
 
     return false;
@@ -184,38 +178,22 @@ public class UsergroupUtil {
    */
   public boolean disableUsergroup(String id) {
     try {
-      UsergroupsDisableResponse resp = slack.methods().usergroupsDisable(
-          UsergroupsDisableRequest.builder().token(TOKEN).usergroup(id).build());
+      UsergroupsDisableResponse resp = slack.methods()
+          .usergroupsDisable(UsergroupsDisableRequest.builder().token(TOKEN).usergroup(id).build());
 
       return resp.isOk();
     } catch (IOException e) {
       logger.error(String.format("IO Error while disabling usergroup%n %s", e.getMessage()));
     } catch (SlackApiException e) {
-      logger.error(String.format("Slack API Error while disabling usergroup%n %s",
-          e.getMessage()));
+      logger.error(String.format("Slack API Error while disabling usergroup%n %s", e.getMessage()));
     }
 
     return false;
   }
 
   /**
-   * Checks if usergroup is available and creates it if it is not.
-   *
-   * @param usergroup object
-   * @param usergroupName target of commnd
-   * @returns group or null in case of error
-   */
-  public Usergroup checkUsergroup(Usergroup usergroup, String usergroupName) {
-    if (usergroup == null) {
-      return createUsergroup(usergroupName);
-    }
-
-    return usergroup;
-  }
-
-  /**
-   * Checks if the user group is currently enabled and if not,
-   * try to enable it and return status.
+   * Checks if the user group is currently enabled and if not, try to enable it
+   * and return status.
    *
    * @param group to be checked
    * @returns an ArrayList

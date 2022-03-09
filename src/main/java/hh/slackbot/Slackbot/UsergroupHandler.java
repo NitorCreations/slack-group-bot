@@ -44,7 +44,6 @@ public class UsergroupHandler {
     String command = params[0];
     String usergroupName = params[1];
 
-    logger.info("asdasdasd");
     if (finalizeUsergroupCommand(userId, command, usergroupName)) {
       return ctx.ack();
     } else {
@@ -63,7 +62,10 @@ public class UsergroupHandler {
    */
   private boolean finalizeUsergroupCommand(String userId, String command, String usergroupName) {
     Usergroup usergroup = usergroupUtil.getGroupByName(usergroupName);
-    usergroup = usergroupUtil.checkUsergroup(usergroup, usergroupName);
+
+    if (usergroup == null) {
+      usergroup = usergroupUtil.createUsergroup(usergroupName);
+    }
 
     if (usergroup == null) {
       messageUtil.sendDirectMessage("usergroup not available", userId);
@@ -75,6 +77,7 @@ public class UsergroupHandler {
     } else if (command.equalsIgnoreCase("leave")) {
       return removeUserFromGroup(userId, usergroup);
     } else {
+      messageUtil.sendDirectMessage(String.format("invalid command: %s", command), userId);
       return false;
     }
   }
@@ -89,7 +92,8 @@ public class UsergroupHandler {
    */
   public boolean addUserToGroup(String userId, Usergroup group) {
     if (!usergroupUtil.checkIfAvailable(group)) {
-      // message about error maybe
+      messageUtil.sendDirectMessage(
+          String.format("Unable to enable the group %s", group.getName()), userId);
       return false;
     }
     List<String> users = group.getUsers();
@@ -129,17 +133,11 @@ public class UsergroupHandler {
     List<String> modifiedUsers = users.stream().filter(u -> !u.equals(userId))
         .collect(Collectors.toList());
 
-    logger.info(modifiedUsers.toString());
-
     if (modifiedUsers.isEmpty()) {
       // maybe send error message to user if fails
-      logger.info("empy");
-
       return usergroupUtil.disableUsergroup(group.getId());
     } else {
       // maybe send error message to user if fails
-      logger.info("not empy");
-
       return usergroupUtil.updateUsergroupUserlist(modifiedUsers, group.getId());
     }
   }

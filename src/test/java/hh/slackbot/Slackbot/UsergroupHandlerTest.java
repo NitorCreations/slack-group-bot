@@ -1,13 +1,11 @@
 package hh.slackbot.slackbot;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.slack.api.app_backend.slash_commands.payload.SlashCommandPayload;
@@ -19,8 +17,7 @@ import hh.slackbot.slackbot.util.UsergroupUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -41,79 +38,192 @@ class UsergroupHandlerTest {
   @MockBean
   private MessageUtil msgUtil;
 
-  @BeforeAll
+  @BeforeEach
   public void init() {
     MockitoAnnotations.openMocks(this);
+    doCallRealMethod().when(groupUtil).userInGroup(anyString(), anyList());
+    doCallRealMethod().when(groupUtil).getGroupByName(anyString());
+    doCallRealMethod().when(groupUtil).checkIfAvailable(any());
+
+    // override these in test functions if necessary
+    when(groupUtil.enableUsergroup(anyString())).thenReturn(true);
+    when(groupUtil.updateUsergroupUserlist(anyList(), anyString())).thenReturn(true);
+    when(groupUtil.disableUsergroup(anyString())).thenReturn(true);
+    initUserGroups();
   }
 
-  @Test
-  @DisplayName("Remove user from group they are not in returns false")
-  void removeUserFromGroupInvalid() {
-    List<String> users = Arrays.asList("123", "234", "345");
+  private void initUserGroups() {
+    List<String> users = new ArrayList<String>(Arrays.asList("user1", "user2", "user3"));
+    List<String> users2 = new ArrayList<String>(Arrays.asList("user1"));
+    List<Usergroup> groups = Arrays.asList(
+        Usergroup.builder()
+          .id("1111")
+          .users(users)
+          .name("sample group")
+          .dateDelete(0)
+          .build(),
+        Usergroup.builder()
+          .id("2222")
+          .users(new ArrayList<String>())
+          .name("empty group")
+          .dateDelete(0)
+          .build(),
+        Usergroup.builder()
+          .id("3333")
+          .users(users2)
+          .name("single group")
+          .dateDelete(0)
+          .build(),
+        Usergroup.builder()
+          .id("4444")
+          .users(users2)
+          .name("disabled group")
+          .dateDelete(1)
+          .build()
+    );
 
-    Usergroup group = Usergroup.builder()
-        .id("54321")
-        .users(users)
-        .name("user not in group")
-        .build();
-
-    String userId = "12345";
-
-    assertFalse(groupHandler.removeUserFromGroup(userId, group));
-    verify(msgUtil).sendDirectMessage(
-        String.format("You are not in the group %s", group.getName()), userId);
+    when(groupUtil.getUserGroups()).thenReturn(groups);
   }
 
-  @Test
-  @DisplayName("Remove user from group they are not in returns false")
-  void removeUserFromGroupValid() {
-    List<String> users = Arrays.asList("22345", "234", "345");
+  private SlashCommandContext callWithMockValues(String userId, String userInput) {
+    SlashCommandPayload mockPayload = mock(SlashCommandPayload.class);
+    when(mockPayload.getUserId()).thenReturn(userId);
+    when(mockPayload.getText()).thenReturn(userInput);
 
-    Usergroup group = Usergroup.builder()
-        .id("54321")
-        .users(users)
-        .name("user in group")
-        .build();
+    SlashCommandRequest mockReq = mock(SlashCommandRequest.class);
+    when(mockReq.getPayload()).thenReturn(mockPayload);
+    SlashCommandContext mockCtx = mock(SlashCommandContext.class);
 
-    when(groupUtil.updateUsergroupUserlist(any(), eq("54321"))).thenReturn(true);
-    when(groupUtil.userInGroup(eq("22345"), eq(users))).thenReturn(true);
+    groupHandler.handleUsergroupCommand(mockReq, mockCtx);
 
-    String userId = "22345";
-    boolean res = groupHandler.removeUserFromGroup(userId, group);
-    verifyNoInteractions(msgUtil);
-
-    List<String> modifiedUsers = users.stream().filter(u -> !u.equals(userId))
-        .collect(Collectors.toList());
-    verify(groupUtil).updateUsergroupUserlist(eq(modifiedUsers), eq("54321"));
-    assertTrue(res);
+    return mockCtx;
   }
 
   @Test
   @DisplayName("Add user to empty group")
-  void addUserToGroupFlowWorks() {
-    SlashCommandPayload mockPayload = mock(SlashCommandPayload.class);
-    when(mockPayload.getUserId()).thenReturn("12345");
-    when(mockPayload.getText()).thenReturn("join empty group");
-
-    SlashCommandRequest mockReq = mock(SlashCommandRequest.class);
-    when(mockReq.getPayload()).thenReturn(mockPayload);
+  void addUserToEmptyGroup() {
+    String userId = "user4";
+    String userInput = "join empty group";
+    SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
     
+    verify(mockCtx).ack();
+  }
+
+  @Test
+  @DisplayName("Try adding duplicate user to group")
+  void addDuplicateUserToGroup() {
+    String userId = "user1";
+    String userInput = "join sample group";
+    SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
+
+    verify(msgUtil).sendDirectMessage(
+        String.format("You are already in the group %s", "sample group"), userId);
+    verify(mockCtx).ack("Command failed to execute");
+  }
+
+  @Test
+  @DisplayName("Remove user from a group they're in")
+  void removeUserFromGroup() {
+    String userId = "user1";
+    String userInput = "leave sample group";
+    SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
+
+    verify(mockCtx).ack();
+  }
+
+  @Test
+  @DisplayName("Try to remove user from a group they're not in")
+  void removeUserFromGroupAbsent() {
+    String userId = "user4";
+    String userInput = "leave sample group";
+    SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
+
+    verify(msgUtil).sendDirectMessage(
+        String.format("You are not in the group %s", "sample group"), userId);
+    verify(mockCtx).ack("Command failed to execute");
+  }
+
+  @Test
+  @DisplayName("Remove the last user from a group")
+  void removeLastUserFromGroup() {
+    String userId = "user1";
+    String userInput = "leave single group";
+    SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
+
+    verify(groupUtil).disableUsergroup("3333");
+    verify(mockCtx).ack();
+  }
+
+  @Test
+  @DisplayName("Create group and add user")
+  void addUserToNewGroup() {
+    String userId = "user1";
+    String userInput = "join new group";
     Usergroup group = Usergroup.builder()
-        .id("54321")
+        .id("2222")
         .users(new ArrayList<String>())
-        .name("empty group")
+        .name("new group")
+        .dateDelete(0)
         .build();
 
-    when(groupUtil.getGroupByName("empty group")).thenReturn(null);
-    when(groupUtil.checkUsergroup(null, "empty group")).thenReturn(group);
-    when(groupUtil.checkIfAvailable(group)).thenReturn(true);
-    when(groupUtil.userInGroup(eq("12345"), anyList())).thenReturn(false);
-    when(groupUtil.updateUsergroupUserlist(anyList(), eq("54321"))).thenReturn(true);
-    
-    SlashCommandContext mockCtx = mock(SlashCommandContext.class);
-    groupHandler.handleUsergroupCommand(mockReq, mockCtx);
-    
-    // check that ack() was called with no params
+    when(groupUtil.createUsergroup("new group")).thenReturn(group);
+
+    SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
+
     verify(mockCtx).ack();
+  }
+
+  @Test
+  @DisplayName("Create group and add user api fails")
+  void addUserToNewGroupFails() {
+    String userId = "user1";
+    String userInput = "join new group";
+
+    when(groupUtil.createUsergroup("new group")).thenReturn(null);
+
+    SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
+
+    verify(msgUtil).sendDirectMessage("usergroup not available", userId);
+    verify(mockCtx).ack("Command failed to execute");
+  }
+
+  @Test
+  @DisplayName("Invalid command fails")
+  void invalidCommandFails() {
+    String userId = "user1";
+    String userInput = "jnoin sample group";
+
+    SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
+    
+    verify(msgUtil).sendDirectMessage("invalid command: jnoin", userId);
+    verify(mockCtx).ack("Command failed to execute");
+  }
+
+  @Test
+  @DisplayName("Enabling group fails")
+  void groupEnableFailure() {
+    String userId = "user1";
+    String userInput = "join disabled group";
+
+    when(groupUtil.enableUsergroup(any())).thenReturn(false);
+
+    SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
+
+    verify(msgUtil).sendDirectMessage("Unable to enable the group disabled group", userId);
+    verify(mockCtx).ack("Command failed to execute");
+  }
+
+  @Test
+  @DisplayName("Joining group fails")
+  void groupJoinFailure() {
+    String userId = "user4";
+    String userInput = "join sample group";
+
+    when(groupUtil.updateUsergroupUserlist(anyList(), anyString())).thenReturn(false);
+
+    SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
+
+    verify(msgUtil).sendDirectMessage("Failed to add you to the group sample group", userId);
+    verify(mockCtx).ack("Command failed to execute");
   }
 }
