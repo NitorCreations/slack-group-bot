@@ -18,7 +18,7 @@ public class MessageUtil {
 
   private static final Logger logger = LoggerFactory.getLogger(MessageUtil.class);
 
-  private static final String TOKEN = "System.getenv(\"SLACK_BOT_TOKEN\")";
+  private static final String TOKEN = System.getenv("SLACK_BOT_TOKEN");
 
   /**
    * Send a direct message to the specified user.
