@@ -1,6 +1,6 @@
 package hh.slackbot.slackbot.util;
 
-import com.slack.api.Slack;
+import com.slack.api.methods.MethodsClient;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.request.usergroups.UsergroupsCreateRequest;
 import com.slack.api.methods.request.usergroups.UsergroupsDisableRequest;
@@ -15,7 +15,6 @@ import com.slack.api.methods.response.usergroups.UsergroupsListResponse;
 import com.slack.api.methods.response.usergroups.users.UsergroupsUsersListResponse;
 import com.slack.api.model.Usergroup;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +25,7 @@ import org.springframework.stereotype.Component;
 public class UsergroupUtil {
 
   @Autowired
-  private Slack slack;
+  private MethodsClient client;
 
   private static final Logger logger = LoggerFactory.getLogger(UsergroupUtil.class);
 
@@ -43,7 +42,7 @@ public class UsergroupUtil {
     logger.info("Retrieving user groups");
 
     try {
-      UsergroupsListResponse resp = slack.methods().usergroupsList(UsergroupsListRequest.builder()
+      UsergroupsListResponse resp = client.usergroupsList(UsergroupsListRequest.builder()
           .token(TOKEN).includeDisabled(true).includeUsers(true).build());
       return resp.getUsergroups();
     } catch (IOException e) {
@@ -85,7 +84,7 @@ public class UsergroupUtil {
   public List<String> getUsergroupUsers(String groupId) {
     List<String> users = null;
     try {
-      UsergroupsUsersListResponse resp = slack.methods().usergroupsUsersList(
+      UsergroupsUsersListResponse resp = client.usergroupsUsersList(
           UsergroupsUsersListRequest.builder().token(TOKEN).usergroup(groupId).build());
 
       users = resp.getUsers();
@@ -111,7 +110,7 @@ public class UsergroupUtil {
     Usergroup group = null;
 
     try {
-      UsergroupsCreateResponse resp = slack.methods()
+      UsergroupsCreateResponse resp = client
           .usergroupsCreate(UsergroupsCreateRequest.builder().token(TOKEN).name(name).build());
 
       if (resp.isOk()) {
@@ -157,7 +156,7 @@ public class UsergroupUtil {
    */
   public boolean enableUsergroup(String id) {
     try {
-      UsergroupsEnableResponse resp = slack.methods()
+      UsergroupsEnableResponse resp = client
           .usergroupsEnable(UsergroupsEnableRequest.builder().token(TOKEN).usergroup(id).build());
 
       return resp.isOk();
@@ -178,7 +177,7 @@ public class UsergroupUtil {
    */
   public boolean disableUsergroup(String id) {
     try {
-      UsergroupsDisableResponse resp = slack.methods()
+      UsergroupsDisableResponse resp = client
           .usergroupsDisable(UsergroupsDisableRequest.builder().token(TOKEN).usergroup(id).build());
 
       return resp.isOk();
@@ -217,7 +216,7 @@ public class UsergroupUtil {
    */
   public boolean updateUsergroupUserlist(List<String> users, String groupId) {
     try {
-      slack.methods().usergroupsUsersUpdate(UsergroupsUsersUpdateRequest.builder()
+      client.usergroupsUsersUpdate(UsergroupsUsersUpdateRequest.builder()
           .token(System.getenv("SLACK_BOT_TOKEN")).usergroup(groupId).users(users).build());
       return true;
     } catch (IOException e) {

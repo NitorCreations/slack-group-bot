@@ -1,6 +1,6 @@
 package hh.slackbot.slackbot.util;
 
-import com.slack.api.Slack;
+import com.slack.api.methods.MethodsClient;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.request.chat.ChatPostEphemeralRequest;
 import com.slack.api.methods.request.chat.ChatPostMessageRequest;
@@ -14,11 +14,11 @@ import org.springframework.stereotype.Component;
 public class MessageUtil {
 
   @Autowired
-  private Slack slack;
+  public MethodsClient client;
 
   private static final Logger logger = LoggerFactory.getLogger(MessageUtil.class);
 
-  private static final String TOKEN = System.getenv("SLACK_BOT_TOKEN");
+  private static final String TOKEN = "System.getenv(\"SLACK_BOT_TOKEN\")";
 
   /**
    * Send a direct message to the specified user.
@@ -29,13 +29,13 @@ public class MessageUtil {
    */
   public boolean sendDirectMessage(String message, String userId) {
     try {
-      slack.methods().chatPostMessage(
+      return client.chatPostMessage(
           ChatPostMessageRequest.builder()
               .token(TOKEN)
               .channel(userId)
               .text(message)
-              .build());
-      return true;
+              .build()
+          ).isOk();
     } catch (IOException e) {
       logger.error(
           String.format("IOException while sending direct message to user %n%s", e.getMessage()));
@@ -57,14 +57,14 @@ public class MessageUtil {
    */
   public boolean sendEphemeralResponse(String message, String userId, String channelId) {
     try {
-      slack.methods().chatPostEphemeral(
+      return client.chatPostEphemeral(
           ChatPostEphemeralRequest.builder()
               .token(TOKEN)
               .channel(channelId)
               .user(userId)
               .text(message)
-              .build());
-      return true;
+              .build()
+          ).isOk();
     } catch (IOException e) {
       logger.error(
           String.format("IOException while sending direct message to user %n%s", e.getMessage()));
