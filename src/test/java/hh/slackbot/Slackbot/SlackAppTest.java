@@ -1,4 +1,4 @@
-package hh.slackbot.Slackbot;
+package hh.slackbot.slackbot;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.verify;
