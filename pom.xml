@@ -60,6 +60,7 @@
 				<configuration>
 					<violationSeverity>warning</violationSeverity>
 					<configLocation>checkstyle.xml</configLocation>
+					<includeTestSourceDirectory>true</includeTestSourceDirectory>
 				</configuration>
 				<dependencies>
 					<dependency>
