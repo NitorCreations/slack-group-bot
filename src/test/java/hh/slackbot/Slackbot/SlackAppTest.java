@@ -24,7 +24,7 @@ import com.slack.api.model.event.AppMentionEvent;
 class SlackAppTest {
 
   @Autowired
-  private SlackApp slackApp;
+  SlackApp slackApp;
 	
   @MockBean
   private EventsApiPayload<AppMentionEvent> mockReq;
