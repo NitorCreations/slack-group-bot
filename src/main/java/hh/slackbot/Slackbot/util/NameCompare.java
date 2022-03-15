@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class NameCompare {
   private static final Logger logger = LoggerFactory.getLogger(NameCompare.class);
-  private static final float TRESHOLD = 0.8f;
+  private static final float THRESHOLD = 0.8f;
 
   public NameCompare() {}
 
@@ -27,7 +27,7 @@ public class NameCompare {
     List<String> hits = names.stream()
         .filter(n -> {
           float result = compareNames(n, name);
-          return result >= TRESHOLD;
+          return result >= THRESHOLD;
         })
         .collect(Collectors.toList());
 
