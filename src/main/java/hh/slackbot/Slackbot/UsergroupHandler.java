@@ -1,182 +1,144 @@
 package hh.slackbot.slackbot;
 
-import com.slack.api.Slack;
 import com.slack.api.app_backend.slash_commands.payload.SlashCommandPayload;
 import com.slack.api.bolt.context.builtin.SlashCommandContext;
 import com.slack.api.bolt.request.builtin.SlashCommandRequest;
 import com.slack.api.bolt.response.Response;
-import com.slack.api.methods.SlackApiException;
-import com.slack.api.methods.request.usergroups.users.UsergroupsUsersUpdateRequest;
 import com.slack.api.model.Usergroup;
 import hh.slackbot.slackbot.util.MessageUtil;
 import hh.slackbot.slackbot.util.UsergroupUtil;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UsergroupHandler {
   public UsergroupHandler() {
   }
 
-  private static Slack slack = Slack.getInstance();
+  @Autowired
+  private MessageUtil messageUtil;
+
+  @Autowired
+  private UsergroupUtil usergroupUtil;
 
   private static final Logger logger = LoggerFactory.getLogger(UsergroupHandler.class);
 
   /**
-   * Breaks the command's name and target from user input.
-   * Calls finalizeUsergroup to finalize the user group method
-   * and calls messageUtil to send the correct message to the user.
+   * Breaks the command's name and target from user input. Calls finalizeUsergroup
+   * to finalize the user group method and calls messageUtil to send the correct
+   * message to the user.
    *
    * @param req slack request object
    * @param ctx slack context object
    * @return ctx.ack()
    */
-  public static Response handleUsergroupCommand(SlashCommandRequest req,
-      SlashCommandContext ctx) {
-
-    String message = "";
-
+  public Response handleUsergroupCommand(SlashCommandRequest req, SlashCommandContext ctx) {
     SlashCommandPayload payload = req.getPayload();
-
     String userId = payload.getUserId();
 
-    try {
+    String[] params = payload.getText().split(" ", 2);
+    String command = params[0];
+    String usergroupName = params[1];
 
-      String[] params = payload.getText().split(" ", 2);
-
-      String command = params[0];
-
-      String usergroupName = params[1];
-
-      message = finalizeUsergroupCommand(userId, command, usergroupName);
-
-    } catch (Exception e) {
-
-      message = "Invalid command parameters";
-
-    } finally {
-      MessageUtil.sendDirectMessage(message, userId);
+    if (finalizeUsergroupCommand(userId, command, usergroupName)) {
+      return ctx.ack();
+    } else {
+      return ctx.ack("Command failed to execute");
     }
-
-    return ctx.ack();
   }
 
   /**
    * Gets parameters from usergroupHandler, checks them and calls the correct user
    * group method based on them.
    *
-   * @param userId of the user making the command
-   * @param command given by the user
+   * @param userId        of the user making the command
+   * @param command       given by the user
    * @param usergroupName name of groups to use the command on
    * @return message based on the success/error of the user group method
    */
-  private static String finalizeUsergroupCommand(String userId, String command,
-      String usergroupName) {
+  private boolean finalizeUsergroupCommand(String userId, String command, String usergroupName) {
+    Usergroup usergroup = usergroupUtil.getGroupByName(usergroupName);
 
-    String answer = "The command can not be done";
-
-    Usergroup usergroup = UsergroupUtil.getGroupByName(usergroupName);
-
-    if (UsergroupUtil.checkUsergroup(usergroup, command, usergroupName)) {
-      UsergroupHandler groupHandler = new UsergroupHandler();
-
-      usergroup = UsergroupUtil.getGroupByName(usergroupName);
-
-      if (command.equalsIgnoreCase("join")) {
-        boolean addedUserToGroupSuccessfully = groupHandler.addUserToGroup(userId, usergroup);
-
-        if (addedUserToGroupSuccessfully) {
-          answer = "You have successfully joined the user group " + usergroup.getName();
-        } else {
-          answer = "You already are in the usergroup " + usergroup.getName();
-        }
-
-      } else if (command.equalsIgnoreCase("leave")) {
-        answer = groupHandler.removeUserFromGroup(userId, usergroup);
-      }
-
-    } else {
-      answer = "Usergroup " + usergroupName + " was not found";
+    if (usergroup == null) {
+      usergroup = usergroupUtil.createUsergroup(usergroupName);
     }
 
-    return answer;
+    if (usergroup == null) {
+      messageUtil.sendDirectMessage("usergroup not available", userId);
+      return false;
+    }
+
+    if (command.equalsIgnoreCase("join")) {
+      return addUserToGroup(userId, usergroup);
+    } else if (command.equalsIgnoreCase("leave")) {
+      return removeUserFromGroup(userId, usergroup);
+    } else {
+      messageUtil.sendDirectMessage(String.format("invalid command: %s", command), userId);
+      return false;
+    }
   }
 
   /**
    * Adds the user into a new user group, if the certain conditions allow it.
    *
    * @param userId of the user to be added
-   * @param group object where to add the user to
+   * @param group  object where to add the user to
    * @return true if the user was added to user group successfully. Returns false
-   *         if the user
-   *         already is in the user group.
+   *         if the user already is in the user group.
    */
   public boolean addUserToGroup(String userId, Usergroup group) {
-
-    List<String> users = UsergroupUtil.checkIfDisabled(group);
-
-    if (UsergroupUtil.userInGroup(userId, users)) {
+    if (!usergroupUtil.checkIfAvailable(group)) {
+      messageUtil.sendDirectMessage(
+          String.format("Unable to enable the group %s", group.getName()), userId);
       return false;
+    }
+    List<String> users = group.getUsers();
+
+    if (usergroupUtil.userInGroup(userId, users)) {
+      messageUtil.sendDirectMessage(
+          String.format("You are already in the group %s", group.getName()), userId);
+      return false;
+
     } else {
       users.add(userId);
-      updateUsergroupUserlist(users, group.getId());
+      boolean success = usergroupUtil.updateUsergroupUserlist(users, group.getId());
+      if (!success) {
+        messageUtil.sendDirectMessage(
+            String.format("Failed to add you to the group %s", group.getName()), userId);
+      }
+      return success;
     }
-    return true;
   }
 
   /**
    * Removes the user from user group, if certain conditions allow it.
    *
    * @param userId of the user to be removed
-   * @param group object where to remove the user from
-   * @returns message based on the success/failure of the method
+   * @param group  object where to remove the user from
+   * @returns whether the operation was successful.
    */
-  public String removeUserFromGroup(String userId, Usergroup group) {
-    logger.info("getting user group users");
+  public boolean removeUserFromGroup(String userId, Usergroup group) {
+    List<String> users = group.getUsers();
 
-    List<String> users = UsergroupUtil.getUsergroupUsers(group.getId());
-
-    if (!UsergroupUtil.userInGroup(userId, users)) {
-      return "You are not a member of the user group " + group.getName();
+    if (!usergroupUtil.userInGroup(userId, users) || group.getDateDelete() != 0) {
+      messageUtil.sendDirectMessage(String.format("You are not in the group %s", group.getName()),
+          userId);
+      return false;
     }
 
-    List<String> modifiedUsers
-        = users.stream().filter(u -> !u.equals(userId)).collect(Collectors.toList());
+    List<String> modifiedUsers = users.stream().filter(u -> !u.equals(userId))
+        .collect(Collectors.toList());
 
     if (modifiedUsers.isEmpty()) {
-      UsergroupUtil.disableUsergroup(group.getId());
+      // maybe send error message to user if fails or when the group is disabled
+      return usergroupUtil.disableUsergroup(group.getId());
     } else {
-      updateUsergroupUserlist(modifiedUsers, group.getId());
+      // maybe send error message to user if fails
+      return usergroupUtil.updateUsergroupUserlist(modifiedUsers, group.getId());
     }
-    return "You have successfully left the user group " + group.getName();
-  }
-
-  /**
-   * Updates the user group's user list (the last step of joining/leaving the user
-   * group).
-   *
-   * @param users list containing new active users in group
-   * @param groupId of the group to be modified
-   * @return true, if the Slack API's updateUsergroupUserlist method is
-   *         successful. Returns false
-   *         if the method fails
-   */
-  public boolean updateUsergroupUserlist(List<String> users, String groupId) {
-    try {
-      slack.methods()
-          .usergroupsUsersUpdate(UsergroupsUsersUpdateRequest.builder()
-              .token(System.getenv("SLACK_BOT_TOKEN")).usergroup(groupId).users(users)
-              .build());
-      return true;
-    } catch (IOException e) {
-      logger.error(String.format("IO Error while updating usergroup%n %s", e.getMessage()));
-    } catch (SlackApiException e) {
-      logger.error(
-          String.format("Slack API Error while updating usergroup%n %s", e.getMessage()));
-    }
-
-    return false;
   }
 }

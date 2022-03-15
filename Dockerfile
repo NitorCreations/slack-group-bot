@@ -22,4 +22,4 @@ RUN useradd -m botuser
 USER botuser
 
 # jar file needs to be named according to build target name in pom.xml
-CMD java -jar -Dserver.port=$PORT Slackbot-0.0.1-SNAPSHOT.jar
+CMD java -jar -Dserver.port=$PORT slackbot-0.0.1-SNAPSHOT.jar

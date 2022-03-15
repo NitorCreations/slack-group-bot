@@ -20,6 +20,7 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           cache: maven
+
       - name: Checkstyle lint check
         run: mvn checkstyle:check
         
@@ -35,8 +36,18 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           cache: maven
-      - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots verify
+
+      - name: Test with coverage
+        run: mvn --batch-mode --update-snapshots verify -P coverage
         env:
           SLACK_BOT_TOKEN: ${{ secrets.DEV_BOT_TOKEN }}
           SLACK_SIGNING_SECRET: ${{ secrets.DEV_SIGNING_SECRET }}
+
+      - name: Add coverage to PR
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.2
+        with:
+          paths: ${{ github.workspace }}/target/site/jacoco/jacoco.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 60
+          min-coverage-changed-files: 60

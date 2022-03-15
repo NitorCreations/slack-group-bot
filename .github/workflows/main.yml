@@ -17,7 +17,7 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           cache: maven
-      - name: Build with Maven
+      - name: Test with Maven
         run: mvn --batch-mode --update-snapshots verify
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
