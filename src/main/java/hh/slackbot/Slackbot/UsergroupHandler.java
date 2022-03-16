@@ -6,6 +6,7 @@ import com.slack.api.bolt.request.builtin.SlashCommandRequest;
 import com.slack.api.bolt.response.Response;
 import com.slack.api.model.Usergroup;
 import hh.slackbot.slackbot.util.MessageUtil;
+import hh.slackbot.slackbot.util.NameCompare;
 import hh.slackbot.slackbot.util.UsergroupUtil;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +25,9 @@ public class UsergroupHandler {
 
   @Autowired
   private UsergroupUtil usergroupUtil;
+
+  @Autowired
+  private NameCompare comparer;
 
   private static final Logger logger = LoggerFactory.getLogger(UsergroupHandler.class);
 
@@ -61,6 +65,19 @@ public class UsergroupHandler {
    * @return message based on the success/error of the user group method
    */
   private boolean finalizeUsergroupCommand(String userId, String command, String usergroupName) {
+    List<Usergroup> groups = usergroupUtil.getUserGroups();
+    List<String> groupNames = groups.stream()
+        .map(group -> group.getName())
+        .collect(Collectors.toList());
+
+    List<String> similarNames = comparer.compareToList(usergroupName, groupNames);
+
+    if (!similarNames.isEmpty() && command.equalsIgnoreCase("join")) {
+      messageUtil.sendDirectMessage(
+          String.format("Did you mean: %s", String.join(", ", similarNames)), userId);
+      return false;
+    }
+
     Usergroup usergroup = usergroupUtil.getGroupByName(usergroupName);
 
     if (usergroup == null) {

@@ -110,8 +110,12 @@ public class UsergroupUtil {
     Usergroup group = null;
 
     try {
-      UsergroupsCreateResponse resp = client
-          .usergroupsCreate(UsergroupsCreateRequest.builder().token(TOKEN).name(name).build());
+      UsergroupsCreateResponse resp = client.usergroupsCreate(
+          UsergroupsCreateRequest.builder()
+            .token(TOKEN)
+            .name(name)
+            .handle(name)
+            .build());
 
       if (resp.isOk()) {
         group = resp.getUsergroup();

@@ -79,6 +79,12 @@ class UsergroupHandlerTest {
           .users(users2)
           .name("disabled group")
           .dateDelete(1)
+          .build(),
+          Usergroup.builder()
+          .id("5555")
+          .users(users)
+          .name("sample2 group")
+          .dateDelete(0)
           .build()
     );
 
@@ -225,5 +231,28 @@ class UsergroupHandlerTest {
 
     verify(msgUtil).sendDirectMessage("Failed to add you to the group sample group", userId);
     verify(mockCtx).ack("Command failed to execute");
+  }
+
+  @Test
+  @DisplayName("Typo fails and sends message with similar results")
+  void typoFails() {
+    String userId = "user";
+    String userInput = "join sample gruop";
+
+    SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
+
+    verify(msgUtil).sendDirectMessage("Did you mean: sample group", userId);
+    verify(mockCtx).ack("Command failed to execute");
+  }
+
+  @Test
+  @DisplayName("Similar group doesn't prevent joining an existing one")
+  void typoAllowsExisting() {
+    String userId = "user";
+    String userInput = "join sample group";
+
+    SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
+
+    verify(mockCtx).ack();
   }
 }
