@@ -150,12 +150,23 @@ public class UsergroupHandler {
     List<String> modifiedUsers = users.stream().filter(u -> !u.equals(userId))
         .collect(Collectors.toList());
 
+    boolean result;
     if (modifiedUsers.isEmpty()) {
       // maybe send error message to user if fails or when the group is disabled
-      return usergroupUtil.disableUsergroup(group.getId());
+      result = usergroupUtil.disableUsergroup(group.getId());
     } else {
       // maybe send error message to user if fails
-      return usergroupUtil.updateUsergroupUserlist(modifiedUsers, group.getId());
+      result = usergroupUtil.updateUsergroupUserlist(modifiedUsers, group.getId());
     }
+
+    if (result) {
+      messageUtil.sendDirectMessage(
+          String.format("You have been removed from the group %s", group.getName()), userId);
+    } else {
+      messageUtil.sendDirectMessage(
+          String.format("Failed to remove you from the group %s", group.getName()), userId);
+    }
+
+    return result;
   }
 }
