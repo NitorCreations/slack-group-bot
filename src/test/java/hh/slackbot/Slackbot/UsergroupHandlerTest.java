@@ -241,7 +241,7 @@ class UsergroupHandlerTest {
 
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
-    verify(msgUtil).sendDirectMessage("Did you mean: sample group", userId);
+    verify(msgUtil).sendDirectMessage("Did you mean: sample group,  sample2 group", userId);
     verify(mockCtx).ack("Command failed to execute");
   }
 
