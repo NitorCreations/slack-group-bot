@@ -8,6 +8,7 @@ import com.slack.api.model.Usergroup;
 import hh.slackbot.slackbot.util.MessageUtil;
 import hh.slackbot.slackbot.util.NameCompare;
 import hh.slackbot.slackbot.util.UsergroupUtil;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -66,8 +67,7 @@ public class UsergroupHandler {
    */
   private boolean finalizeUsergroupCommand(String userId, String command, String usergroupName) {
     List<Usergroup> groups = usergroupUtil.getUserGroups();
-    List<String> groupNames = groups.stream()
-        .map(group -> group.getName())
+    List<String> groupNames = groups.stream().map(group -> group.getName())
         .collect(Collectors.toList());
 
     List<String> similarNames = comparer.compareToList(usergroupName, groupNames);
@@ -109,11 +109,11 @@ public class UsergroupHandler {
    */
   public boolean addUserToGroup(String userId, Usergroup group) {
     if (!usergroupUtil.checkIfAvailable(group)) {
-      messageUtil.sendDirectMessage(
-          String.format("Unable to enable the group %s", group.getName()), userId);
+      messageUtil.sendDirectMessage(String.format("Unable to enable the group %s", group.getName()),
+          userId);
       return false;
     }
-    List<String> users = group.getUsers();
+    List<String> users = group.getDateDelete() == 0 ? group.getUsers() : new ArrayList<>();
 
     if (usergroupUtil.userInGroup(userId, users)) {
       messageUtil.sendDirectMessage(

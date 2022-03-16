@@ -116,6 +116,18 @@ class UsergroupHandlerTest {
   }
 
   @Test
+  @DisplayName("Add user back to group they left from as last member")
+  void addUserBackToDisabledGroup() {
+    String userId = "user1";
+    String userInput = "join disabled group";
+    SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
+
+    verify(groupUtil)
+          .updateUsergroupUserlist(new ArrayList<String>(Arrays.asList("user1")), "4444");
+    verify(mockCtx).ack();
+  }
+
+  @Test
   @DisplayName("Try adding duplicate user to group")
   void addDuplicateUserToGroup() {
     String userId = "user1";
