@@ -16,6 +16,8 @@ RUN ./mvnw -B package -DskipTests -ntp
 
 FROM openjdk:11-jre-slim-buster
 
+WORKDIR /usr/src/app
+
 COPY --from=build target/*.jar .
 
 RUN useradd -m botuser
