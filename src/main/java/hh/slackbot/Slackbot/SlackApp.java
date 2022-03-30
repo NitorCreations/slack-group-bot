@@ -3,6 +3,7 @@ package hh.slackbot.slackbot;
 import static com.slack.api.model.block.Blocks.*;
 import static com.slack.api.model.block.composition.BlockCompositions.*;
 import static com.slack.api.model.block.element.BlockElements.*;
+
 import com.slack.api.Slack;
 import com.slack.api.app_backend.events.payload.EventsApiPayload;
 import com.slack.api.bolt.App;
@@ -11,18 +12,16 @@ import com.slack.api.bolt.response.Response;
 import com.slack.api.methods.MethodsClient;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.response.chat.ChatPostMessageResponse;
-import com.slack.api.model.block.composition.OptionObject;
-import com.slack.api.model.block.composition.PlainTextObject;
-import com.slack.api.model.block.composition.TextObject;
 import com.slack.api.model.event.AppMentionEvent;
+import hh.slackbot.slackbot.util.UsergroupUtil;
 import java.io.IOException;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import hh.slackbot.slackbot.util.UsergroupUtil;
 
 @Configuration
 public class SlackApp {
@@ -42,6 +41,11 @@ public class SlackApp {
     app.command("/groups", userGroupHandler::handleUsergroupCommand);
 
     app.event(AppMentionEvent.class, (req, ctx) -> mentionResponse(req, ctx));
+
+    app.blockAction(Pattern.compile("^join_.+$"), (req, ctx) -> {
+      logger.info("{}", req.getPayload().getActions().get(0).getValue());
+      return ctx.ack();
+    });
 
     return app;
   }

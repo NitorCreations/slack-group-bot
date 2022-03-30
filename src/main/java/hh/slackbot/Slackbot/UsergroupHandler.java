@@ -5,6 +5,7 @@ import com.slack.api.bolt.context.builtin.SlashCommandContext;
 import com.slack.api.bolt.request.builtin.SlashCommandRequest;
 import com.slack.api.bolt.response.Response;
 import com.slack.api.model.Usergroup;
+import hh.slackbot.slackbot.util.BlockMessager;
 import hh.slackbot.slackbot.util.MessageUtil;
 import hh.slackbot.slackbot.util.NameCompare;
 import hh.slackbot.slackbot.util.UsergroupUtil;
@@ -29,6 +30,9 @@ public class UsergroupHandler {
 
   @Autowired
   private NameCompare comparer;
+
+  @Autowired
+  private BlockMessager blockMessager;
 
   private static final Logger logger = LoggerFactory.getLogger(UsergroupHandler.class);
 
@@ -79,12 +83,13 @@ public class UsergroupHandler {
     List<String> similarNames = comparer.compareToList(usergroupName, groupNames);
 
     if (!similarNames.isEmpty() && command.equalsIgnoreCase("join")) {
-      messageUtil.sendEphemeralResponse(
-          String.format("Did you mean: %s", String.join(", ", similarNames)),
-          userId,
-          responseChannel
+      blockMessager.similarGroupsMessage(
+          usergroupName,
+          similarNames,
+          responseChannel,
+          userId
       );
-      return false;
+      return true;
     }
 
     Usergroup usergroup = usergroupUtil.getGroupByName(usergroupName);
