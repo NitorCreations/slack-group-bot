@@ -95,6 +95,7 @@ class UsergroupHandlerTest {
     SlashCommandPayload mockPayload = mock(SlashCommandPayload.class);
     when(mockPayload.getUserId()).thenReturn(userId);
     when(mockPayload.getText()).thenReturn(userInput);
+    when(mockPayload.getChannelId()).thenReturn("channel_id");
 
     SlashCommandRequest mockReq = mock(SlashCommandRequest.class);
     when(mockReq.getPayload()).thenReturn(mockPayload);
@@ -116,14 +117,26 @@ class UsergroupHandlerTest {
   }
 
   @Test
+  @DisplayName("Add user back to group they left from as last member")
+  void addUserBackToDisabledGroup() {
+    String userId = "user1";
+    String userInput = "join disabled group";
+    SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
+
+    verify(groupUtil)
+          .updateUsergroupUserlist(new ArrayList<String>(Arrays.asList("user1")), "4444");
+    verify(mockCtx).ack();
+  }
+
+  @Test
   @DisplayName("Try adding duplicate user to group")
   void addDuplicateUserToGroup() {
     String userId = "user1";
     String userInput = "join sample group";
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
-    verify(msgUtil).sendDirectMessage(
-        String.format("You are already in the group %s", "sample group"), userId);
+    verify(msgUtil).sendEphemeralResponse(
+        String.format("You are already in the group %s", "sample group"), userId, "channel_id");
     verify(mockCtx).ack("Command failed to execute");
   }
 
@@ -144,8 +157,8 @@ class UsergroupHandlerTest {
     String userInput = "leave sample group";
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
-    verify(msgUtil).sendDirectMessage(
-        String.format("You are not in the group %s", "sample group"), userId);
+    verify(msgUtil).sendEphemeralResponse(
+        String.format("You are not in the group %s", "sample group"), userId, "channel_id");
     verify(mockCtx).ack("Command failed to execute");
   }
 
@@ -189,7 +202,7 @@ class UsergroupHandlerTest {
 
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
-    verify(msgUtil).sendDirectMessage("usergroup not available", userId);
+    verify(msgUtil).sendEphemeralResponse("usergroup not available", userId, "channel_id");
     verify(mockCtx).ack("Command failed to execute");
   }
 
@@ -201,7 +214,7 @@ class UsergroupHandlerTest {
 
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
     
-    verify(msgUtil).sendDirectMessage("invalid command: jnoin", userId);
+    verify(msgUtil).sendEphemeralResponse("invalid command: jnoin", userId, "channel_id");
     verify(mockCtx).ack("Command failed to execute");
   }
 
@@ -215,7 +228,8 @@ class UsergroupHandlerTest {
 
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
-    verify(msgUtil).sendDirectMessage("Unable to enable the group disabled group", userId);
+    verify(msgUtil).sendEphemeralResponse(
+        "Unable to enable the group disabled group", userId, "channel_id");
     verify(mockCtx).ack("Command failed to execute");
   }
 
@@ -229,7 +243,8 @@ class UsergroupHandlerTest {
 
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
-    verify(msgUtil).sendDirectMessage("Failed to add you to the group sample group", userId);
+    verify(msgUtil).sendEphemeralResponse(
+        "Failed to add you to the group sample group", userId, "channel_id");
     verify(mockCtx).ack("Command failed to execute");
   }
 
@@ -241,7 +256,8 @@ class UsergroupHandlerTest {
 
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
-    verify(msgUtil).sendDirectMessage("Did you mean: sample group, sample2 group", userId);
+    verify(msgUtil).sendEphemeralResponse(
+        "Did you mean: sample group, sample2 group", userId, "channel_id");
     verify(mockCtx).ack("Command failed to execute");
   }
 
