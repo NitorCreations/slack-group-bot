@@ -64,7 +64,6 @@ public class UsergroupUtil {
     Usergroup group = null;
     List<Usergroup> usergroups = getUserGroups();
     logger.info(String.format("group name: %s", name));
-    logger.info(String.format("groups: %s", usergroups.toString()));
     if (!(usergroups == null || usergroups.isEmpty())) {
       for (Usergroup g : usergroups) {
         if (g.getName().equalsIgnoreCase(name)) {

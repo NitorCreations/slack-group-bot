@@ -42,7 +42,8 @@ public class BlockMessager {
             .text(markdownText(String.format("Given group was *%s*", actual)))
             .accessory(
               button(b -> 
-                b.text(plainText(pt -> pt.text("create"))).value(actual).actionId("btn_create")
+                b.text(plainText(pt -> pt.text("create and join")))
+                    .value(actual).actionId("btn_create")
               )
             ).blockId("header"))
     );

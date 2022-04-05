@@ -19,8 +19,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UsergroupHandler {
-  public UsergroupHandler() {
-  }
 
   @Autowired
   private MessageUtil messageUtil;
