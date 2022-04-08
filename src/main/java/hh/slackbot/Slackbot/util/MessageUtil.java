@@ -2,8 +2,10 @@ package hh.slackbot.slackbot.util;
 
 import com.slack.api.methods.MethodsClient;
 import com.slack.api.methods.SlackApiException;
+import com.slack.api.methods.request.chat.ChatDeleteRequest;
 import com.slack.api.methods.request.chat.ChatPostEphemeralRequest;
 import com.slack.api.methods.request.chat.ChatPostMessageRequest;
+import com.slack.api.methods.response.chat.ChatDeleteResponse;
 import com.slack.api.methods.response.chat.ChatPostEphemeralResponse;
 import com.slack.api.model.block.LayoutBlock;
 import java.io.IOException;
@@ -111,6 +113,33 @@ public class MessageUtil {
 
       logger.error("Message post failed: {}", resp.getError());
       
+    } catch (IOException e) {
+      logger.error(
+          String.format("IOException while sending direct message to user %n%s", e.getMessage()));
+    } catch (SlackApiException e) {
+      logger.error(
+          String.format("API exception while sending direct message to user %n%s", e.getMessage()));
+    }
+
+    return false;
+  }
+
+  public boolean deleteBotMessage(String channelId, String timeStamp) {
+    try {
+      ChatDeleteResponse resp = client.chatDelete(
+          ChatDeleteRequest.builder()
+            .token(TOKEN)
+            .channel(channelId)
+            .ts(timeStamp)
+            .build()
+      );
+
+      if (resp.isOk()) {
+        return true;
+      }
+
+      logger.error("Message deletion failed: {}", resp.getError());
+
     } catch (IOException e) {
       logger.error(
           String.format("IOException while sending direct message to user %n%s", e.getMessage()));

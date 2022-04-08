@@ -1,5 +1,6 @@
 package hh.slackbot.slackbot;
 
+import com.google.gson.JsonObject;
 import com.slack.api.app_backend.interactive_components.payload.BlockActionPayload;
 import com.slack.api.app_backend.interactive_components.payload.BlockActionPayload.Action;
 import com.slack.api.bolt.context.builtin.ActionContext;
@@ -7,6 +8,7 @@ import com.slack.api.bolt.request.builtin.BlockActionRequest;
 import com.slack.api.bolt.response.Response;
 import com.slack.api.model.Usergroup;
 import hh.slackbot.slackbot.util.MessageUtil;
+import hh.slackbot.slackbot.util.RestService;
 import hh.slackbot.slackbot.util.UsergroupUtil;
 import java.util.List;
 import org.slf4j.Logger;
@@ -25,6 +27,9 @@ public class BlockActionHandler {
 
   @Autowired
   private UsergroupHandler usergroupHandler;
+
+  @Autowired
+  private RestService restService;
 
   private static final Logger logger = LoggerFactory.getLogger(BlockActionHandler.class);
   
@@ -45,6 +50,14 @@ public class BlockActionHandler {
       messageUtil.sendEphemeralResponse(
           String.format("joining group %s failed", groupName), userId, channelId);
     }
+
+    JsonObject json = new JsonObject();
+    json.addProperty("response_type", "ephemeral");
+    json.addProperty("text", "asdasd");
+    json.addProperty("replace_original", true);
+    json.addProperty("delete_original", true);
+
+    restService.postSlackResponse(req.getResponseUrl(), json);
 
     return resp;
   }
@@ -73,6 +86,8 @@ public class BlockActionHandler {
           String.format("joining group %s failed", groupName), userId, channelId);
       return resp;
     }
+
+    messageUtil.deleteBotMessage(channelId, payload.getContainer().getMessageTs());
 
     return resp;
   }

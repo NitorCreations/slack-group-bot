@@ -57,7 +57,6 @@ public class BlockMessager {
     );
     layout.add(actions(actions -> actions.elements(blocks).blockId("asdf")));
 
-
     return layout;
   }
 
