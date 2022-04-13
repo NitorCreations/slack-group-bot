@@ -123,31 +123,4 @@ public class MessageUtil {
 
     return false;
   }
-
-  public boolean deleteBotMessage(String channelId, String timeStamp) {
-    try {
-      ChatDeleteResponse resp = client.chatDelete(
-          ChatDeleteRequest.builder()
-            .token(TOKEN)
-            .channel(channelId)
-            .ts(timeStamp)
-            .build()
-      );
-
-      if (resp.isOk()) {
-        return true;
-      }
-
-      logger.error("Message deletion failed: {}", resp.getError());
-
-    } catch (IOException e) {
-      logger.error(
-          String.format("IOException while sending direct message to user %n%s", e.getMessage()));
-    } catch (SlackApiException e) {
-      logger.error(
-          String.format("API exception while sending direct message to user %n%s", e.getMessage()));
-    }
-
-    return false;
-  }
 }

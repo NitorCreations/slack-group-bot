@@ -1,8 +1,11 @@
 package hh.slackbot.slackbot.util;
 
-import static com.slack.api.model.block.Blocks.*;
-import static com.slack.api.model.block.composition.BlockCompositions.*;
-import static com.slack.api.model.block.element.BlockElements.*;
+import static com.slack.api.model.block.Blocks.actions;
+import static com.slack.api.model.block.Blocks.divider;
+import static com.slack.api.model.block.Blocks.section;
+import static com.slack.api.model.block.composition.BlockCompositions.markdownText;
+import static com.slack.api.model.block.composition.BlockCompositions.plainText;
+import static com.slack.api.model.block.element.BlockElements.button;
 
 import com.slack.api.model.block.LayoutBlock;
 import com.slack.api.model.block.element.BlockElement;

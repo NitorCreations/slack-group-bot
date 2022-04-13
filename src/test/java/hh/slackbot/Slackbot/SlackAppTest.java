@@ -22,7 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 class SlackAppTest {
 
   @Autowired
-  SlackApp slackApp;
+  private SlackApp slackApp;
 
   @MockBean
   private EventsApiPayload<AppMentionEvent> mockReq;
@@ -41,13 +41,13 @@ class SlackAppTest {
     assertNotNull(slackApp.initSlackApp());
   }
 
-/*   @Test
+  @Test
   @DisplayName("SlackApp mention response is successful")
   void mentionResponseSuccessfully() throws IOException, SlackApiException {
     // mockReq and mockCtx are defined with @MockBean
-    SlackApp.mentionResponse(mockReq, mockCtx);
+    slackApp.mentionResponse(mockReq, mockCtx);
 
     verify(mockCtx).say("Greetings :wave:");
     verify(mockCtx).ack();
-  } */
+  }
 }

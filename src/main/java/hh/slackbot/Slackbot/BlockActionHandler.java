@@ -38,6 +38,7 @@ public class BlockActionHandler {
     BlockActionPayload payload = req.getPayload();
     List<Action> actions = payload.getActions();
     if (actions.isEmpty()) {
+      logger.error("payload contained no actions, unable to proceed with request");
       return resp;
     }
 
@@ -49,16 +50,17 @@ public class BlockActionHandler {
     if (usergroup == null || !usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
       messageUtil.sendEphemeralResponse(
           String.format("joining group %s failed", groupName), userId, channelId);
+      return resp;
     }
 
     JsonObject json = new JsonObject();
     json.addProperty("response_type", "ephemeral");
-    json.addProperty("text", "asdasd");
+    json.addProperty("text", "");
     json.addProperty("replace_original", true);
     json.addProperty("delete_original", true);
 
     restService.postSlackResponse(req.getResponseUrl(), json);
-
+    
     return resp;
   }
 
@@ -67,6 +69,7 @@ public class BlockActionHandler {
     BlockActionPayload payload = req.getPayload();
     List<Action> actions = payload.getActions();
     if (actions.isEmpty()) {
+      logger.error("Payload contained no actions, unable to proceed with request");
       return resp;
     }
 
@@ -87,7 +90,13 @@ public class BlockActionHandler {
       return resp;
     }
 
-    messageUtil.deleteBotMessage(channelId, payload.getContainer().getMessageTs());
+    JsonObject json = new JsonObject();
+    json.addProperty("response_type", "ephemeral");
+    json.addProperty("text", "");
+    json.addProperty("replace_original", true);
+    json.addProperty("delete_original", true);
+
+    restService.postSlackResponse(req.getResponseUrl(), json);
 
     return resp;
   }

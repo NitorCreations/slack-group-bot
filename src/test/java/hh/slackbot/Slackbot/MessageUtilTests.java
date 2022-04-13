@@ -101,7 +101,7 @@ public class MessageUtilTests {
   }
 
   @Test
-  @DisplayName("Ephemeral message IOException returns false")
+  @DisplayName("Ephemeral message Exceptions return false")
   public void ephemeralMessageIoException() throws IOException, SlackApiException {
     when(client.chatPostEphemeral(any(ChatPostEphemeralRequest.class)))
         .thenThrow(new IOException());
@@ -110,8 +110,14 @@ public class MessageUtilTests {
     String userId = "12345";
     String channelId = "54321";
 
+    // IOException, just text message body
     boolean result = msgUtil.sendEphemeralResponse(msg, userId, channelId);
     
+    Assertions.assertFalse(result, "Return false after error");
+
+    // IOException, blocks message body
+    result = msgUtil.sendEphemeralResponse(null, msg, userId, channelId);
+
     Assertions.assertFalse(result, "Return false after error");
   }
 }
