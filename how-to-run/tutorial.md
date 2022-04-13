@@ -38,7 +38,7 @@ The command should be **\*/groups\*** and the URL the same as before. The rest o
 Now just invite the bot to a channel with **@APPNAME** where you want to use it.
 
 ## Running the bot in a VM
-[https://docs.docker.com/engine/install/ubuntu/](https://docs.docker.com/engine/install/ubuntu/)
+First, install docker on the VM (or your own machine). [https://docs.docker.com/engine/install/ubuntu/](https://docs.docker.com/engine/install/ubuntu/)
 
 Run the following commands.
 
@@ -47,6 +47,8 @@ Run the following commands.
 git clone https://github.com/NitorCreations/slack-group-bot
 cd slack-group-bot
 docker build . -t bot # replace bot with a name of your choice
+
+# check OAuth token and signing secret from the app's settings
 
 # write env
 cat <<EOF > .env
@@ -60,4 +62,6 @@ docker run -d --env-file .env -p [LOCAL_PORT]:[CONTAINER_PORT] bot
 
 # if not already on public net, run ngrok tunnel
 ngrok http [LOCAL_PORT]
+
+# finish setting up the URL's for the app now
 ```
