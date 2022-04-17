@@ -3,6 +3,7 @@ package hh.slackbot.slackbot;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -249,7 +250,7 @@ class UsergroupHandlerTest {
   }
 
   @Test
-  @DisplayName("Typo fails and sends message with similar results")
+  @DisplayName("Typo sends a blockit message")
   void typoFails() {
     String userId = "user";
     String userInput = "join sample gruop";
@@ -257,8 +258,8 @@ class UsergroupHandlerTest {
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
     verify(msgUtil).sendEphemeralResponse(
-        "Did you mean: sample group, sample2 group", userId, "channel_id");
-    verify(mockCtx).ack("Command failed to execute");
+        anyList(), eq("Groups with similar names"), eq(userId), eq("channel_id"));
+    verify(mockCtx).ack();
   }
 
   @Test
