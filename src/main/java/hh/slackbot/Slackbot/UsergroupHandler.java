@@ -98,9 +98,9 @@ public class UsergroupHandler {
 
     if (usergroup == null) {
       messageUtil.sendEphemeralResponse(
-        "User group not available :warning:", 
-        userId, 
-        responseChannel
+          "User group not available :warning:", 
+          userId, 
+          responseChannel
       );
       return false;
     }
@@ -192,8 +192,8 @@ public class UsergroupHandler {
     if (result) {
       messageUtil.sendEphemeralResponse(
           String.format(
-            "You have been removed from the group %s :white_check_mark:", 
-            group.getName()
+              "You have been removed from the group %s :white_check_mark:", 
+              group.getName()
           ),
           userId,
           responseChannel
