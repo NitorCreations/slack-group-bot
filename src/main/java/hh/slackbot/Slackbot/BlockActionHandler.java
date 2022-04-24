@@ -47,12 +47,17 @@ public class BlockActionHandler {
     String groupName = actions.get(0).getValue();
     Usergroup usergroup = usergroupUtil.getGroupByName(groupName);
 
-    if (usergroup == null || !usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
+    if (usergroup == null) {
       messageUtil.sendEphemeralResponse(
           String.format("joining group %s failed", groupName), userId, channelId);
       return resp;
     }
 
+    if (!usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
+      return resp;
+    }
+
+    // Deleting the ephemeral blockkit message
     JsonObject json = new JsonObject();
     json.addProperty("response_type", "ephemeral");
     json.addProperty("text", "");
@@ -69,7 +74,7 @@ public class BlockActionHandler {
     BlockActionPayload payload = req.getPayload();
     List<Action> actions = payload.getActions();
     if (actions.isEmpty()) {
-      logger.error("Payload contained no actions, unable to proceed with request");
+      logger.error("Payload contained no actions, unable to proceed with the request");
       return resp;
     }
 
@@ -85,11 +90,10 @@ public class BlockActionHandler {
     }
 
     if (!usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
-      messageUtil.sendEphemeralResponse(
-          String.format("joining group %s failed", groupName), userId, channelId);
       return resp;
     }
 
+    // Deleting the ephemeral blockkit message
     JsonObject json = new JsonObject();
     json.addProperty("response_type", "ephemeral");
     json.addProperty("text", "");
