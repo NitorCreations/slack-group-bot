@@ -13,6 +13,7 @@ import com.slack.api.methods.response.usergroups.UsergroupsDisableResponse;
 import com.slack.api.methods.response.usergroups.UsergroupsEnableResponse;
 import com.slack.api.methods.response.usergroups.UsergroupsListResponse;
 import com.slack.api.methods.response.usergroups.users.UsergroupsUsersListResponse;
+import com.slack.api.methods.response.usergroups.users.UsergroupsUsersUpdateResponse;
 import com.slack.api.model.Usergroup;
 import java.io.IOException;
 import java.util.List;
@@ -44,7 +45,11 @@ public class UsergroupUtil {
     try {
       UsergroupsListResponse resp = client.usergroupsList(UsergroupsListRequest.builder()
           .token(TOKEN).includeDisabled(true).includeUsers(true).build());
-      return resp.getUsergroups();
+      if (!resp.isOk()) {
+        logger.warn("Failure getting usergroups: {}", resp.getError());
+      } else {
+        usergroups = resp.getUsergroups();
+      }
     } catch (IOException e) {
       logger.error(String.format("IO Error while getting usergroups%n %s", e.getMessage()));
     } catch (SlackApiException e) {
@@ -87,7 +92,11 @@ public class UsergroupUtil {
       UsergroupsUsersListResponse resp = client.usergroupsUsersList(
           UsergroupsUsersListRequest.builder().token(TOKEN).usergroup(groupId).build());
 
-      users = resp.getUsers();
+      if (!resp.isOk()) {
+        logger.warn("Failure getting usergroup users: {}", resp.getError());
+      } else {
+        users = resp.getUsers();
+      }
 
     } catch (IOException e) {
       logger.error(String.format("IO Error while getting usergroups users%n %s", e.getMessage()));
@@ -117,14 +126,16 @@ public class UsergroupUtil {
             .handle(name)
             .build());
 
-      if (resp.isOk()) {
+      if (!resp.isOk()) {
+        logger.warn("Failure creating usergroup: {}", resp.getError());
+      } else {
         group = resp.getUsergroup();
       }
     } catch (IOException e) {
-      logger.error(String.format("IO Error while getting usergroups users%n %s", e.getMessage()));
+      logger.error(String.format("IO Error while creating usergroup%n %s", e.getMessage()));
     } catch (SlackApiException e) {
       logger.error(
-          String.format("Slack API Error while getting usergroups users%n %s", e.getMessage()));
+          String.format("Slack API Error while creating usergroup%n %s", e.getMessage()));
     }
 
     return group;
@@ -163,6 +174,9 @@ public class UsergroupUtil {
       UsergroupsEnableResponse resp = client
           .usergroupsEnable(UsergroupsEnableRequest.builder().token(TOKEN).usergroup(id).build());
 
+      if (!resp.isOk()) {
+        logger.warn("Failure enabling usergroup: {}", resp.getError());
+      }
       return resp.isOk();
     } catch (IOException e) {
       logger.error(String.format("IO Error while enabling usergroup%n %s", e.getMessage()));
@@ -184,6 +198,9 @@ public class UsergroupUtil {
       UsergroupsDisableResponse resp = client
           .usergroupsDisable(UsergroupsDisableRequest.builder().token(TOKEN).usergroup(id).build());
 
+      if (!resp.isOk()) {
+        logger.warn("Failure disabling usergroup: {}", resp.getError());
+      }
       return resp.isOk();
     } catch (IOException e) {
       logger.error(String.format("IO Error while disabling usergroup%n %s", e.getMessage()));
@@ -220,9 +237,13 @@ public class UsergroupUtil {
    */
   public boolean updateUsergroupUserlist(List<String> users, String groupId) {
     try {
-      client.usergroupsUsersUpdate(UsergroupsUsersUpdateRequest.builder()
+      UsergroupsUsersUpdateResponse resp =
+          client.usergroupsUsersUpdate(UsergroupsUsersUpdateRequest.builder()
           .token(System.getenv("SLACK_BOT_TOKEN")).usergroup(groupId).users(users).build());
-      return true;
+      if (!resp.isOk()) {
+        logger.warn("Failure updating usergroup users: {}", resp.getError());
+      }
+      return resp.isOk();
     } catch (IOException e) {
       logger.error(String.format("IO Error while updating usergroup%n %s", e.getMessage()));
     } catch (SlackApiException e) {
