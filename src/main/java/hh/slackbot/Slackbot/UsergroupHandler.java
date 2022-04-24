@@ -44,6 +44,7 @@ public class UsergroupHandler {
    * @return ctx.ack()
    */
   public Response handleUsergroupCommand(SlashCommandRequest req, SlashCommandContext ctx) {
+    Response resp = ctx.ack();
     SlashCommandPayload payload = req.getPayload();
     String userId = payload.getUserId();
     String responseChannel = payload.getChannelId();
@@ -52,11 +53,11 @@ public class UsergroupHandler {
     String command = params[0];
     String usergroupName = params[1];
 
-    if (finalizeUsergroupCommand(userId, command, usergroupName, responseChannel)) {
-      return ctx.ack();
-    } else {
-      return ctx.ack("Command failed to execute");
+    if (!finalizeUsergroupCommand(userId, command, usergroupName, responseChannel)) {
+      logger.info(
+          "Handling of command \"{}\" failed with parameters \"{}\":", command, usergroupName);
     }
+    return resp;
   }
 
   /**
