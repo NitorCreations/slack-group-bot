@@ -55,7 +55,7 @@ public class UsergroupHandler {
     if (finalizeUsergroupCommand(userId, command, usergroupName, responseChannel)) {
       return ctx.ack();
     } else {
-      return ctx.ack("Command failed to execute");
+      return ctx.ack("Command failed to execute :x:");
     }
   }
 
@@ -97,7 +97,7 @@ public class UsergroupHandler {
     }
 
     if (usergroup == null) {
-      messageUtil.sendEphemeralResponse("usergroup not available", userId, responseChannel);
+      messageUtil.sendEphemeralResponse("User group not available :warning:", userId, responseChannel);
       return false;
     }
 
@@ -126,7 +126,7 @@ public class UsergroupHandler {
   public boolean addUserToGroup(String userId, Usergroup group, String responseChannel) {
     if (!usergroupUtil.checkIfAvailable(group)) {
       messageUtil.sendEphemeralResponse(
-          String.format("Unable to enable the group %s", group.getName()),
+          String.format("Unable to enable the group %s :warning:", group.getName()),
           userId,
           responseChannel
       );
@@ -136,7 +136,7 @@ public class UsergroupHandler {
 
     if (usergroupUtil.userInGroup(userId, users)) {
       messageUtil.sendEphemeralResponse(
-          String.format("You are already in the group %s", group.getName()),
+          String.format("You are already in the group %s :warning:", group.getName()),
           userId,
           responseChannel
       );
@@ -147,7 +147,7 @@ public class UsergroupHandler {
       boolean success = usergroupUtil.updateUsergroupUserlist(users, group.getId());
       if (!success) {
         messageUtil.sendEphemeralResponse(
-            String.format("Failed to add you to the group %s", group.getName()),
+            String.format("Failed to add you to the group %s :warning:", group.getName()),
             userId,
             responseChannel
         );
@@ -168,7 +168,7 @@ public class UsergroupHandler {
 
     if (!usergroupUtil.userInGroup(userId, users) || group.getDateDelete() != 0) {
       messageUtil.sendEphemeralResponse(
-          String.format("You are not in the group %s", group.getName()),
+          String.format("You are not in the group %s :warning:", group.getName()),
           userId,
           responseChannel
       );
@@ -187,13 +187,13 @@ public class UsergroupHandler {
 
     if (result) {
       messageUtil.sendEphemeralResponse(
-          String.format("You have been removed from the group %s", group.getName()),
+          String.format("You have been removed from the group %s :white_check_mark:", group.getName()),
           userId,
           responseChannel
       );
     } else {
       messageUtil.sendEphemeralResponse(
-          String.format("Failed to remove you from the group %s", group.getName()),
+          String.format("Failed to remove you from the group %s :warning:", group.getName()),
           userId,
           responseChannel
       );

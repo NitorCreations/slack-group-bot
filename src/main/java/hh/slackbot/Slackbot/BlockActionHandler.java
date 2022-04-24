@@ -49,7 +49,7 @@ public class BlockActionHandler {
 
     if (usergroup == null || !usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
       messageUtil.sendEphemeralResponse(
-          String.format("joining group %s failed", groupName), userId, channelId);
+          String.format("Joining group %s failed :x:", groupName), userId, channelId);
       return resp;
     }
 
@@ -80,13 +80,13 @@ public class BlockActionHandler {
     
     if (usergroup == null) {
       messageUtil.sendEphemeralResponse(
-          String.format("creating group %s failed", groupName), userId, channelId);
+          String.format("Creating group %s failed :x:", groupName), userId, channelId);
       return resp;
     }
 
     if (!usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
       messageUtil.sendEphemeralResponse(
-          String.format("joining group %s failed", groupName), userId, channelId);
+          String.format("Joining group %s failed :x:", groupName), userId, channelId);
       return resp;
     }
 
