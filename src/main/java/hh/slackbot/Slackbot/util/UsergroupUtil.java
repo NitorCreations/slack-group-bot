@@ -44,6 +44,7 @@ public class UsergroupUtil {
     try {
       UsergroupsListResponse resp = client.usergroupsList(UsergroupsListRequest.builder()
           .token(TOKEN).includeDisabled(true).includeUsers(true).build());
+      logger.info(resp.getError());
       return resp.getUsergroups();
     } catch (IOException e) {
       logger.error(String.format("IO Error while getting usergroups%n %s", e.getMessage()));
