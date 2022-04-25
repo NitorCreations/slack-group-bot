@@ -1,4 +1,4 @@
-package hh.slackbot.slackbot.util;
+package hh.slackbot.Slackbot.util;
 
 import static com.slack.api.model.block.Blocks.actions;
 import static com.slack.api.model.block.Blocks.divider;

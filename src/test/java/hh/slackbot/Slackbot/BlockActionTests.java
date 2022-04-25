@@ -1,4 +1,4 @@
-package hh.slackbot.slackbot;
+package hh.slackbot.Slackbot;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -16,9 +16,13 @@ import com.slack.api.app_backend.interactive_components.payload.BlockActionPaylo
 import com.slack.api.bolt.context.builtin.ActionContext;
 import com.slack.api.bolt.request.builtin.BlockActionRequest;
 import com.slack.api.model.Usergroup;
-import hh.slackbot.slackbot.util.MessageUtil;
-import hh.slackbot.slackbot.util.RestService;
-import hh.slackbot.slackbot.util.UsergroupUtil;
+
+import hh.slackbot.Slackbot.BlockActionHandler;
+import hh.slackbot.Slackbot.UsergroupHandler;
+import hh.slackbot.Slackbot.util.MessageUtil;
+import hh.slackbot.Slackbot.util.RestService;
+import hh.slackbot.Slackbot.util.UsergroupUtil;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

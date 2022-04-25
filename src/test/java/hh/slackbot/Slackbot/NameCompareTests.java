@@ -1,6 +1,5 @@
-package hh.slackbot.slackbot;
+package hh.slackbot.Slackbot;
 
-import hh.slackbot.slackbot.util.NameCompare;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import hh.slackbot.Slackbot.util.NameCompare;
 
 @SpringBootTest
 public class NameCompareTests {

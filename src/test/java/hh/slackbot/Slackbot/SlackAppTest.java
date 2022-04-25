@@ -1,4 +1,4 @@
-package hh.slackbot.slackbot;
+package hh.slackbot.Slackbot;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.verify;
@@ -7,6 +7,9 @@ import com.slack.api.app_backend.events.payload.EventsApiPayload;
 import com.slack.api.bolt.context.builtin.EventContext;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.model.event.AppMentionEvent;
+
+import hh.slackbot.Slackbot.SlackApp;
+
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

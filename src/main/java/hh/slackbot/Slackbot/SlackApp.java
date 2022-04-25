@@ -1,4 +1,4 @@
-package hh.slackbot.slackbot;
+package hh.slackbot.Slackbot;
 
 import com.slack.api.app_backend.events.payload.EventsApiPayload;
 import com.slack.api.bolt.App;

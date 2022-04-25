@@ -1,4 +1,4 @@
-package hh.slackbot.slackbot.config;
+package hh.slackbot.Slackbot.config;
 
 import com.slack.api.Slack;
 import com.slack.api.methods.MethodsClient;

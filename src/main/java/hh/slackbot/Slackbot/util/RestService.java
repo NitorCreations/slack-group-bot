@@ -1,4 +1,4 @@
-package hh.slackbot.slackbot.util;
+package hh.slackbot.Slackbot.util;
 
 import com.google.gson.JsonElement;
 import org.springframework.http.HttpStatus;

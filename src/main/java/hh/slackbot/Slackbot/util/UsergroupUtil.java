@@ -1,4 +1,4 @@
-package hh.slackbot.slackbot.util;
+package hh.slackbot.Slackbot.util;
 
 import com.slack.api.methods.MethodsClient;
 import com.slack.api.methods.SlackApiException;
@@ -30,6 +30,8 @@ public class UsergroupUtil {
   private static final Logger logger = LoggerFactory.getLogger(UsergroupUtil.class);
 
   private static final String TOKEN = System.getenv("SLACK_BOT_TOKEN");
+  
+  
 
   /**
    * Tries to retrieve a list of enabled usergroups in the workspace.
