@@ -45,7 +45,7 @@ public class BlockMessager {
             .text(markdownText(String.format("Given group was *%s*", actual)))
             .accessory(
               button(b -> 
-                b.text(plainText(pt -> pt.text("create and join")))
+                b.text(plainText(pt -> pt.text("Create and join")))
                     .value(actual).actionId("btn_create")
               )
             ).blockId("header"))
@@ -55,7 +55,7 @@ public class BlockMessager {
 
     layout.add(
         section(section -> section.text(
-          plainText(pt -> pt.text("Did you mean one of these? click to join."))
+          plainText(pt -> pt.text(":question: Did you mean one of these? Click to join:"))
         ).blockId("similar"))
     );
     layout.add(actions(actions -> actions.elements(blocks).blockId("asdf")));
