@@ -5,10 +5,12 @@ import com.slack.api.bolt.context.builtin.SlashCommandContext;
 import com.slack.api.bolt.request.builtin.SlashCommandRequest;
 import com.slack.api.bolt.response.Response;
 import com.slack.api.model.Usergroup;
-import hh.slackbot.slackbot.util.BlockMessager;
-import hh.slackbot.slackbot.util.MessageUtil;
-import hh.slackbot.slackbot.util.NameCompare;
-import hh.slackbot.slackbot.util.UsergroupUtil;
+
+import hh.slackbot.Slackbot.util.BlockMessager;
+import hh.slackbot.Slackbot.util.MessageUtil;
+import hh.slackbot.Slackbot.util.NameCompare;
+import hh.slackbot.Slackbot.util.UsergroupUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,16 +49,15 @@ public class UsergroupHandler {
     SlashCommandPayload payload = req.getPayload();
     String userId = payload.getUserId();
     String responseChannel = payload.getChannelId();
-    
+
     String[] params = payload.getText().split(" ", 2);
     String command = params[0];
     String usergroupName = params[1];
-    
-    if (finalizeUsergroupCommand(
-    		userId, command, usergroupName, responseChannel)) {
-    	return ctx.ack();
+
+    if (finalizeUsergroupCommand(userId, command, usergroupName, responseChannel)) {
+      return ctx.ack();
     } else {
-    	return ctx.ack("Command failed to execute :x:");
+      return ctx.ack("Command failed to execute :x:");
     }
   }
 
@@ -83,11 +84,11 @@ public class UsergroupHandler {
 
     if (!similarNames.isEmpty() && command.equalsIgnoreCase("join")) {
       blockMessager.similarGroupsMessage(
-    		  usergroupName,
-    		  similarNames,
-    		  responseChannel,
-    		  userId
-    );
+          usergroupName,
+          similarNames,
+          responseChannel,
+          userId
+      );
       return true;
     }
 
@@ -99,8 +100,9 @@ public class UsergroupHandler {
 
     if (usergroup == null) {
       messageUtil.sendEphemeralResponse(
-          "There was an unexpected error in I/O operation or Slack API "
-          + "- the usergroup could not be created :warning:", 
+          "There was an unexpected error in I/O operation"
+          + "or Slack API - the usergroup could "
+          + "not be created :warning:",
           userId, 
           responseChannel
       );
@@ -113,10 +115,11 @@ public class UsergroupHandler {
       return removeUserFromGroup(userId, usergroup, responseChannel);
     } else {
       messageUtil.sendEphemeralResponse(
-    		  String.format("The command %s is incorrect or does not exist "
-    				  + "- the command could not be executed", command),
-    		  userId,
-    		  responseChannel
+          String.format("The command %s is incorrect "
+          		+ "or does not exist - the command "
+          		+ "could not be executed", command),
+          userId,
+          responseChannel
       );
       return false;
     }
@@ -132,42 +135,42 @@ public class UsergroupHandler {
    */
   public boolean addUserToGroup(String userId, Usergroup group, String responseChannel) {
     if (!usergroupUtil.checkIfAvailable(group)) {
-    	messageUtil.sendEphemeralResponse(
-    			String.format("There was an unexpected error in I/O operation or Slack API "
-    	+ "- the usergroup was found but "
-    	+ "could not be enabled %s :warning:", group.getName()),
-    			userId,
-    			responseChannel
-    	);
-    return false;
+      messageUtil.sendEphemeralResponse(
+          String.format("There was an unexpected error "
+          		+ "in I/O operation or Slack API - the usergroup was found "
+          		+ "but could not be enabled %s :warning:", group.getName()),
+          userId,
+          responseChannel
+      );
+      return false;
     }
     List<String> users = group.getDateDelete() == 0 ? group.getUsers() : new ArrayList<>();
-    
+
     if (usergroupUtil.userInGroup(userId, users)) {
       messageUtil.sendEphemeralResponse(
-    		  String.format("You are already a member of the group %s "
-    				  + "- you can not join the group you "
-    				  + "already belong to :warning:", group.getName()),
-    		  userId,
-    		  responseChannel
-    	);
+          String.format("You are already a member of the group %s - "
+          		+ "you can not join the group "
+          		+ "you already belong to :warning:", group.getName()),
+          userId,
+          responseChannel
+      );
       return false;
-      
+
     } else {
-    	users.add(userId);
-    	boolean success = usergroupUtil.updateUsergroupUserlist(users, group.getId());
-    	if (!success) {
-    		messageUtil.sendEphemeralResponse(
-    				String.format("There was an unexpected error in "
-    						+ "I/O operation or Slack API "
-    						+ "- you could not be added to the group %s :warning:", group.getName()),
-    				userId,
-    				responseChannel
-    		);
-    	}
-    return success;
+      users.add(userId);
+      boolean success = usergroupUtil.updateUsergroupUserlist(users, group.getId());
+      if (!success) {
+        messageUtil.sendEphemeralResponse(
+            String.format("There was an unexpected error "
+            		+ "in I/O operation or Slack API - you could "
+            		+ "not be added to the group %s :warning:", group.getName()),
+            userId,
+            responseChannel
+        );
+      }
+      return success;
     }
-   }
+  }
 
   /**
    * Removes the user from user group, if certain conditions allow it.
@@ -178,23 +181,22 @@ public class UsergroupHandler {
    */
   public boolean removeUserFromGroup(String userId, Usergroup group, String responseChannel) {
     List<String> users = group.getUsers();
-    
+
     if (!usergroupUtil.userInGroup(userId, users) || group.getDateDelete() != 0) {
-    	messageUtil.sendEphemeralResponse(
-    			String.format("You are not a member of the group %s "
-    					+ "- you can not be removed from the group "
-    					+ "you do not belong to :warning:", group.getName()),
-    			userId,
-    			responseChannel
-    	);
-    return false;
+      messageUtil.sendEphemeralResponse(
+          String.format("You are not a member of the group %s "
+          		+ "- you can not be removed from the group "
+          		+ "you do not belong to :warning:", group.getName()),
+          userId,
+          responseChannel
+      );
+      return false;
     }
 
     List<String> modifiedUsers = users.stream().filter(u -> !u.equals(userId))
         .collect(Collectors.toList());
 
     boolean result;
-    
     if (modifiedUsers.isEmpty()) {
       result = usergroupUtil.disableUsergroup(group.getId());
     } else {
@@ -202,18 +204,19 @@ public class UsergroupHandler {
     }
 
     if (result) {
-    	messageUtil.sendEphemeralResponse(
-    			String.format(
-    					"You have been removed from the group %s :white_check_mark:", 
-    					group.getName()
-    					),
-    			userId,
-    			responseChannel
-    			);
-    	} else {
-    		messageUtil.sendEphemeralResponse(
-    				String.format("There was an unexpected error in I/O device or Slack API"
-    						+ "- you could not be removed from the group %s :warning:", group.getName()),
+      messageUtil.sendEphemeralResponse(
+          String.format(
+              "You have been removed from the group %s :white_check_mark:", 
+              group.getName()
+          ),
+          userId,
+          responseChannel
+      );
+    } else {
+      messageUtil.sendEphemeralResponse(
+          String.format("There was an unexpected error "
+          		+ "in I/O device or Slack API - you could "
+          		+ "not be removed from the group %s :warning:", group.getName()),
           userId,
           responseChannel
       );
