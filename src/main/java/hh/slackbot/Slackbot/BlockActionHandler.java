@@ -89,6 +89,7 @@ public class BlockActionHandler {
           String.format("joining group %s failed", groupName), userId, channelId);
       return resp;
     }
+    
 
     JsonObject json = new JsonObject();
     json.addProperty("response_type", "ephemeral");

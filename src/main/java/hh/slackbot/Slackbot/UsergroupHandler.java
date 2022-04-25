@@ -102,6 +102,11 @@ public class UsergroupHandler {
     }
 
     if (command.equalsIgnoreCase("join")) {
+      messageUtil.sendEphemeralResponse(
+          String.format("You have joined group %s", usergroup.getName()),
+          userId,
+          responseChannel
+      );
       return addUserToGroup(userId, usergroup, responseChannel);
     } else if (command.equalsIgnoreCase("leave")) {
       return removeUserFromGroup(userId, usergroup, responseChannel);
