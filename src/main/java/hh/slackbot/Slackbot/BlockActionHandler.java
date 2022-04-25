@@ -49,7 +49,10 @@ public class BlockActionHandler {
 
     if (usergroup == null || !usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
       messageUtil.sendEphemeralResponse(
-          String.format("Joining group %s failed :x:", groupName), userId, channelId);
+          String.format("You could not join the group %s. "
+          + "This might happen if the group does not exist "
+          + "or there has been an "
+          + "unexpected I/O or Slack API error :x:", groupName), userId, channelId);
       return resp;
     }
 
@@ -80,13 +83,14 @@ public class BlockActionHandler {
     
     if (usergroup == null) {
       messageUtil.sendEphemeralResponse(
-          String.format("Creating group %s failed :x:", groupName), userId, channelId);
+          String.format("Due to an unexpected I/O or Slack API error, "
+          + "you could not join the group %s :x:", groupName), userId, channelId);
       return resp;
     }
 
     if (!usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
       messageUtil.sendEphemeralResponse(
-          String.format("Joining group %s failed :x:", groupName), userId, channelId);
+          String.format("You could not join the group %s :x:", groupName), userId, channelId);
       return resp;
     }
 
