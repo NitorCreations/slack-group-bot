@@ -3,7 +3,6 @@ name: Release to Heroku
 on:
   push:
     branches:
-      - development
       - main
 
 jobs:
