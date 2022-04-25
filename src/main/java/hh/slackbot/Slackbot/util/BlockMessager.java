@@ -47,7 +47,7 @@ public class BlockMessager {
     layout.add(divider());
 
     layout.add(section(section -> section
-        .text(plainText(pt -> pt.text("Did you mean one of these? click to join.")))
+        .text(plainText(pt -> pt.text(":question: Did you mean one of these? Click to join:")))
         .blockId("similar")));
     layout.add(actions(actions -> actions.elements(blocks).blockId("joining")));
 

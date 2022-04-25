@@ -137,7 +137,7 @@ class UsergroupHandlerTest {
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
     verify(msgUtil).sendEphemeralResponse(
-        String.format("You are already in the group %s", "sample group"), userId, "channel_id");
+        anyString(), eq(userId), eq("channel_id"));
     verify(mockCtx).ack();
   }
 
@@ -159,7 +159,7 @@ class UsergroupHandlerTest {
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
     verify(msgUtil).sendEphemeralResponse(
-        String.format("You are not in the group %s", "sample group"), userId, "channel_id");
+        anyString(), eq(userId), eq("channel_id"));
     verify(mockCtx).ack();
   }
 
@@ -203,7 +203,7 @@ class UsergroupHandlerTest {
 
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
-    verify(msgUtil).sendEphemeralResponse("usergroup not available", userId, "channel_id");
+    verify(msgUtil).sendEphemeralResponse(anyString(), eq(userId), eq("channel_id"));
     verify(mockCtx).ack();
   }
 
@@ -215,7 +215,7 @@ class UsergroupHandlerTest {
 
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
     
-    verify(msgUtil).sendEphemeralResponse("invalid command: jnoin", userId, "channel_id");
+    verify(msgUtil).sendEphemeralResponse(anyString(), eq(userId), eq("channel_id"));
     verify(mockCtx).ack();
   }
 
@@ -230,7 +230,7 @@ class UsergroupHandlerTest {
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
     verify(msgUtil).sendEphemeralResponse(
-        "Unable to enable the group disabled group", userId, "channel_id");
+        anyString(), eq(userId), eq("channel_id"));
     verify(mockCtx).ack();
   }
 
@@ -245,7 +245,7 @@ class UsergroupHandlerTest {
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
     verify(msgUtil).sendEphemeralResponse(
-        "Failed to add you to the group sample group", userId, "channel_id");
+        anyString(), eq(userId), eq("channel_id"));
     verify(mockCtx).ack();
   }
 
