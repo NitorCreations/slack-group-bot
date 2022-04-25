@@ -179,7 +179,7 @@ public class UsergroupHandler {
   public boolean removeUserFromGroup(String userId, Usergroup group, String responseChannel) {
     List<String> users = group.getUsers();
     
-    if (!usergroupUtil.userInGroup(userId, users) || group.getDateDelete() != 0) 
+    if (!usergroupUtil.userInGroup(userId, users) || group.getDateDelete() != 0) {
     	messageUtil.sendEphemeralResponse(
     			String.format("You are not a member of the group %s "
     					+ "- you can not be removed from the group "
@@ -194,6 +194,7 @@ public class UsergroupHandler {
         .collect(Collectors.toList());
 
     boolean result;
+    
     if (modifiedUsers.isEmpty()) {
       result = usergroupUtil.disableUsergroup(group.getId());
     } else {
