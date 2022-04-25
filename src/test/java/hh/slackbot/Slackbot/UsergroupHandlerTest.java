@@ -8,16 +8,13 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import com.slack.api.app_backend.slash_commands.payload.SlashCommandPayload;
 import com.slack.api.bolt.context.builtin.SlashCommandContext;
 import com.slack.api.bolt.request.builtin.SlashCommandRequest;
 import com.slack.api.model.Usergroup;
-
 import hh.slackbot.Slackbot.UsergroupHandler;
 import hh.slackbot.Slackbot.util.MessageUtil;
 import hh.slackbot.Slackbot.util.UsergroupUtil;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

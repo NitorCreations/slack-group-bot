@@ -100,7 +100,7 @@ public class UsergroupHandler {
 
     if (usergroup == null) {
       messageUtil.sendEphemeralResponse(
-          "There was an unexpected error in I/O operation"
+          "There was an unexpected error in I/O operation "
           + "or Slack API - the usergroup could "
           + "not be created :warning:",
           userId, 
@@ -115,11 +115,11 @@ public class UsergroupHandler {
       return removeUserFromGroup(userId, usergroup, responseChannel);
     } else {
       messageUtil.sendEphemeralResponse(
-          String.format("The command %s is incorrect "
-          		+ "or does not exist - the command "
-          		+ "could not be executed", command),
-          userId,
-          responseChannel
+    		  String.format("The command %s is incorrect "
+    				  + "or does not exist - the command "
+    				  + "could not be executed", command),
+    		  userId,
+    		  responseChannel
       );
       return false;
     }
@@ -136,9 +136,9 @@ public class UsergroupHandler {
   public boolean addUserToGroup(String userId, Usergroup group, String responseChannel) {
     if (!usergroupUtil.checkIfAvailable(group)) {
       messageUtil.sendEphemeralResponse(
-          String.format("There was an unexpected error "
-          		+ "in I/O operation or Slack API - the usergroup was found "
-          		+ "but could not be enabled %s :warning:", group.getName()),
+          String.format("There was an unexpected error in "
+        		  + "I/O operation or Slack API - the usergroup was found "
+        		  + "but could not be enabled %s :warning:", group.getName()),
           userId,
           responseChannel
       );
@@ -149,11 +149,11 @@ public class UsergroupHandler {
     if (usergroupUtil.userInGroup(userId, users)) {
       messageUtil.sendEphemeralResponse(
           String.format("You are already a member of the group %s - "
-          		+ "you can not join the group "
-          		+ "you already belong to :warning:", group.getName()),
+        		  		+ "you can not join the group "
+        		  		+ "you already belong to :warning:", group.getName()),
           userId,
           responseChannel
-      );
+          );
       return false;
 
     } else {
@@ -162,15 +162,15 @@ public class UsergroupHandler {
       if (!success) {
         messageUtil.sendEphemeralResponse(
             String.format("There was an unexpected error "
-            		+ "in I/O operation or Slack API - you could "
-            		+ "not be added to the group %s :warning:", group.getName()),
+            				+ "in I/O operation or Slack API - you could "
+            				+ "not be added to the group %s :warning:", group.getName()),
             userId,
             responseChannel
-        );
-      }
+            );
+        }
       return success;
+      }
     }
-  }
 
   /**
    * Removes the user from user group, if certain conditions allow it.
@@ -185,13 +185,13 @@ public class UsergroupHandler {
     if (!usergroupUtil.userInGroup(userId, users) || group.getDateDelete() != 0) {
       messageUtil.sendEphemeralResponse(
           String.format("You are not a member of the group %s "
-          		+ "- you can not be removed from the group "
-          		+ "you do not belong to :warning:", group.getName()),
+        		  		+ "- you can not be removed from the group "
+        		  		+ "you do not belong to :warning:", group.getName()),
           userId,
           responseChannel
-      );
+          );
       return false;
-    }
+      }
 
     List<String> modifiedUsers = users.stream().filter(u -> !u.equals(userId))
         .collect(Collectors.toList());
@@ -215,13 +215,13 @@ public class UsergroupHandler {
     } else {
       messageUtil.sendEphemeralResponse(
           String.format("There was an unexpected error "
-          		+ "in I/O device or Slack API - you could "
-          		+ "not be removed from the group %s :warning:", group.getName()),
+        		  		+ "in I/O device or Slack API - you could "
+        		  		+ "not be removed from the group %s :warning:", group.getName()),
           userId,
           responseChannel
-      );
-    }
-
+          );
+      }
+    
     return result;
+    }
   }
-}
