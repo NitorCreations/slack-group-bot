@@ -144,7 +144,8 @@ public class UsergroupHandler {
     if (usergroupUtil.userInGroup(userId, users)) {
       messageUtil.sendEphemeralResponse(
           String.format("You are already in the group %s. "
-          + "You can not join again :warning:", group.getName()),
+          + "You can only join groups "
+          + " you are not a part of :warning:", group.getName()),
           userId,
           responseChannel
       );
@@ -178,7 +179,8 @@ public class UsergroupHandler {
     if (!usergroupUtil.userInGroup(userId, users) || group.getDateDelete() != 0) {
       messageUtil.sendEphemeralResponse(
           String.format("You are not in the group %s. "
-          + "You can only leave groups you are not in :warning:", group.getName()),
+          + "You can only leave groups "
+          + "you are a part of :warning:", group.getName()),
           userId,
           responseChannel
       );
