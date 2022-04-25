@@ -99,7 +99,7 @@ public class UsergroupHandler {
     if (usergroup == null) {
       messageUtil.sendEphemeralResponse(
           String.format("Due to an unexpected I/O or Slack API error, "
-          		+ "the group %s was not found or created :warning:", usergroupName),
+           + "the group %s was not found or created :warning:", usergroupName),
           userId, 
           responseChannel
       );
@@ -113,7 +113,7 @@ public class UsergroupHandler {
     } else {
       messageUtil.sendEphemeralResponse(
           String.format("The command %s is incorrect or does not exist. "
-          		+ "Please write /help to see the accurate commands", command),
+           + "Please write /help to see the accurate commands", command),
           userId,
           responseChannel
       );
@@ -133,7 +133,7 @@ public class UsergroupHandler {
     if (!usergroupUtil.checkIfAvailable(group)) {
       messageUtil.sendEphemeralResponse(
           String.format("Due to an unexpected I/O or Slack API error, "
-          		+ "the group %s was found but not enabled :warning:", group.getName()),
+          + "the group %s was found but not enabled :warning:", group.getName()),
           userId,
           responseChannel
       );
@@ -144,7 +144,7 @@ public class UsergroupHandler {
     if (usergroupUtil.userInGroup(userId, users)) {
       messageUtil.sendEphemeralResponse(
           String.format("You are already in the group %s. "
-          		+ "You can not join again :warning:", group.getName()),
+          + "You can not join again :warning:", group.getName()),
           userId,
           responseChannel
       );
@@ -156,7 +156,7 @@ public class UsergroupHandler {
       if (!success) {
         messageUtil.sendEphemeralResponse(
             String.format("Due to an unexpected I/O or Slack API error, "
-            		+ "you could not be added to the group %s :warning:", group.getName()),
+            + "you could not be added to the group %s :warning:", group.getName()),
             userId,
             responseChannel
         );
@@ -178,7 +178,7 @@ public class UsergroupHandler {
     if (!usergroupUtil.userInGroup(userId, users) || group.getDateDelete() != 0) {
       messageUtil.sendEphemeralResponse(
           String.format("You are not in the group %s. "
-          		+ "You can only leave groups you are currently in :warning:", group.getName()),
+          + "You can only leave groups you are not in :warning:", group.getName()),
           userId,
           responseChannel
       );
@@ -207,7 +207,7 @@ public class UsergroupHandler {
     } else {
       messageUtil.sendEphemeralResponse(
           String.format("Due to an unexpected I/O or Slack API error, "
-          		+ "you could not be removed from the group  %s :warning:", group.getName()),
+          + "you could not be removed from the group  %s :warning:", group.getName()),
           userId,
           responseChannel
       );
