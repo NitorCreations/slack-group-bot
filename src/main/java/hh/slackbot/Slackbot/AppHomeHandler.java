@@ -1,15 +1,11 @@
 package hh.slackbot.slackbot;
 
-import static com.slack.api.model.block.Blocks.actions;
 import static com.slack.api.model.block.Blocks.divider;
 import static com.slack.api.model.block.Blocks.section;
 import static com.slack.api.model.block.composition.BlockCompositions.markdownText;
 import static com.slack.api.model.block.composition.BlockCompositions.plainText;
 import static com.slack.api.model.block.element.BlockElements.button;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import com.slack.api.app_backend.events.payload.EventsApiPayload;
 import com.slack.api.bolt.context.builtin.EventContext;
 import com.slack.api.bolt.response.Response;
@@ -21,11 +17,14 @@ import com.slack.api.model.Usergroup;
 import com.slack.api.model.block.LayoutBlock;
 import com.slack.api.model.event.AppHomeOpenedEvent;
 import com.slack.api.model.view.View;
+import hh.slackbot.slackbot.util.UsergroupUtil;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import hh.slackbot.slackbot.util.UsergroupUtil;
 
 @Component
 public class AppHomeHandler {
@@ -101,20 +100,20 @@ public class AppHomeHandler {
     }
 
     elements.add(
-      section(section -> section.text(
-        markdownText(
-          "*Usergroups you are currently part of*"
-        )
-      ).blockId("member"))
+        section(section -> section.text(
+          markdownText(
+            "*Usergroups you are currently part of*"
+          )
+        ).blockId("member"))
     );
 
     if (isMember.isEmpty()) {
       elements.add(
-        section(section -> section.text(
-          markdownText(
-            "~~~~~~~~~~:leaves:"
-          )
-        ).blockId("empty_member"))
+          section(section -> section.text(
+            markdownText(
+              "~~~~~~~~~~:leaves:"
+            )
+          ).blockId("empty_member"))
       );
     }
 
@@ -127,25 +126,26 @@ public class AppHomeHandler {
           ).accessory(
             button(b -> b.text(plainText("Leave group")).value(name).actionId("leave_" + name))
           ).blockId(g.getId())));
-        elements.add(divider());
+
+      elements.add(divider());
     }
 
     elements.add(
-      section(section -> section.text(
-        markdownText(
-          "*Currently available usergroups*\n"
-          + "Join your friends in these groups :ghost:"
-        )
-      ).blockId("available"))
+        section(section -> section.text(
+          markdownText(
+            "*Currently available usergroups*\n"
+            + "Join your friends in these groups :ghost:"
+          )
+        ).blockId("available"))
     );
 
     if (enabled.isEmpty()) {
       elements.add(
-        section(section -> section.text(
-          markdownText(
-            "~~~~~~~~~~:leaves:"
-          )
-        ).blockId("empty_available"))
+          section(section -> section.text(
+            markdownText(
+              "~~~~~~~~~~:leaves:"
+            )
+          ).blockId("empty_available"))
       );
     }
 
@@ -158,25 +158,26 @@ public class AppHomeHandler {
           ).accessory(
             button(b -> b.text(plainText("Join group")).value(name).actionId("join_" + name))
           ).blockId(g.getId())));
-        elements.add(divider());
+
+      elements.add(divider());
     }
 
     elements.add(
-      section(section -> section.text(
-        markdownText(
-          "*Usergroups that have currently no members*\n"
-          + "Bring some life to these groups :seedling:"
-        )
-      ).blockId("disabled"))
+        section(section -> section.text(
+          markdownText(
+            "*Usergroups that have currently no members*\n"
+            + "Bring some life to these groups :seedling:"
+          )
+        ).blockId("disabled"))
     );
 
     if (disabled.isEmpty()) {
       elements.add(
-        section(section -> section.text(
-          markdownText(
-            "~~~~~~~~~~:leaves:"
-          )
-        ).blockId("empty_disabled"))
+          section(section -> section.text(
+            markdownText(
+              "~~~~~~~~~~:leaves:"
+            )
+          ).blockId("empty_disabled"))
       );
     }
 
