@@ -26,8 +26,12 @@ public class BlockMessager {
 
   private static final Logger logger = LoggerFactory.getLogger(MessageUtil.class);
 
-  public boolean similarGroupsMessage(String actual, List<String> similar, String channelId,
-      String userId) {
+  public boolean similarGroupsMessage(
+      String actual,
+      List<String> similar,
+      String channelId,
+      String userId
+  ) {
     List<LayoutBlock> blocks = similarGroupsLayout(actual, similar);
     return msgUtil.sendEphemeralResponse(blocks, "Groups with similar names", userId, channelId);
   }
