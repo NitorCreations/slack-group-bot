@@ -192,8 +192,8 @@ public class UsergroupUtil {
    * @returns true. Returns false in case of an error.
    */
   public boolean disableUsergroup(String id) {
-	logger.info("Trying to disable the group...");
     try {
+      logger.info("Trying to disable the group...");
       UsergroupsDisableResponse resp = client
           .usergroupsDisable(UsergroupsDisableRequest.builder().token(TOKEN).usergroup(id).build());
       logger.info("The group successfully disabled");

@@ -15,7 +15,7 @@ public class NameCompare {
   private static final float THRESHOLD = 0.8f;
 
   public NameCompare() {
-	  /* Empty */
+      /* Empty */
   }
 
   public float compareNames(String name1, String name2) {

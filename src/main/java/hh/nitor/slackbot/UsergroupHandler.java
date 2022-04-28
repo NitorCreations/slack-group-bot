@@ -62,11 +62,13 @@ public class UsergroupHandler {
         return ctx.ack();
       } else {
           logger.error("The operation to {} the group {} has failed", command, usergroupName);
-          return ctx.ack(String.format("The operation to %s the group %s has failed :x:", command, usergroupName));
-        }
-      } catch (Exception e) {
+          return ctx.ack(String.format("The operation to %s "
+                     + "the group %s has failed :x:", command, usergroupName));
+      }
+    } catch (Exception e) {
           logger.info("Invalid parameters: command/group is missing from the input");
-          return ctx.ack("The operation has failed: please check that you have written the command correctly :x:");
+          return ctx.ack("The operation has failed: please check "
+                     + "that you have written the command correctly :x:");
       }
   }
 
@@ -105,7 +107,8 @@ public class UsergroupHandler {
       return true;
     }
 
-    logger.info("The group name {} is unique: no similarities with other group names", usergroupName);
+    logger.info("The group name {} is unique: "
+           + "no similarities with other group names", usergroupName);
     Usergroup usergroup = usergroupUtil.getGroupByName(usergroupName);
 
     if (usergroup == null) {
@@ -215,11 +218,13 @@ public class UsergroupHandler {
 
     boolean result;
     if (modifiedUsers.isEmpty()) {
-      logger.info("The group {} will have no members after the user has left it", group.getName());
+      logger.info("The group {} will have no members "
+             + "after the user has left it", group.getName());
       logger.info("The group {} will be disabled", group.getName());
       result = usergroupUtil.disableUsergroup(group.getId());
     } else {
-      logger.info("The group {} will still have members after the user has left it", group.getName());
+      logger.info("The group {} will still have members "
+             + "after the user has left it", group.getName());
       logger.info("Removing the user from the group {}...", group.getName());
       result = usergroupUtil.updateUsergroupUserlist(modifiedUsers, group.getId());
     }

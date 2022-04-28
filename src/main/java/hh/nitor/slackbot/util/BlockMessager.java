@@ -23,7 +23,7 @@ public class BlockMessager {
   @Autowired
   private MessageUtil msgUtil;
 
-  private static final Logger logger = LoggerFactory.getLogger(MessageUtil.class);
+  private static final Logger logger = LoggerFactory.getLogger(BlockMessager.class);
 
   public boolean similarGroupsMessage(
       String actual,
@@ -40,7 +40,6 @@ public class BlockMessager {
     List<LayoutBlock> layout = new ArrayList<>();
     List<BlockElement> blocks = stringsToButtons(similar);
     logger.info("Creating an Interactive Block Message of similar group names...");
-
     layout.add(
         section(section ->
           section
