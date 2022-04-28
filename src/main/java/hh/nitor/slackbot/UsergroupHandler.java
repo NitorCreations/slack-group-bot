@@ -55,7 +55,7 @@ public class UsergroupHandler {
     try {
       String[] params = payload.getText().split(" ", 2);
       String command = params[0];
-      String usergroupName = params[1].toLowerCase().replaceAll("\\s", "_");
+      String usergroupName = params[1].toLowerCase();
 
       if (finalizeUsergroupCommand(userId, command, usergroupName, responseChannel)) {
         logger.info("The operation to {} the group {} has been successful", command, usergroupName);
