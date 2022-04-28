@@ -44,19 +44,30 @@ public class UsergroupHandler {
    * @return ctx.ack()
    */
   public Response handleUsergroupCommand(SlashCommandRequest req, SlashCommandContext ctx) {
+    logger.info("Starting HandleUsergroupCommand...");
+    logger.info("Processing the payload...");
     SlashCommandPayload payload = req.getPayload();
     String userId = payload.getUserId();
     String responseChannel = payload.getChannelId();
+    
+    logger.info("Processing the usergroup command's parameters...");
 
-    String[] params = payload.getText().split(" ", 2);
-    String command = params[0];
-    String usergroupName = params[1];
+    try {
+      String[] params = payload.getText().split(" ", 2);
+      String command = params[0];
+      String usergroupName = params[1].toLowerCase().replaceAll("\\s", "_");
 
-    if (finalizeUsergroupCommand(userId, command, usergroupName, responseChannel)) {
-      return ctx.ack();
-    } else {
-      return ctx.ack("Command failed to execute :x:");
-    }
+      if (finalizeUsergroupCommand(userId, command, usergroupName, responseChannel)) {
+        logger.info("The operation to {} the group {} has been successful", command, usergroupName);
+        return ctx.ack();
+      } else {
+          logger.error("The operation to {} the group {} has failed", command, usergroupName);
+          return ctx.ack(String.format("The operation to %s the group %s has failed :x:", command, usergroupName));
+        }
+      } catch (Exception e) {
+          logger.info("Invalid parameters: command/group is missing from the input");
+          return ctx.ack("The operation has failed: please check that you have written the command correctly :x:");
+      }
   }
 
   /**
@@ -74,6 +85,9 @@ public class UsergroupHandler {
       String usergroupName,
       String responseChannel
   ) {
+
+    logger.info("The user wants to {} the group {}", command, usergroupName);
+    logger.info("Checking for groups with similar names as {}", usergroupName);
     List<Usergroup> groups = usergroupUtil.getUserGroups();
     List<String> groupNames = groups.stream().map(group -> group.getName())
         .collect(Collectors.toList());
@@ -81,6 +95,7 @@ public class UsergroupHandler {
     List<String> similarNames = comparer.compareToList(usergroupName, groupNames);
 
     if (!similarNames.isEmpty() && command.equalsIgnoreCase("join")) {
+      logger.info("Found groups that have similar names with the group {}", usergroupName);
       blockMessager.similarGroupsMessage(
           usergroupName,
           similarNames,
@@ -90,15 +105,18 @@ public class UsergroupHandler {
       return true;
     }
 
+    logger.info("The group name {} is unique: no similarities with other group names", usergroupName);
     Usergroup usergroup = usergroupUtil.getGroupByName(usergroupName);
 
     if (usergroup == null) {
+      logger.info("The group {} does not exist", usergroupName);
       usergroup = usergroupUtil.createUsergroup(usergroupName);
     }
 
     if (usergroup == null) {
       messageUtil.sendEphemeralResponse(
-          String.format("Due to an unexpected I/O or Slack API error, "
+          String.format("Due to an unexpected "
+           + "I/O or Slack API error, "
            + "the group %s was not found or created :warning:", usergroupName),
           userId, 
           responseChannel
@@ -111,9 +129,10 @@ public class UsergroupHandler {
     } else if (command.equalsIgnoreCase("leave")) {
       return removeUserFromGroup(userId, usergroup, responseChannel);
     } else {
+      logger.error("The command {} does not exist", command);
       messageUtil.sendEphemeralResponse(
-          String.format("The command %s is incorrect or does not exist. "
-           + "Please write /help to see the accurate commands", command),
+          String.format("The command %s is incorrect or does not exist "
+           + "Please check that you have used the accurate command :x:", command),
           userId,
           responseChannel
       );
@@ -132,7 +151,8 @@ public class UsergroupHandler {
   public boolean addUserToGroup(String userId, Usergroup group, String responseChannel) {
     if (!usergroupUtil.checkIfAvailable(group)) {
       messageUtil.sendEphemeralResponse(
-          String.format("Due to an unexpected I/O or Slack API error, "
+          String.format("Due to an unexpected "
+          + "I/O or Slack API error, "
           + "the group %s was found but not enabled :warning:", group.getName()),
           userId,
           responseChannel
@@ -142,6 +162,7 @@ public class UsergroupHandler {
     List<String> users = group.getDateDelete() == 0 ? group.getUsers() : new ArrayList<>();
 
     if (usergroupUtil.userInGroup(userId, users)) {
+      logger.error("The user can only join groups they are not in");
       messageUtil.sendEphemeralResponse(
           String.format("You are already in the group %s. "
           + "You can only join groups "
@@ -177,6 +198,7 @@ public class UsergroupHandler {
     List<String> users = group.getUsers();
 
     if (!usergroupUtil.userInGroup(userId, users) || group.getDateDelete() != 0) {
+      logger.error("The user can only leave groups they are in");
       messageUtil.sendEphemeralResponse(
           String.format("You are not in the group %s. "
           + "You can only leave groups "
@@ -187,13 +209,18 @@ public class UsergroupHandler {
       return false;
     }
 
+    logger.info("Checking if the user is the last member of the group {}", group.getName());
     List<String> modifiedUsers = users.stream().filter(u -> !u.equals(userId))
         .collect(Collectors.toList());
 
     boolean result;
     if (modifiedUsers.isEmpty()) {
+      logger.info("The group {} will have no members after the user has left it", group.getName());
+      logger.info("The group {} will be disabled", group.getName());
       result = usergroupUtil.disableUsergroup(group.getId());
     } else {
+      logger.info("The group {} will still have members after the user has left it", group.getName());
+      logger.info("Removing the user from the group {}...", group.getName());
       result = usergroupUtil.updateUsergroupUserlist(modifiedUsers, group.getId());
     }
 

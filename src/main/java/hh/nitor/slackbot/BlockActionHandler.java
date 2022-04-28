@@ -34,11 +34,13 @@ public class BlockActionHandler {
   private static final Logger logger = LoggerFactory.getLogger(BlockActionHandler.class);
   
   public Response handleBlockJoinAction(BlockActionRequest req, ActionContext ctx) {
+    logger.info("Starting HandleBlockJoinAction...");
+    logger.info("Processing the payload...");
     Response resp = ctx.ack();
     BlockActionPayload payload = req.getPayload();
     List<Action> actions = payload.getActions();
     if (actions.isEmpty()) {
-      logger.error("payload contained no actions, unable to proceed with request");
+      logger.error("payload contained no actions: unable to proceed with request");
       return resp;
     }
 
@@ -47,32 +49,40 @@ public class BlockActionHandler {
     String groupName = actions.get(0).getValue();
     Usergroup usergroup = usergroupUtil.getGroupByName(groupName);
 
-    if (usergroup == null || !usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
+    if (usergroup == null) {
+      logger.error("The group {} does not exist", groupName);
       messageUtil.sendEphemeralResponse(
-          String.format("You could not join the group %s. "
-          + "This might happen if the group does not exist "
-          + "or there has been an "
-          + "unexpected I/O or Slack API error :x:", groupName), userId, channelId);
+          String.format("You could not not be addded to the group %s. "
+          + "The group does not exist :x:",groupName), userId, channelId);
+    } else if (!usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
+      messageUtil.sendEphemeralResponse(
+          String.format("Failed to add you to the group %s :x:", groupName),
+          userId, channelId);
       return resp;
     }
-
+    logger.info("Creating a Json Object with properties...");
     JsonObject json = new JsonObject();
     json.addProperty("response_type", "ephemeral");
     json.addProperty("text", "");
     json.addProperty("replace_original", true);
     json.addProperty("delete_original", true);
 
+    logger.info("Calling Rest Service's PostSlackResponse");
     restService.postSlackResponse(req.getResponseUrl(), json);
-    
+
+    logger.info("Returning response...");
     return resp;
   }
 
   public Response handleBlockCreateAction(BlockActionRequest req, ActionContext ctx) {
+
+    logger.info("Starting handleBlockCreateAction...");
+    logger.info("Processing the payload...");
     Response resp = ctx.ack();
     BlockActionPayload payload = req.getPayload();
     List<Action> actions = payload.getActions();
     if (actions.isEmpty()) {
-      logger.error("Payload contained no actions, unable to proceed with request");
+      logger.error("Payload contained no actions: unable to proceed with request");
       return resp;
     }
 
@@ -94,14 +104,17 @@ public class BlockActionHandler {
       return resp;
     }
 
+    logger.info("Creating a Json Object with properties...");
     JsonObject json = new JsonObject();
     json.addProperty("response_type", "ephemeral");
     json.addProperty("text", "");
     json.addProperty("replace_original", true);
     json.addProperty("delete_original", true);
 
+    logger.info("Calling Rest Service's PostSlackResponse");
     restService.postSlackResponse(req.getResponseUrl(), json);
 
+    logger.info("Returning response...");
     return resp;
   }
 }
