@@ -45,10 +45,12 @@ public class MessageUtil {
           ).isOk();
     } catch (IOException e) {
       logger.error(
-          String.format("Failed to send a direct message to user due to IOException: %n %s", e.getMessage()));
+          String.format("Failed to send a direct message to user "
+                + "due to IOException: %n %s", e.getMessage()));
     } catch (SlackApiException e) {
       logger.error(
-          String.format("Failed to send a direct message to user due to API exception: %n %s", e.getMessage()));
+          String.format("Failed to send a direct message to user "
+                + "due to API exception: %n %s", e.getMessage()));
     }
 
     return false;
@@ -75,10 +77,12 @@ public class MessageUtil {
           ).isOk();
     } catch (IOException e) {
       logger.error(
-          String.format("Failed to send an ephemeral message to user due to IOException: %n %s", e.getMessage()));
+          String.format("Failed to send an ephemeral message to user "
+                + "due to IOException: %n %s", e.getMessage()));
     } catch (SlackApiException e) {
       logger.error(
-          String.format("Failed to send an ephemeral message to user due to API exception: %n %s", e.getMessage()));
+          String.format("Failed to send an ephemeral message to user "
+                + "due to API exception: %n %s", e.getMessage()));
     }
 
     return false;
@@ -111,18 +115,21 @@ public class MessageUtil {
           );
 
       if (resp.isOk()) {
-    	logger.info("Ephemeral message (with block elements) sent successfully to user");
+        logger.info("Ephemeral message (with block elements) "
+              + "sent successfully to user");
         return true;
       }
 
       logger.error("Ephemeral message post has failed: {}", resp.getError());
-      
+
     } catch (IOException e) {
       logger.error(
-          String.format("Failed to send an ephemeral message (with block elements) to user due to IOException: %n %s", e.getMessage()));
+          String.format("Failed to send an ephemeral message (with block elements) "
+                + "to user due to IOException: %n %s", e.getMessage()));
     } catch (SlackApiException e) {
       logger.error(
-          String.format("Failed to send a ephemeral message (with block elements) to user due to API exception: %n %s", e.getMessage()));
+          String.format("Failed to send a ephemeral message (with block elements) "
+                + "to user due to API exception: %n %s", e.getMessage()));
     }
 
     return false;

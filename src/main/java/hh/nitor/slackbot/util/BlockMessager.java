@@ -37,10 +37,9 @@ public class BlockMessager {
   }
 
   private List<LayoutBlock> similarGroupsLayout(String actual, List<String> similar) {
-    
 	
-	logger.info("Creating an Interactive Block Message of similar group names...");  
-	List<LayoutBlock> layout = new ArrayList<>();
+    logger.info("Creating an Interactive Block Message of similar group names...");  
+    List<LayoutBlock> layout = new ArrayList<>();
     List<BlockElement> blocks = stringsToButtons(similar);
 
     layout.add(
@@ -70,7 +69,7 @@ public class BlockMessager {
   private List<BlockElement> stringsToButtons(List<String> strings) {
     return strings
         .stream()
-        .map(string -> 
+        .map(string ->
           button(b ->
             b.text(plainText(pt -> pt.text(string))).value(string).actionId("join_" + string)
         ))

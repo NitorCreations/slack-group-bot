@@ -21,5 +21,4 @@ public class RestService {
 
     return response.getStatusCode() == HttpStatus.OK;
   }
-  
 }

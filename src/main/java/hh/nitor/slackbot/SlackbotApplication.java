@@ -11,7 +11,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 public class SlackbotApplication {
 
   private static Logger logger = LoggerFactory.getLogger(SlackbotApplication.class);
-  
+
   public static void main(String[] args) {
 	logger.info("Starting Slackbot Application...");
     SpringApplication.run(SlackbotApplication.class, args);

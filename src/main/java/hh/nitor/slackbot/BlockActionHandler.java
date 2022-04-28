@@ -34,53 +34,53 @@ public class BlockActionHandler {
   private static final Logger logger = LoggerFactory.getLogger(BlockActionHandler.class);
   
   public Response handleBlockJoinAction(BlockActionRequest req, ActionContext ctx) {
-	logger.info("Starting HandleBlockJoinAction...");
-	logger.info("Processing the payload...");
-    Response resp = ctx.ack();
-    BlockActionPayload payload = req.getPayload();
-    List<Action> actions = payload.getActions();
-    if (actions.isEmpty()) {
-      logger.error("The payload contained no actions, unable to proceed with request");
-      return resp;
-    }
+      logger.info("Starting HandleBlockJoinAction...");
+      logger.info("Processing the payload...");
+      Response resp = ctx.ack();
+      BlockActionPayload payload = req.getPayload();
+      List<Action> actions = payload.getActions();
+      if (actions.isEmpty()) {
+          logger.error("The payload contained no actions, unable to proceed with request");
+          return resp;
+      }
 
-    String userId = payload.getUser().getId();
-    String channelId = payload.getChannel().getId();
-    String groupName = actions.get(0).getValue();
+      String userId = payload.getUser().getId();
+      String channelId = payload.getChannel().getId();
+      String groupName = actions.get(0).getValue();
 
-    Usergroup usergroup = usergroupUtil.getGroupByName(groupName);
-    
-    if (usergroup == null) {
-    	logger.error("The group {} does not exist", groupName);
-    	messageUtil.sendEphemeralResponse(
-    		String.format("You could not be added to the group %s."
-    		+ "The group does not exist :x:", groupName), userId, channelId);
-    	return resp;
-    } else if (!usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
-    	messageUtil.sendEphemeralResponse(
-    		String.format("Failed to add you to the group %s :x:", groupName), userId, channelId);
-    	return resp;
-    } 
-    
-    logger.info("Creating a Json Object with properties...");
-    JsonObject json = new JsonObject();
-    json.addProperty("response_type", "ephemeral");
-    json.addProperty("text", "");
-    json.addProperty("replace_original", true);
-    json.addProperty("delete_original", true);
+      Usergroup usergroup = usergroupUtil.getGroupByName(groupName);
 
-    logger.info("Calling Rest Service's PostSlackResponse");
-    restService.postSlackResponse(req.getResponseUrl(), json);
-    
-    logger.info("Returning response...");
+      if (usergroup == null) {
+            logger.error("The group {} does not exist", groupName);
+            messageUtil.sendEphemeralResponse(
+                   String.format("You could not be added to the group %s."
+                   + "The group does not exist :x:", groupName), userId, channelId);
     return resp;
+      } else if (!usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
+           messageUtil.sendEphemeralResponse(
+                 String.format("Failed to add you to the group %s :x:", groupName), userId, channelId);
+          return resp;
+      }
+
+      logger.info("Creating a Json Object with properties...");
+      JsonObject json = new JsonObject();
+      json.addProperty("response_type", "ephemeral");
+      json.addProperty("text", "");
+      json.addProperty("replace_original", true);
+      json.addProperty("delete_original", true);
+
+      logger.info("Calling Rest Service's PostSlackResponse");
+      restService.postSlackResponse(req.getResponseUrl(), json);
+
+      logger.info("Returning response...");
+      return resp;
   }
 
   public Response handleBlockCreateAction(BlockActionRequest req, ActionContext ctx) {
-    
-	logger.info("Starting handleBlockCreateAction...");
-	logger.info("Processing the payload...");
-	Response resp = ctx.ack();
+
+    logger.info("Starting handleBlockCreateAction...");
+    logger.info("Processing the payload...");
+    Response resp = ctx.ack();
     BlockActionPayload payload = req.getPayload();
     List<Action> actions = payload.getActions();
     if (actions.isEmpty()) {
@@ -92,7 +92,7 @@ public class BlockActionHandler {
     String channelId = payload.getChannel().getId();
     String groupName = actions.get(0).getValue();
     Usergroup usergroup = usergroupUtil.createUsergroup(groupName);
-    
+
     if (usergroup == null) {
       messageUtil.sendEphemeralResponse(
           String.format("Due to an unexpected I/O or Slack API error, "
