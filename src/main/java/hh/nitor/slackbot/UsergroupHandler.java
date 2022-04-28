@@ -66,8 +66,8 @@ public class UsergroupHandler {
                      + "the group %s has failed :x:", command, usergroupName));
       }
     } catch (Exception e) {
-        logger.info("Invalid parameters: command/group is missing from the input");
-        return ctx.ack("The operation has failed: please check "
+      logger.info("Invalid parameters: command/group is missing from the input");
+      return ctx.ack("The operation has failed: please check "
                      + "that you have written the command correctly :x:");
     }
   }
