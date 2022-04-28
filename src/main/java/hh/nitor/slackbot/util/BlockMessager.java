@@ -35,10 +35,9 @@ public class BlockMessager {
     logger.info("Interactive Block Message sent successfully to the user");
     return msgUtil.sendEphemeralResponse(blocks, "Groups with similar names", userId, channelId);
   }
-
+  
   private List<LayoutBlock> similarGroupsLayout(String actual, List<String> similar) {
     List<LayoutBlock> layout = new ArrayList<>();
-    List<BlockElement> blocks = stringsToButtons(similar);
     logger.info("Creating an Interactive Block Message of similar group names...");
     layout.add(
         section(section ->
@@ -53,12 +52,13 @@ public class BlockMessager {
     );
 
     layout.add(divider());
-
     layout.add(
         section(section -> section.text(
           plainText(pt -> pt.text(":question: Did you mean one of these? Click to join:"))
         ).blockId("similar"))
     );
+    
+    List<BlockElement> blocks = stringsToButtons(similar);
     layout.add(actions(actions -> actions.elements(blocks).blockId("asdf")));
 
     return layout;
