@@ -10,11 +10,11 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 @ServletComponentScan
 public class SlackbotApplication {
 
-  private static Logger logger = LoggerFactory.getLogger(SlackbotApplication.class);
+	private static Logger logger = LoggerFactory.getLogger(SlackbotApplication.class);
 
-  public static void main(String[] args) {
-	logger.info("Starting Slackbot Application...");
-    SpringApplication.run(SlackbotApplication.class, args);
-    logger.info("Slackbot Application has started");
-  }
+	public static void main(String[] args) {
+		logger.info("Starting Slackbot Application...");
+		SpringApplication.run(SlackbotApplication.class, args);
+		logger.info("Slackbot Application has started");
+	}
 }

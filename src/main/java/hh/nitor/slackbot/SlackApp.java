@@ -17,35 +17,35 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SlackApp {
 
-  @Autowired
-  private UsergroupHandler userGroupHandler;
+	@Autowired
+	private UsergroupHandler userGroupHandler;
 
-  @Autowired
-  private BlockActionHandler blockActionHandler;
+	@Autowired
+	private BlockActionHandler blockActionHandler;
 
-  private static Logger logger = LoggerFactory.getLogger(SlackApp.class);
+	private static Logger logger = LoggerFactory.getLogger(SlackApp.class);
 
-  @Bean
-  public App initSlackApp() {
-	  
-    logger.info("Receiving interaction from the user...");
-    App app = new App();
+	@Bean
+	public App initSlackApp() {
 
-    app.command("/groups", userGroupHandler::handleUsergroupCommand);
+		logger.info("Receiving interaction from the user...");
+		App app = new App();
 
-    app.event(AppMentionEvent.class, (req, ctx) -> mentionResponse(req, ctx));
+		app.command("/groups", userGroupHandler::handleUsergroupCommand);
 
-    app.blockAction(Pattern.compile("^join_.+$"), blockActionHandler::handleBlockJoinAction);
+		app.event(AppMentionEvent.class, (req, ctx) -> mentionResponse(req, ctx));
 
-    app.blockAction(Pattern.compile("btn_create"), blockActionHandler::handleBlockCreateAction);
+		app.blockAction(Pattern.compile("^join_.+$"), blockActionHandler::handleBlockJoinAction);
 
-    return app;
-  }
+		app.blockAction(Pattern.compile("btn_create"), blockActionHandler::handleBlockCreateAction);
 
-  public Response mentionResponse(EventsApiPayload<AppMentionEvent> req, EventContext ctx)
-      throws IOException, SlackApiException {
-      logger.info("Starting MentionResponse...");
-      ctx.say("Greetings :wave:");
-      return ctx.ack();
-  }
+		return app;
+	}
+
+	public Response mentionResponse(EventsApiPayload<AppMentionEvent> req, EventContext ctx)
+			throws IOException, SlackApiException {
+		logger.info("Starting MentionResponse...");
+		ctx.say("Greetings :wave:");
+		return ctx.ack();
+	}
 }

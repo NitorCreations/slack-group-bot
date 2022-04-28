@@ -21,33 +21,33 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SlackAppTest {
 
-  @Autowired
-  private SlackApp slackApp;
+	@Autowired
+	private SlackApp slackApp;
 
-  @MockBean
-  private EventsApiPayload<AppMentionEvent> mockReq;
+	@MockBean
+	private EventsApiPayload<AppMentionEvent> mockReq;
 
-  @MockBean
-  private EventContext mockCtx;
+	@MockBean
+	private EventContext mockCtx;
 
-  @BeforeEach
-  public void init() {
-    MockitoAnnotations.openMocks(this);
-  }
+	@BeforeEach
+	public void init() {
+		MockitoAnnotations.openMocks(this);
+	}
 
-  @Test
-  @DisplayName("SlackApp is not null")
-  void returnAppSuccessfully() {
-    assertNotNull(slackApp.initSlackApp());
-  }
+	@Test
+	@DisplayName("SlackApp is not null")
+	void returnAppSuccessfully() {
+		assertNotNull(slackApp.initSlackApp());
+	}
 
-  @Test
-  @DisplayName("SlackApp mention response is successful")
-  void mentionResponseSuccessfully() throws IOException, SlackApiException {
-    // mockReq and mockCtx are defined with @MockBean
-    slackApp.mentionResponse(mockReq, mockCtx);
+	@Test
+	@DisplayName("SlackApp mention response is successful")
+	void mentionResponseSuccessfully() throws IOException, SlackApiException {
+		// mockReq and mockCtx are defined with @MockBean
+		slackApp.mentionResponse(mockReq, mockCtx);
 
-    verify(mockCtx).say("Greetings :wave:");
-    verify(mockCtx).ack();
-  }
+		verify(mockCtx).say("Greetings :wave:");
+		verify(mockCtx).ack();
+	}
 }

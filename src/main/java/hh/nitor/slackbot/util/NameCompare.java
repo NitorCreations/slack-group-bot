@@ -11,34 +11,32 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class NameCompare {
-  private static final Logger logger = LoggerFactory.getLogger(NameCompare.class);
-  private static final float THRESHOLD = 0.8f;
+	private static final Logger logger = LoggerFactory.getLogger(NameCompare.class);
+	private static final float THRESHOLD = 0.8f;
 
-  public NameCompare() {
-	  /* Empty*/ 
-  }
+	public NameCompare() {
+		/* Empty */
+	}
 
-  public float compareNames(String name1, String name2) {
-    StringMetric metric = StringMetrics.damerauLevenshtein();
-    float result = metric.compare(name1, name2);
-    logger.info("{}, {}, {}", name1, name2, result);
-    return result;
-  }
+	public float compareNames(String name1, String name2) {
+		StringMetric metric = StringMetrics.damerauLevenshtein();
+		float result = metric.compare(name1, name2);
+		logger.info("{}, {}, {}", name1, name2, result);
+		return result;
+	}
 
-  public List<String> compareToList(String name, List<String> names) {
+	public List<String> compareToList(String name, List<String> names) {
 
-     logger.info("Collecting similar group names into a list...");
+		logger.info("Collecting similar group names into a list...");
 
-      List<String> hits = names.stream()
-        .filter(n -> {
-          float result = compareNames(n, name);
-          return result >= THRESHOLD;
-        })
-        .collect(Collectors.toList());
+		List<String> hits = names.stream().filter(n -> {
+			float result = compareNames(n, name);
+			return result >= THRESHOLD;
+		}).collect(Collectors.toList());
 
-    if (!hits.contains(name)) {
-      return hits;
-    }
-    return new ArrayList<>();
-  }
+		if (!hits.contains(name)) {
+			return hits;
+		}
+		return new ArrayList<>();
+	}
 }

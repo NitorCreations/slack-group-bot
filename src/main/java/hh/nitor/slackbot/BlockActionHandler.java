@@ -19,101 +19,101 @@ import org.springframework.stereotype.Component;
 @Component
 public class BlockActionHandler {
 
-  @Autowired
-  private UsergroupUtil usergroupUtil;
+	@Autowired
+	private UsergroupUtil usergroupUtil;
 
-  @Autowired
-  private MessageUtil messageUtil;
+	@Autowired
+	private MessageUtil messageUtil;
 
-  @Autowired
-  private UsergroupHandler usergroupHandler;
+	@Autowired
+	private UsergroupHandler usergroupHandler;
 
-  @Autowired
-  private RestService restService;
+	@Autowired
+	private RestService restService;
 
-  private static final Logger logger = LoggerFactory.getLogger(BlockActionHandler.class);
-  
-  public Response handleBlockJoinAction(BlockActionRequest req, ActionContext ctx) {
-      logger.info("Starting HandleBlockJoinAction...");
-      logger.info("Processing the payload...");
-      Response resp = ctx.ack();
-      BlockActionPayload payload = req.getPayload();
-      List<Action> actions = payload.getActions();
-      if (actions.isEmpty()) {
-          logger.error("The payload contained no actions, unable to proceed with request");
-          return resp;
-      }
+	private static final Logger logger = LoggerFactory.getLogger(BlockActionHandler.class);
 
-      String userId = payload.getUser().getId();
-      String channelId = payload.getChannel().getId();
-      String groupName = actions.get(0).getValue();
+	public Response handleBlockJoinAction(BlockActionRequest req, ActionContext ctx) {
+		logger.info("Starting HandleBlockJoinAction...");
+		logger.info("Processing the payload...");
+		Response resp = ctx.ack();
+		BlockActionPayload payload = req.getPayload();
+		List<Action> actions = payload.getActions();
+		if (actions.isEmpty()) {
+			logger.error("The payload contained no actions, unable to proceed with request");
+			return resp;
+		}
 
-      Usergroup usergroup = usergroupUtil.getGroupByName(groupName);
+		String userId = payload.getUser().getId();
+		String channelId = payload.getChannel().getId();
+		String groupName = actions.get(0).getValue();
 
-      if (usergroup == null) {
-            logger.error("The group {} does not exist", groupName);
-            messageUtil.sendEphemeralResponse(
-                   String.format("You could not be added to the group %s."
-                   + "The group does not exist :x:", groupName), userId, channelId);
-    return resp;
-      } else if (!usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
-           messageUtil.sendEphemeralResponse(
-                 String.format("Failed to add you to the group %s :x:", groupName), userId, channelId);
-          return resp;
-      }
+		Usergroup usergroup = usergroupUtil.getGroupByName(groupName);
 
-      logger.info("Creating a Json Object with properties...");
-      JsonObject json = new JsonObject();
-      json.addProperty("response_type", "ephemeral");
-      json.addProperty("text", "");
-      json.addProperty("replace_original", true);
-      json.addProperty("delete_original", true);
+		if (usergroup == null) {
+			logger.error("The group {} does not exist", groupName);
+			messageUtil.sendEphemeralResponse(String
+					.format("You could not be added to the group %s." + "The group does not exist :x:", groupName),
+					userId, channelId);
+			return resp;
+		} else if (!usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
+			messageUtil.sendEphemeralResponse(String.format("Failed to add you to the group %s :x:", groupName), userId,
+					channelId);
+			return resp;
+		}
 
-      logger.info("Calling Rest Service's PostSlackResponse");
-      restService.postSlackResponse(req.getResponseUrl(), json);
+		logger.info("Creating a Json Object with properties...");
+		JsonObject json = new JsonObject();
+		json.addProperty("response_type", "ephemeral");
+		json.addProperty("text", "");
+		json.addProperty("replace_original", true);
+		json.addProperty("delete_original", true);
 
-      logger.info("Returning response...");
-      return resp;
-  }
+		logger.info("Calling Rest Service's PostSlackResponse");
+		restService.postSlackResponse(req.getResponseUrl(), json);
 
-  public Response handleBlockCreateAction(BlockActionRequest req, ActionContext ctx) {
+		logger.info("Returning response...");
+		return resp;
+	}
 
-    logger.info("Starting handleBlockCreateAction...");
-    logger.info("Processing the payload...");
-    Response resp = ctx.ack();
-    BlockActionPayload payload = req.getPayload();
-    List<Action> actions = payload.getActions();
-    if (actions.isEmpty()) {
-      logger.error("Payload contained no actions, unable to proceed with request");
-      return resp;
-    }
+	public Response handleBlockCreateAction(BlockActionRequest req, ActionContext ctx) {
 
-    String userId = payload.getUser().getId();
-    String channelId = payload.getChannel().getId();
-    String groupName = actions.get(0).getValue();
-    Usergroup usergroup = usergroupUtil.createUsergroup(groupName);
+		logger.info("Starting handleBlockCreateAction...");
+		logger.info("Processing the payload...");
+		Response resp = ctx.ack();
+		BlockActionPayload payload = req.getPayload();
+		List<Action> actions = payload.getActions();
+		if (actions.isEmpty()) {
+			logger.error("Payload contained no actions, unable to proceed with request");
+			return resp;
+		}
 
-    if (usergroup == null) {
-      messageUtil.sendEphemeralResponse(
-          String.format("Due to an unexpected I/O or Slack API error, "
-          + "you could not join the group %s :x:", groupName), userId, channelId);
-      return resp;
-    }
+		String userId = payload.getUser().getId();
+		String channelId = payload.getChannel().getId();
+		String groupName = actions.get(0).getValue();
+		Usergroup usergroup = usergroupUtil.createUsergroup(groupName);
 
-    if (!usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
-      messageUtil.sendEphemeralResponse(
-          String.format("You could not join the group %s :x:", groupName), userId, channelId);
-      return resp;
-    }
+		if (usergroup == null) {
+			messageUtil.sendEphemeralResponse(String.format(
+					"Due to an unexpected I/O or Slack API error, " + "you could not join the group %s :x:", groupName),
+					userId, channelId);
+			return resp;
+		}
 
-    JsonObject json = new JsonObject();
-    json.addProperty("response_type", "ephemeral");
-    json.addProperty("text", "");
-    json.addProperty("replace_original", true);
-    json.addProperty("delete_original", true);
+		if (!usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
+			messageUtil.sendEphemeralResponse(String.format("You could not join the group %s :x:", groupName), userId,
+					channelId);
+			return resp;
+		}
 
-    restService.postSlackResponse(req.getResponseUrl(), json);
+		JsonObject json = new JsonObject();
+		json.addProperty("response_type", "ephemeral");
+		json.addProperty("text", "");
+		json.addProperty("replace_original", true);
+		json.addProperty("delete_original", true);
 
-    return resp;
-  }
+		restService.postSlackResponse(req.getResponseUrl(), json);
+
+		return resp;
+	}
 }

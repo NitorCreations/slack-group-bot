@@ -9,16 +9,15 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class RestService {
 
-  private final RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
 
-  public RestService() {
-    this.restTemplate = new RestTemplate();
-  }
+	public RestService() {
+		this.restTemplate = new RestTemplate();
+	}
 
-  public boolean postSlackResponse(String responseUrl, JsonElement body) {
-    ResponseEntity<String> response
-        = restTemplate.postForEntity(responseUrl, body.toString(), String.class);
+	public boolean postSlackResponse(String responseUrl, JsonElement body) {
+		ResponseEntity<String> response = restTemplate.postForEntity(responseUrl, body.toString(), String.class);
 
-    return response.getStatusCode() == HttpStatus.OK;
-  }
+		return response.getStatusCode() == HttpStatus.OK;
+	}
 }
