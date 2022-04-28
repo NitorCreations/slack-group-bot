@@ -61,15 +61,15 @@ public class UsergroupHandler {
         logger.info("The operation to {} the group {} has been successful", command, usergroupName);
         return ctx.ack();
       } else {
-          logger.error("The operation to {} the group {} has failed", command, usergroupName);
-          return ctx.ack(String.format("The operation to %s "
+        logger.error("The operation to {} the group {} has failed", command, usergroupName);
+        return ctx.ack(String.format("The operation to %s "
                      + "the group %s has failed :x:", command, usergroupName));
       }
     } catch (Exception e) {
-          logger.info("Invalid parameters: command/group is missing from the input");
-          return ctx.ack("The operation has failed: please check "
+        logger.info("Invalid parameters: command/group is missing from the input");
+        return ctx.ack("The operation has failed: please check "
                      + "that you have written the command correctly :x:");
-      }
+    }
   }
 
   /**
