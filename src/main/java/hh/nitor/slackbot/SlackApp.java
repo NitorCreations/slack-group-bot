@@ -27,6 +27,8 @@ public class SlackApp {
 
   @Bean
   public App initSlackApp() {
+	  
+	logger.info("Receiving interaction from the user...");
     App app = new App();
 
     app.command("/groups", userGroupHandler::handleUsergroupCommand);
@@ -42,6 +44,7 @@ public class SlackApp {
 
   public Response mentionResponse(EventsApiPayload<AppMentionEvent> req, EventContext ctx)
       throws IOException, SlackApiException {
+	logger.info("Starting MentionResponse...");
     ctx.say("Greetings :wave:");
     return ctx.ack();
   }

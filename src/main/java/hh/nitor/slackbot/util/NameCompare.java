@@ -14,7 +14,7 @@ public class NameCompare {
   private static final Logger logger = LoggerFactory.getLogger(NameCompare.class);
   private static final float THRESHOLD = 0.8f;
 
-  public NameCompare() {}
+  public NameCompare() { /* Empty*/ }
 
   public float compareNames(String name1, String name2) {
     StringMetric metric = StringMetrics.damerauLevenshtein();
@@ -24,7 +24,10 @@ public class NameCompare {
   }
 
   public List<String> compareToList(String name, List<String> names) {
-    List<String> hits = names.stream()
+    
+	  logger.info("Collecting similar group names into a list...");
+
+	  List<String> hits = names.stream()
         .filter(n -> {
           float result = compareNames(n, name);
           return result >= THRESHOLD;
