@@ -71,13 +71,9 @@ public class BlockActionHandler {
 
     // Deleting the ephemeral blockkit message if event came from a channel
     if (userId != channelId) {
-      JsonObject json = new JsonObject();
-      json.addProperty("response_type", "ephemeral");
-      json.addProperty("text", "");
-      json.addProperty("replace_original", true);
-      json.addProperty("delete_original", true);
-  
-      restService.postSlackResponse(req.getResponseUrl(), json);
+      if (!deleteMessage(req.getResponseUrl())) {
+        logger.error("Failed to delete ephemeral message");
+      }
     } else {
       // else refresh home view
       homeHandler.publishView(userId);
@@ -113,13 +109,9 @@ public class BlockActionHandler {
 
     // Deleting the ephemeral blockkit message if event came from a channel
     if (userId != channelId) {
-      JsonObject json = new JsonObject();
-      json.addProperty("response_type", "ephemeral");
-      json.addProperty("text", "");
-      json.addProperty("replace_original", true);
-      json.addProperty("delete_original", true);
-  
-      restService.postSlackResponse(req.getResponseUrl(), json);
+      if (!deleteMessage(req.getResponseUrl())) {
+        logger.error("Failed to delete ephemeral message");
+      }
     } else {
       // else refresh home view
       homeHandler.publishView(userId);
@@ -163,19 +155,25 @@ public class BlockActionHandler {
 
     // Deleting the ephemeral blockkit message if event came from a channel
     if (userId != channelId) {
-      JsonObject json = new JsonObject();
-      json.addProperty("response_type", "ephemeral");
-      json.addProperty("text", "");
-      json.addProperty("replace_original", true);
-      json.addProperty("delete_original", true);
-  
-      restService.postSlackResponse(req.getResponseUrl(), json);
+      if (!deleteMessage(req.getResponseUrl())) {
+        logger.error("Failed to delete ephemeral message");
+      }
     } else {
       // else refresh home view
       homeHandler.publishView(userId);
     }
     
     return resp;
+  }
+
+  private boolean deleteMessage(String responseUrl) {
+    JsonObject json = new JsonObject();
+    json.addProperty("response_type", "ephemeral");
+    json.addProperty("text", "");
+    json.addProperty("replace_original", true);
+    json.addProperty("delete_original", true);
+
+    return restService.postSlackResponse(responseUrl, json);
   }
   
 }
