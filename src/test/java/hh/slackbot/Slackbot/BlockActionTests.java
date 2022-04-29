@@ -16,9 +16,6 @@ import com.slack.api.app_backend.interactive_components.payload.BlockActionPaylo
 import com.slack.api.bolt.context.builtin.ActionContext;
 import com.slack.api.bolt.request.builtin.BlockActionRequest;
 import com.slack.api.model.Usergroup;
-
-import hh.slackbot.slackbot.BlockActionHandler;
-import hh.slackbot.slackbot.UsergroupHandler;
 import hh.slackbot.slackbot.util.MessageUtil;
 import hh.slackbot.slackbot.util.RestService;
 import hh.slackbot.slackbot.util.UsergroupUtil;

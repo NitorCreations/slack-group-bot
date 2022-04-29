@@ -87,6 +87,7 @@ public class UsergroupHandler {
           responseChannel,
           userId
       );
+      
       return true;
     }
 
@@ -108,11 +109,13 @@ public class UsergroupHandler {
 
     if (command.equalsIgnoreCase("join")) {
       messageUtil.sendEphemeralResponse(
-          String.format("You have joined group %s", usergroup.getName()),
-          userId,
+          String.format("You have been added to group %s :white_check_mark:", usergroupName),
+          userId, 
           responseChannel
       );
       return addUserToGroup(userId, usergroup, responseChannel);
+      
+
     } else if (command.equalsIgnoreCase("leave")) {
       return removeUserFromGroup(userId, usergroup, responseChannel);
     } else {
@@ -198,6 +201,7 @@ public class UsergroupHandler {
     boolean result;
     if (modifiedUsers.isEmpty()) {
       result = usergroupUtil.disableUsergroup(group.getId());
+      
     } else {
       result = usergroupUtil.updateUsergroupUserlist(modifiedUsers, group.getId());
     }
