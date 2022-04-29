@@ -143,7 +143,7 @@ public class UsergroupHandler {
     } else {
       messageUtil.sendEphemeralResponse(
           String.format("The command %s is incorrect or does not exist. "
-           + "Please write \"/groups help to see\" the accurate commands", command),
+           + "Please write \"/groups help\" to see the accurate commands", command),
           userId,
           responseChannel
       );
