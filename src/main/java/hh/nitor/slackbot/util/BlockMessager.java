@@ -46,9 +46,12 @@ public class BlockMessager {
             .accessory(
               button(b -> 
                 b.text(plainText(pt -> pt.text("Create and join")))
+                
                     .value(actual).actionId("btn_create")
+                    
               )
             ).blockId("header"))
+            
     );
 
     layout.add(divider());

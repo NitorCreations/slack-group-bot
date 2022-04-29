@@ -103,6 +103,7 @@ public class BlockActionHandler {
           String.format("You could not join the group %s :x:", groupName), userId, channelId);
       return resp;
     }
+    
 
     logger.info("Creating a Json Object with properties...");
     JsonObject json = new JsonObject();

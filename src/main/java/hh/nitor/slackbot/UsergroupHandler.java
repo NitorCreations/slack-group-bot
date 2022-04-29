@@ -104,6 +104,7 @@ public class UsergroupHandler {
           responseChannel,
           userId
       );
+      
       return true;
     }
 
@@ -129,8 +130,10 @@ public class UsergroupHandler {
 
     if (command.equalsIgnoreCase("join")) {
       return addUserToGroup(userId, usergroup, responseChannel);
+
     } else if (command.equalsIgnoreCase("leave")) {
       return removeUserFromGroup(userId, usergroup, responseChannel);
+
     } else {
       logger.error("The command {} does not exist", command);
       messageUtil.sendEphemeralResponse(
@@ -139,6 +142,7 @@ public class UsergroupHandler {
           userId,
           responseChannel
       );
+
       return false;
     }
   }
@@ -185,6 +189,12 @@ public class UsergroupHandler {
             userId,
             responseChannel
         );
+      } else {
+        messageUtil.sendEphemeralResponse(
+            String.format("You have been added to group %s :white_check_mark:", group.getName()),
+            userId, 
+            responseChannel
+        );
       }
       return success;
     }
@@ -222,6 +232,7 @@ public class UsergroupHandler {
              + "after the user has left it", group.getName());
       logger.info("The group {} will be disabled", group.getName());
       result = usergroupUtil.disableUsergroup(group.getId());
+      
     } else {
       logger.info("The group {} will still have members "
              + "after the user has left it", group.getName());
