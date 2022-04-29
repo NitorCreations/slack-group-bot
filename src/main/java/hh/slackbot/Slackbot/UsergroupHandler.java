@@ -108,16 +108,11 @@ public class UsergroupHandler {
     }
 
     if (command.equalsIgnoreCase("join")) {
-      messageUtil.sendEphemeralResponse(
-          String.format("You have been added to group %s :white_check_mark:", usergroupName),
-          userId, 
-          responseChannel
-      );
       return addUserToGroup(userId, usergroup, responseChannel);
-      
 
     } else if (command.equalsIgnoreCase("leave")) {
       return removeUserFromGroup(userId, usergroup, responseChannel);
+
     } else {
       messageUtil.sendEphemeralResponse(
           String.format("The command %s is incorrect or does not exist. "
@@ -125,6 +120,7 @@ public class UsergroupHandler {
           userId,
           responseChannel
       );
+
       return false;
     }
   }
@@ -167,6 +163,12 @@ public class UsergroupHandler {
             String.format("Due to an unexpected I/O or Slack API error, "
             + "you could not be added to the group %s :warning:", group.getName()),
             userId,
+            responseChannel
+        );
+      } else {
+        messageUtil.sendEphemeralResponse(
+            String.format("You have been added to group %s :white_check_mark:", group.getName()),
+            userId, 
             responseChannel
         );
       }
