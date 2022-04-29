@@ -77,38 +77,72 @@ public class BlockMessager {
   }
   
   
-  public Response helpText(SlashCommandRequest req, SlashCommandContext ctx) {
-	    List<LayoutBlock> helpLayout = new ArrayList<>();
+  public Response helpText(SlashCommandRequest req, SlashCommandContext ctx, String command) {
+	  
+	  	List<LayoutBlock> helpLayout = new ArrayList<>();
+	  	
+	  	if (command.equalsIgnoreCase("help") || command.isEmpty()) {
+	  		
+	  		helpLayout.add(section(section -> section.text(markdownText(String.format(
+	    			"This bot helps you to join or leave Slack user groups. "
+	    			+ "A new user group can be automatically created when trying to join a non-existing group. "
+	    		    + "You will be notified if similar group names already exist. "
+	    			))).blockId("botInfo"))
+	    	);
+	    	    
+	    	helpLayout.add(divider());
+	    	    
+	    	helpLayout.add(section(section -> section.text(plainText(pt -> pt.text(
+	    			"Available slash commands below:"
+	    			))).blockId("commands"))
+	    	);
 
-	    helpLayout.add(
-	        section(section ->
-	          section
-	            .text(markdownText(String.format(
-		            "This bot helps you to join or leave Slack user groups. "
-		            + "A new user group can be automatically created when trying to join a non-existing group. "
-		            + "You will be notified if similar group names already exist. "
-		            ))).blockId("header"))
-	    );
-	    
-	    helpLayout.add(divider());
-	    
-	    helpLayout.add(
-		        section(section -> section.text(
-		          plainText(pt -> pt.text("Available slash commands below:"))
-		        ).blockId("Commands"))
+	    	helpLayout.add(section(section -> section.text(plainText(pt -> pt.text(
+	    			"/groups join [group_name]"
+	    			))).blockId("joinCommand"))
+	    	);
+	    	    
+	    	helpLayout.add(section(section -> section.text(plainText(pt -> pt.text(
+	    			"/groups leave [group_name]"
+	    			))).blockId("leaveCommand"))
+	    	);
+	  		
+	    } else {
+	    	
+	    	helpLayout.add(section(section -> section.text(markdownText(String.format(
+	  				"Command failed to execute :x:"
+	  				))).blockId("fail"))
+	  		);
+	  		
+	  		helpLayout.add(section(section -> section.text(markdownText(String.format(
+	  				"Your command: " + command
+	  				))).blockId("invalid"))
+	  		);
+	  		
+	  		helpLayout.add(divider());
+		    
+		    helpLayout.add(section(section -> section.text(plainText(pt -> pt.text(
+		    		"Available slash commands below:"
+		    		))).blockId("commands"))
+		    );
+		    
+		    helpLayout.add(section(section -> section.text(plainText(pt -> pt.text(
+		    		"/groups help"
+		    		))).blockId("help"))
 		    );
 
-	    helpLayout.add(
-	        section(section -> section.text(
-	          plainText(pt -> pt.text("/groups join [group_name]"))
-	        ).blockId("joinCommand"))
-	    );
-	    
-	    helpLayout.add(
-		        section(section -> section.text(
-		          plainText(pt -> pt.text("/groups leave [group_name]"))
-		        ).blockId("leaveCommand"))
+		    helpLayout.add(section(section -> section.text(plainText(pt -> pt.text(
+		    		"/groups join [group_name]"
+		    		))).blockId("joinCommand"))
 		    );
+		    
+		    helpLayout.add(section(section -> section.text(plainText(pt -> pt.text(
+		    		"/groups leave [group_name]"
+		    		))).blockId("leaveCommand"))
+			);
+	  		
+	  		helpLayout.add(divider());
+	    }
 
 	    return ctx.ack(helpLayout);
 	  }

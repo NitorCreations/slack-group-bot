@@ -7,8 +7,6 @@ import com.slack.api.bolt.response.Response;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.model.event.AppMentionEvent;
 
-import hh.slackbot.slackbot.util.BlockMessager;
-
 import java.io.IOException;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
@@ -25,17 +23,12 @@ public class SlackApp {
 
   @Autowired
   private BlockActionHandler blockActionHandler;
-  
-  @Autowired
-  private BlockMessager blockMessager;
 
   private static Logger logger = LoggerFactory.getLogger(SlackApp.class);
 
   @Bean
   public App initSlackApp() {
     App app = new App();
-    
-    app.command("/help", blockMessager::helpText);
 
     app.command("/groups", userGroupHandler::handleUsergroupCommand);
 
@@ -50,7 +43,7 @@ public class SlackApp {
 
   public Response mentionResponse(EventsApiPayload<AppMentionEvent> req, EventContext ctx)
       throws IOException, SlackApiException {
-    ctx.say("Greetings :wave:");
+    ctx.say("Greetings :wave:" + System.lineSeparator() + "Learn more about me by typing: /groups help");
     return ctx.ack();
   }
 }

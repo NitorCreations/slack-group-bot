@@ -5,13 +5,16 @@ import com.slack.api.bolt.context.builtin.SlashCommandContext;
 import com.slack.api.bolt.request.builtin.SlashCommandRequest;
 import com.slack.api.bolt.response.Response;
 import com.slack.api.model.Usergroup;
+
 import hh.slackbot.slackbot.util.BlockMessager;
 import hh.slackbot.slackbot.util.MessageUtil;
 import hh.slackbot.slackbot.util.NameCompare;
 import hh.slackbot.slackbot.util.UsergroupUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,15 +50,42 @@ public class UsergroupHandler {
     SlashCommandPayload payload = req.getPayload();
     String userId = payload.getUserId();
     String responseChannel = payload.getChannelId();
+    
+    String command = "";
+    
+    Response helpInfo = blockMessager.helpText(req, ctx, command);
+    
+    // "/groups"
+    if (payload.getText() == null) {
+    	return helpInfo;
+    }
 
     String[] params = payload.getText().split(" ", 2);
-    String command = params[0];
+    command = params[0];
+    
+    // "/groups help"
+    if (command.equalsIgnoreCase("help")) {
+    	return helpInfo;
+    }
+    	
+    // "/groups invalid_command"
+    else if (!(command.equalsIgnoreCase("join") || command.equalsIgnoreCase("leave"))) {
+    	helpInfo = blockMessager.helpText(req, ctx, command);
+    	return helpInfo;
+    }
+    	
+    // "/groups join/leave"
+    else if (params.length < 2) {
+    	return ctx.ack("Missing group name. Find more info by typing: /groups help");
+    }
+
     String usergroupName = params[1];
 
+    // "/groups join/leave group_name"
     if (finalizeUsergroupCommand(userId, command, usergroupName, responseChannel)) {
       return ctx.ack();
     } else {
-      return ctx.ack("Command failed to execute :x:");
+      return helpInfo;
     }
   }
 
@@ -113,7 +143,7 @@ public class UsergroupHandler {
     } else {
       messageUtil.sendEphemeralResponse(
           String.format("The command %s is incorrect or does not exist. "
-           + "Please write /help to see the accurate commands", command),
+           + "Please write \"/groups help to see\" the accurate commands", command),
           userId,
           responseChannel
       );
