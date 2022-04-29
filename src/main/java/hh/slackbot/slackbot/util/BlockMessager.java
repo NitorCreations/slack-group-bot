@@ -7,6 +7,9 @@ import static com.slack.api.model.block.composition.BlockCompositions.markdownTe
 import static com.slack.api.model.block.composition.BlockCompositions.plainText;
 import static com.slack.api.model.block.element.BlockElements.button;
 
+import com.slack.api.bolt.context.builtin.SlashCommandContext;
+import com.slack.api.bolt.request.builtin.SlashCommandRequest;
+import com.slack.api.bolt.response.Response;
 import com.slack.api.model.block.LayoutBlock;
 import com.slack.api.model.block.element.BlockElement;
 import java.util.ArrayList;
@@ -72,4 +75,41 @@ public class BlockMessager {
         ))
         .collect(Collectors.toList());
   }
+  
+  
+  public Response helpText(SlashCommandRequest req, SlashCommandContext ctx) {
+	    List<LayoutBlock> helpLayout = new ArrayList<>();
+
+	    helpLayout.add(
+	        section(section ->
+	          section
+	            .text(markdownText(String.format(
+		            "This bot helps you to join or leave Slack user groups. "
+		            + "A new user group can be automatically created when trying to join a non-existing group. "
+		            + "You will be notified if similar group names already exist. "
+		            ))).blockId("header"))
+	    );
+	    
+	    helpLayout.add(divider());
+	    
+	    helpLayout.add(
+		        section(section -> section.text(
+		          plainText(pt -> pt.text("Available slash commands below:"))
+		        ).blockId("Commands"))
+		    );
+
+	    helpLayout.add(
+	        section(section -> section.text(
+	          plainText(pt -> pt.text("/groups join [group_name]"))
+	        ).blockId("joinCommand"))
+	    );
+	    
+	    helpLayout.add(
+		        section(section -> section.text(
+		          plainText(pt -> pt.text("/groups leave [group_name]"))
+		        ).blockId("leaveCommand"))
+		    );
+
+	    return ctx.ack(helpLayout);
+	  }
 }
