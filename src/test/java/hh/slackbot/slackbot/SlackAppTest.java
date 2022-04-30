@@ -7,9 +7,6 @@ import com.slack.api.app_backend.events.payload.EventsApiPayload;
 import com.slack.api.bolt.context.builtin.EventContext;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.model.event.AppMentionEvent;
-
-import hh.slackbot.slackbot.SlackApp;
-
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

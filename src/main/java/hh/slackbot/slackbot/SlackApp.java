@@ -6,7 +6,6 @@ import com.slack.api.bolt.context.builtin.EventContext;
 import com.slack.api.bolt.response.Response;
 import com.slack.api.methods.SlackApiException;
 import com.slack.api.model.event.AppMentionEvent;
-
 import java.io.IOException;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
@@ -43,7 +42,7 @@ public class SlackApp {
 
   public Response mentionResponse(EventsApiPayload<AppMentionEvent> req, EventContext ctx)
       throws IOException, SlackApiException {
-    ctx.say("Greetings :wave:" + System.lineSeparator() + "Learn more about me by typing: /groups help");
+    ctx.say("Greetings :wave:\nLearn more about me by typing: /groups help");
     return ctx.ack();
   }
 }

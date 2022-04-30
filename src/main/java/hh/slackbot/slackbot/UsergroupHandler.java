@@ -5,16 +5,13 @@ import com.slack.api.bolt.context.builtin.SlashCommandContext;
 import com.slack.api.bolt.request.builtin.SlashCommandRequest;
 import com.slack.api.bolt.response.Response;
 import com.slack.api.model.Usergroup;
-
 import hh.slackbot.slackbot.util.BlockMessager;
 import hh.slackbot.slackbot.util.MessageUtil;
 import hh.slackbot.slackbot.util.NameCompare;
 import hh.slackbot.slackbot.util.UsergroupUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +45,6 @@ public class UsergroupHandler {
    */
   public Response handleUsergroupCommand(SlashCommandRequest req, SlashCommandContext ctx) {
     SlashCommandPayload payload = req.getPayload();
-    String userId = payload.getUserId();
-    String responseChannel = payload.getChannelId();
     
     String command = "";
     
@@ -57,7 +52,7 @@ public class UsergroupHandler {
     
     // "/groups"
     if (payload.getText() == null) {
-    	return helpInfo;
+      return helpInfo;
     }
 
     String[] params = payload.getText().split(" ", 2);
@@ -65,22 +60,19 @@ public class UsergroupHandler {
     
     // "/groups help"
     if (command.equalsIgnoreCase("help")) {
-    	return helpInfo;
-    }
-    	
-    // "/groups invalid_command"
-    else if (!(command.equalsIgnoreCase("join") || command.equalsIgnoreCase("leave"))) {
-    	helpInfo = blockMessager.helpText(req, ctx, command);
-    	return helpInfo;
-    }
-    	
-    // "/groups join/leave"
-    else if (params.length < 2) {
-    	return ctx.ack("Missing group name. Find more info by typing: /groups help");
+      return helpInfo;
+    } else if (!(command.equalsIgnoreCase("join") || command.equalsIgnoreCase("leave"))) {
+      // "/groups invalid_command"
+      helpInfo = blockMessager.helpText(req, ctx, command);
+      return helpInfo;
+    } else if (params.length < 2) {
+      // "/groups join/leave"
+      return ctx.ack("Missing group name. Find more info by typing: /groups help");
     }
 
     String usergroupName = params[1];
-
+    String userId = payload.getUserId();
+    String responseChannel = payload.getChannelId();
     // "/groups join/leave group_name"
     if (finalizeUsergroupCommand(userId, command, usergroupName, responseChannel)) {
       return ctx.ack();

@@ -13,8 +13,6 @@ import com.slack.api.app_backend.slash_commands.payload.SlashCommandPayload;
 import com.slack.api.bolt.context.builtin.SlashCommandContext;
 import com.slack.api.bolt.request.builtin.SlashCommandRequest;
 import com.slack.api.model.Usergroup;
-
-import hh.slackbot.slackbot.UsergroupHandler;
 import hh.slackbot.slackbot.util.MessageUtil;
 import hh.slackbot.slackbot.util.UsergroupUtil;
 import java.util.ArrayList;
