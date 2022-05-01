@@ -138,7 +138,7 @@ class UsergroupHandlerTest {
 
     verify(msgUtil).sendEphemeralResponse(
         anyString(), eq(userId), eq("channel_id"));
-    verify(mockCtx).ack("Command failed to run :x:");
+    verify(mockCtx).ack(anyString());
   }
 
   @Test
@@ -204,7 +204,7 @@ class UsergroupHandlerTest {
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
     verify(msgUtil).sendEphemeralResponse(anyString(), eq(userId), eq("channel_id"));
-    verify(mockCtx).ack("Command failed to run :x:");
+    verify(mockCtx).ack(anyString());
   }
 
   @Test
@@ -231,7 +231,7 @@ class UsergroupHandlerTest {
 
     verify(msgUtil).sendEphemeralResponse(
         anyString(), eq(userId), eq("channel_id"));
-    verify(mockCtx).ack("Command failed to run :x:");
+    verify(mockCtx).ack(anyString());
   }
 
   @Test
@@ -246,7 +246,7 @@ class UsergroupHandlerTest {
 
     verify(msgUtil).sendEphemeralResponse(
         anyString(), eq(userId), eq("channel_id"));
-    verify(mockCtx).ack("Command failed to run :x:");
+    verify(mockCtx).ack(anyString());
   }
 
   @Test
