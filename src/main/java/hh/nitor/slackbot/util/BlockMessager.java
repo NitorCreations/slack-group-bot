@@ -23,7 +23,7 @@ public class BlockMessager {
   @Autowired
   private MessageUtil msgUtil;
 
-  private static final Logger logger = LoggerFactory.getLogger(MessageUtil.class);
+  private static final Logger logger = LoggerFactory.getLogger(BlockMessager.class);
 
   public boolean similarGroupsMessage(
       String actual,
@@ -32,13 +32,13 @@ public class BlockMessager {
       String userId
   ) {
     List<LayoutBlock> blocks = similarGroupsLayout(actual, similar);
+    logger.info("Interactive Block Message sent successfully to the user");
     return msgUtil.sendEphemeralResponse(blocks, "Groups with similar names", userId, channelId);
   }
-
+  
   private List<LayoutBlock> similarGroupsLayout(String actual, List<String> similar) {
     List<LayoutBlock> layout = new ArrayList<>();
-    List<BlockElement> blocks = stringsToButtons(similar);
-
+    logger.info("Creating an Interactive Block Message of similar group names...");
     layout.add(
         section(section ->
           section
@@ -46,18 +46,22 @@ public class BlockMessager {
             .accessory(
               button(b -> 
                 b.text(plainText(pt -> pt.text("Create and join")))
+                
                     .value(actual).actionId("btn_create")
+                    
               )
             ).blockId("header"))
+            
     );
 
     layout.add(divider());
-
     layout.add(
         section(section -> section.text(
           plainText(pt -> pt.text(":question: Did you mean one of these? Click to join:"))
         ).blockId("similar"))
     );
+    
+    List<BlockElement> blocks = stringsToButtons(similar);
     layout.add(actions(actions -> actions.elements(blocks).blockId("asdf")));
 
     return layout;
@@ -72,7 +76,6 @@ public class BlockMessager {
         ))
         .collect(Collectors.toList());
   }
-  
   
   public List<LayoutBlock> helpText(boolean commandFailed) {
     List<LayoutBlock> helpLayout = new ArrayList<>();

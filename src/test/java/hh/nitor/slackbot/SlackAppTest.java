@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class SlackAppTest {

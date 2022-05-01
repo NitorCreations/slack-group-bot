@@ -27,6 +27,9 @@ public class SlackApp {
 
   @Bean
   public App initSlackApp() {
+
+    logger.info("Receiving interaction from the user...");
+    
     App app = new App();
 
     app.command("/groups", userGroupHandler::handleUsergroupCommand);

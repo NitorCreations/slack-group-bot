@@ -32,6 +32,7 @@ public class MessageUtil {
    */
   public boolean sendDirectMessage(String message, String userId) {
     try {
+      logger.info("Direct message sent successfully to user");
       return client.chatPostMessage(
           ChatPostMessageRequest.builder()
               .token(TOKEN)
@@ -41,12 +42,13 @@ public class MessageUtil {
           ).isOk();
     } catch (IOException e) {
       logger.error(
-          String.format("IOException while sending direct message to user %n%s", e.getMessage()));
+          String.format("Failed to send a direct message "
+           + "to user due to IOException: %n %s", e.getMessage()));
     } catch (SlackApiException e) {
       logger.error(
-          String.format("API exception while sending direct message to user %n%s", e.getMessage()));
+          String.format("Failed to send a direct message "
+           + "to user due to API exception: %n %s", e.getMessage()));
     }
-
     return false;
   }
 
@@ -60,6 +62,7 @@ public class MessageUtil {
    */
   public boolean sendEphemeralResponse(String message, String userId, String channelId) {
     try {
+      logger.info("Ephemeral message sent successfully to user");
       return client.chatPostEphemeral(
           ChatPostEphemeralRequest.builder()
               .token(TOKEN)
@@ -70,12 +73,13 @@ public class MessageUtil {
           ).isOk();
     } catch (IOException e) {
       logger.error(
-          String.format("IOException while sending direct message to user %n%s", e.getMessage()));
+          String.format("Failed to send an ephemeral message to "
+           + "user due to IOException: %n %s", e.getMessage()));
     } catch (SlackApiException e) {
       logger.error(
-          String.format("API exception while sending direct message to user %n%s", e.getMessage()));
+          String.format("Failed to send an ephemeral message to "
+           + "user due to API exception: %n %s", e.getMessage()));
     }
-
     return false;
   }
 
@@ -106,19 +110,23 @@ public class MessageUtil {
           );
 
       if (resp.isOk()) {
+        logger.info("Ephemeral message (with block elements) sent successfully to user");
         return true;
       }
 
-      logger.error("Message post failed: {}", resp.getError());
+      logger.error("Ephemeral message post has failed: {}", resp.getError());
       
     } catch (IOException e) {
       logger.error(
-          String.format("IOException while sending direct message to user %n%s", e.getMessage()));
+          String.format("Failed to send an ephemeral message "
+           + "(with block elements) to user "
+           + "due to IOException: %n %s", e.getMessage()));
     } catch (SlackApiException e) {
       logger.error(
-          String.format("API exception while sending direct message to user %n%s", e.getMessage()));
+          String.format("Failed to send a ephemeral message "
+           + "(with block elements) to user "
+           + "due to API exception: %n %s", e.getMessage()));
     }
-
     return false;
   }
 }
