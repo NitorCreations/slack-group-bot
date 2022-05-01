@@ -45,40 +45,50 @@ public class UsergroupHandler {
    */
   public Response handleUsergroupCommand(SlashCommandRequest req, SlashCommandContext ctx) {
     SlashCommandPayload payload = req.getPayload();
+    Response resp = ctx.ack();
     
     String command = "";
     
-    Response helpInfo = blockMessager.helpText(req, ctx, command);
-    
-    // "/groups"
+    String userId = payload.getUserId();
+    String responseChannel = payload.getChannelId();
+
     if (payload.getText() == null) {
-      return helpInfo;
+      messageUtil.sendEphemeralResponse(
+          blockMessager.helpText(false), "help", userId, responseChannel);
+      return resp;
     }
 
     String[] params = payload.getText().split(" ", 2);
     command = params[0];
     
+    if (!(command.equalsIgnoreCase("join") || command.equalsIgnoreCase("leave"))) {
+      messageUtil.sendEphemeralResponse(
+          blockMessager.helpText(false), "help", userId, responseChannel);
+      return resp;
+    }
+
+    // "/groups"
+    if (params.length < 2) {
+      messageUtil.sendEphemeralResponse(
+          "Missing group name. Find more info by typing: /groups help", userId, responseChannel);
+      return resp;
+    }
+
     // "/groups help"
     if (command.equalsIgnoreCase("help")) {
-      return helpInfo;
-    } else if (!(command.equalsIgnoreCase("join") || command.equalsIgnoreCase("leave"))) {
-      // "/groups invalid_command"
-      helpInfo = blockMessager.helpText(req, ctx, command);
-      return helpInfo;
-    } else if (params.length < 2) {
-      // "/groups join/leave"
-      return ctx.ack("Missing group name. Find more info by typing: /groups help");
+      messageUtil.sendEphemeralResponse(
+          blockMessager.helpText(false), "help", userId, responseChannel);
+      return resp;
     }
 
     String usergroupName = params[1];
-    String userId = payload.getUserId();
-    String responseChannel = payload.getChannelId();
     // "/groups join/leave group_name"
-    if (finalizeUsergroupCommand(userId, command, usergroupName, responseChannel)) {
-      return ctx.ack();
-    } else {
-      return helpInfo;
+    if (!finalizeUsergroupCommand(userId, command, usergroupName, responseChannel)) {
+      messageUtil.sendEphemeralResponse(
+          blockMessager.helpText(true), "help", userId, responseChannel);
+      return ctx.ack("Command failed to run :x:");
     }
+    return resp;
   }
 
   /**

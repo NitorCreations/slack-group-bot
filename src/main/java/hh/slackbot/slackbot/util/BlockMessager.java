@@ -7,9 +7,6 @@ import static com.slack.api.model.block.composition.BlockCompositions.markdownTe
 import static com.slack.api.model.block.composition.BlockCompositions.plainText;
 import static com.slack.api.model.block.element.BlockElements.button;
 
-import com.slack.api.bolt.context.builtin.SlashCommandContext;
-import com.slack.api.bolt.request.builtin.SlashCommandRequest;
-import com.slack.api.bolt.response.Response;
 import com.slack.api.model.block.LayoutBlock;
 import com.slack.api.model.block.element.BlockElement;
 import java.util.ArrayList;
@@ -77,10 +74,10 @@ public class BlockMessager {
   }
   
   
-  public Response helpText(SlashCommandRequest req, SlashCommandContext ctx, String command) {
+  public List<LayoutBlock> helpText(boolean commandFailed) {
     List<LayoutBlock> helpLayout = new ArrayList<>();
 
-    if (command.equalsIgnoreCase("help") || command.isEmpty()) {
+    if (!commandFailed) {
       helpLayout.add(section(section -> section.text(markdownText(String.format(
           "This bot helps you to join or leave Slack user groups. "
           + "A new user group can be automatically created "
@@ -113,11 +110,6 @@ public class BlockMessager {
           ))).blockId("fail"))
       );
       
-      helpLayout.add(section(section -> section.text(markdownText(String.format(
-          "Your command: " + command
-          ))).blockId("invalid"))
-      );
-      
       helpLayout.add(divider());
       
       helpLayout.add(section(section -> section.text(plainText(pt -> pt.text(
@@ -143,6 +135,6 @@ public class BlockMessager {
       helpLayout.add(divider());
     }
 
-    return ctx.ack(helpLayout);
+    return helpLayout;
   }
 }
