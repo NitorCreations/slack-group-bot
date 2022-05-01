@@ -1,4 +1,4 @@
-package hh.slackbot.slackbot;
+package hh.nitor.slackbot;
 
 import static com.slack.api.model.block.Blocks.divider;
 import static com.slack.api.model.block.Blocks.section;
@@ -17,7 +17,7 @@ import com.slack.api.model.Usergroup;
 import com.slack.api.model.block.LayoutBlock;
 import com.slack.api.model.event.AppHomeOpenedEvent;
 import com.slack.api.model.view.View;
-import hh.slackbot.slackbot.util.UsergroupUtil;
+import hh.nitor.slackbot.util.UsergroupUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

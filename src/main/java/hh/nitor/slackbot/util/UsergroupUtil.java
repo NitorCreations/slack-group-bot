@@ -1,4 +1,4 @@
-package hh.slackbot.slackbot.util;
+package hh.nitor.slackbot.util;
 
 import com.slack.api.methods.MethodsClient;
 import com.slack.api.methods.SlackApiException;
@@ -40,7 +40,7 @@ public class UsergroupUtil {
    */
   public List<Usergroup> getUserGroups() {
     List<Usergroup> usergroups = null;
-    logger.info("Retrieving user groups");
+    logger.info("Trying to retrieve all groups...");
 
     try {
       UsergroupsListResponse resp = client.usergroupsList(UsergroupsListRequest.builder()
@@ -50,12 +50,15 @@ public class UsergroupUtil {
       } else {
         usergroups = resp.getUsergroups();
       }
+      logger.info("All groups retrieved successfully");
+      return resp.getUsergroups();
     } catch (IOException e) {
-      logger.error(String.format("IO Error while getting usergroups%n %s", e.getMessage()));
+      logger.error(String.format("Failed to retrieve all groups"
+             + " due to IO Error: %n %s", e.getMessage()));
     } catch (SlackApiException e) {
-      logger.error(String.format("Slack API Error while getting usergroups%n %s", e.getMessage()));
+      logger.error(String.format("Failed to retrieve all groups"
+             + " due to Slack API Error: %n %s", e.getMessage()));
     }
-
     return usergroups;
   }
 
@@ -68,7 +71,7 @@ public class UsergroupUtil {
   public Usergroup getGroupByName(String name) {
     Usergroup group = null;
     List<Usergroup> usergroups = getUserGroups();
-    logger.info(String.format("group name: %s", name));
+    logger.info("Searching for the group {}...", name);
     if (!(usergroups == null || usergroups.isEmpty())) {
       for (Usergroup g : usergroups) {
         if (g.getName().equalsIgnoreCase(name)) {
@@ -88,6 +91,7 @@ public class UsergroupUtil {
    */
   public List<String> getUsergroupUsers(String groupId) {
     List<String> users = null;
+    logger.info("Trying to retrieve all the users from the group...");
     try {
       UsergroupsUsersListResponse resp = client.usergroupsUsersList(
           UsergroupsUsersListRequest.builder().token(TOKEN).usergroup(groupId).build());
@@ -97,12 +101,15 @@ public class UsergroupUtil {
       } else {
         users = resp.getUsers();
       }
+      logger.info("The group's users retrieved successfully");
+      users = resp.getUsers();
 
     } catch (IOException e) {
-      logger.error(String.format("IO Error while getting usergroups users%n %s", e.getMessage()));
+      logger.error(String.format("Failed to retrieve the group's "
+             + "users due to IO Error: %n %s", e.getMessage()));
     } catch (SlackApiException e) {
-      logger.error(
-          String.format("Slack API Error while getting usergroups users%n %s", e.getMessage()));
+      logger.error(String.format("Failed to retrieve the group's "
+             + "users due to Slack API Error: %n %s", e.getMessage()));
     }
 
     return users;
@@ -118,6 +125,7 @@ public class UsergroupUtil {
   public Usergroup createUsergroup(String name) {
     Usergroup group = null;
 
+    logger.info("Trying to create the group {}...", name);
     try {
       UsergroupsCreateResponse resp = client.usergroupsCreate(
           UsergroupsCreateRequest.builder()
@@ -126,18 +134,17 @@ public class UsergroupUtil {
             .handle(name)
             .build());
 
-      if (!resp.isOk()) {
-        logger.warn("Failure creating usergroup: {}", resp.getError());
-      } else {
+      if (resp.isOk()) {
+        logger.info("The group {} created successfully", name);
         group = resp.getUsergroup();
       }
     } catch (IOException e) {
-      logger.error(String.format("IO Error while creating usergroup%n %s", e.getMessage()));
+      logger.error(String.format("Failed to retrieve the group's users"
+             + " due to IO Error: %n %s", e.getMessage()));
     } catch (SlackApiException e) {
-      logger.error(
-          String.format("Slack API Error while creating usergroup%n %s", e.getMessage()));
+      logger.error(String.format("Failed to retrieve the group's users"
+             + " due to Slack API Error: %n %s", e.getMessage()));
     }
-
     return group;
   }
 
@@ -151,11 +158,14 @@ public class UsergroupUtil {
    */
   public boolean userInGroup(String userId, List<String> users) {
 
+    logger.info("Checking if the user is in the group...");
     if (users == null || users.isEmpty()) {
+      logger.info("The user is not in the group");
       return false;
     } else {
       for (String u : users) {
         if (u.equals(userId)) {
+          logger.info("The user is in the group");
           return true;
         }
       }
@@ -171,19 +181,22 @@ public class UsergroupUtil {
    */
   public boolean enableUsergroup(String id) {
     try {
+      logger.info("Trying to enable the group...");
       UsergroupsEnableResponse resp = client
           .usergroupsEnable(UsergroupsEnableRequest.builder().token(TOKEN).usergroup(id).build());
 
       if (!resp.isOk()) {
         logger.warn("Failure enabling usergroup: {}", resp.getError());
       }
+      logger.info("The group successfully enabled");
       return resp.isOk();
     } catch (IOException e) {
-      logger.error(String.format("IO Error while enabling usergroup%n %s", e.getMessage()));
+      logger.error(String.format("Failed to enable the group "
+             + "due to IO Error: %n %s", e.getMessage()));
     } catch (SlackApiException e) {
-      logger.error(String.format("Slack API Error while enabling usergroup%n %s", e.getMessage()));
+      logger.error(String.format("Failed to enable the group "
+             + "due to Slack API Error: %n %s", e.getMessage()));
     }
-
     return false;
   }
 
@@ -195,19 +208,22 @@ public class UsergroupUtil {
    */
   public boolean disableUsergroup(String id) {
     try {
+      logger.info("Trying to disable the group...");
       UsergroupsDisableResponse resp = client
           .usergroupsDisable(UsergroupsDisableRequest.builder().token(TOKEN).usergroup(id).build());
 
       if (!resp.isOk()) {
         logger.warn("Failure disabling usergroup: {}", resp.getError());
       }
+      logger.info("The group successfully disabled");
       return resp.isOk();
     } catch (IOException e) {
-      logger.error(String.format("IO Error while disabling usergroup%n %s", e.getMessage()));
+      logger.error(String.format("Failed to disable the "
+             + "group due to IO Error: %n %s", e.getMessage()));
     } catch (SlackApiException e) {
-      logger.error(String.format("Slack API Error while disabling usergroup%n %s", e.getMessage()));
+      logger.error(String.format("Failed to disable the "
+             + "group due to Slack API Error: %n %s", e.getMessage()));
     }
-
     return false;
   }
 
@@ -219,10 +235,12 @@ public class UsergroupUtil {
    * @returns an ArrayList
    */
   public boolean checkIfAvailable(Usergroup group) {
+    logger.info("Checking if the {} is available...", group.getName());
     if (group.getDateDelete() != 0) {
+      logger.info("The group {} seems to be disabled: it will now be enabled", group.getName());
       return enableUsergroup(group.getId());
     }
-
+    logger.info("The group {} is available", group.getName()); 
     return true;
   }
 
@@ -236,6 +254,7 @@ public class UsergroupUtil {
    *         successful. Returns false if the method fails
    */
   public boolean updateUsergroupUserlist(List<String> users, String groupId) {
+    logger.info("Trying to update the group's user list...");
     try {
       UsergroupsUsersUpdateResponse resp =
           client.usergroupsUsersUpdate(UsergroupsUsersUpdateRequest.builder()
@@ -243,13 +262,15 @@ public class UsergroupUtil {
       if (!resp.isOk()) {
         logger.warn("Failure updating usergroup users: {}", resp.getError());
       }
+      logger.info("The group's user list successfully updated");
       return resp.isOk();
     } catch (IOException e) {
-      logger.error(String.format("IO Error while updating usergroup%n %s", e.getMessage()));
+      logger.error(String.format("Failed to update the group's "
+             + "user list due to IO Error: %n %s", e.getMessage()));
     } catch (SlackApiException e) {
-      logger.error(String.format("Slack API Error while updating usergroup%n %s", e.getMessage()));
+      logger.error(String.format("Failed to update the group's "
+             + "user list due to Slack API Error: %n %s", e.getMessage()));
     }
-
     return false;
   }
 }

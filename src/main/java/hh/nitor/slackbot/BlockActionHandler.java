@@ -1,4 +1,4 @@
-package hh.slackbot.slackbot;
+package hh.nitor.slackbot;
 
 import com.google.gson.JsonObject;
 import com.slack.api.app_backend.interactive_components.payload.BlockActionPayload;
@@ -7,9 +7,9 @@ import com.slack.api.bolt.context.builtin.ActionContext;
 import com.slack.api.bolt.request.builtin.BlockActionRequest;
 import com.slack.api.bolt.response.Response;
 import com.slack.api.model.Usergroup;
-import hh.slackbot.slackbot.util.MessageUtil;
-import hh.slackbot.slackbot.util.RestService;
-import hh.slackbot.slackbot.util.UsergroupUtil;
+import hh.nitor.slackbot.util.MessageUtil;
+import hh.nitor.slackbot.util.RestService;
+import hh.nitor.slackbot.util.UsergroupUtil;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,11 +37,13 @@ public class BlockActionHandler {
   private static final Logger logger = LoggerFactory.getLogger(BlockActionHandler.class);
   
   public Response handleBlockJoinAction(BlockActionRequest req, ActionContext ctx) {
+    logger.info("Starting HandleBlockJoinAction...");
+    logger.info("Processing the payload...");
     Response resp = ctx.ack();
     BlockActionPayload payload = req.getPayload();
     List<Action> actions = payload.getActions();
     if (actions.isEmpty()) {
-      logger.error("payload contained no actions, unable to proceed with request");
+      logger.error("payload contained no actions: unable to proceed with request");
       return resp;
     }
 
@@ -57,11 +59,14 @@ public class BlockActionHandler {
     }
 
     if (usergroup == null) {
+      logger.error("The group {} does not exist", groupName);
       messageUtil.sendEphemeralResponse(
-          String.format("You could not join the group %s. "
-          + "This might happen if the group does not exist "
-          + "or there has been an "
-          + "unexpected I/O or Slack API error :x:", groupName), userId, channelId);
+          String.format("You could not not be addded to the group %s. "
+          + "The group does not exist :x:", groupName), userId, channelId);
+    } else if (!usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
+      messageUtil.sendEphemeralResponse(
+          String.format("Failed to add you to the group %s :x:", groupName),
+          userId, channelId);
       return resp;
     }
 
@@ -83,6 +88,9 @@ public class BlockActionHandler {
   }
 
   public Response handleBlockCreateAction(BlockActionRequest req, ActionContext ctx) {
+
+    logger.info("Starting handleBlockCreateAction...");
+    logger.info("Processing the payload...");
     Response resp = ctx.ack();
     BlockActionPayload payload = req.getPayload();
     List<Action> actions = payload.getActions();
@@ -106,6 +114,7 @@ public class BlockActionHandler {
     if (!usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
       return resp;
     }
+    
 
     // Deleting the ephemeral blockkit message if event came from a channel
     if (userId != channelId) {

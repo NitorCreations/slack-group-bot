@@ -1,4 +1,4 @@
-package hh.slackbot.slackbot;
+package hh.nitor.slackbot;
 
 import com.slack.api.app_backend.events.payload.EventsApiPayload;
 import com.slack.api.bolt.App;
@@ -31,6 +31,9 @@ public class SlackApp {
 
   @Bean
   public App initSlackApp() {
+
+    logger.info("Receiving interaction from the user...");
+    
     App app = new App();
 
     app.command("/groups", userGroupHandler::handleUsergroupCommand);
@@ -50,7 +53,7 @@ public class SlackApp {
 
   public Response mentionResponse(EventsApiPayload<AppMentionEvent> req, EventContext ctx)
       throws IOException, SlackApiException {
-    ctx.say("Greetings :wave:");
+    ctx.say("Greetings :wave:\nLearn more about me by typing: /groups help");
     return ctx.ack();
   }
 }

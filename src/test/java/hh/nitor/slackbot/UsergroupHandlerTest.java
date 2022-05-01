@@ -1,4 +1,4 @@
-package hh.slackbot.slackbot;
+package hh.nitor.slackbot;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -13,8 +13,8 @@ import com.slack.api.app_backend.slash_commands.payload.SlashCommandPayload;
 import com.slack.api.bolt.context.builtin.SlashCommandContext;
 import com.slack.api.bolt.request.builtin.SlashCommandRequest;
 import com.slack.api.model.Usergroup;
-import hh.slackbot.slackbot.util.MessageUtil;
-import hh.slackbot.slackbot.util.UsergroupUtil;
+import hh.nitor.slackbot.util.MessageUtil;
+import hh.nitor.slackbot.util.UsergroupUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -60,31 +60,31 @@ class UsergroupHandlerTest {
         Usergroup.builder()
           .id("1111")
           .users(users)
-          .name("sample group")
+          .name("sample_group")
           .dateDelete(0)
           .build(),
         Usergroup.builder()
           .id("2222")
           .users(new ArrayList<String>())
-          .name("empty group")
+          .name("empty_group")
           .dateDelete(0)
           .build(),
         Usergroup.builder()
           .id("3333")
           .users(users2)
-          .name("single group")
+          .name("single_group")
           .dateDelete(0)
           .build(),
         Usergroup.builder()
           .id("4444")
           .users(users2)
-          .name("disabled group")
+          .name("disabled_group")
           .dateDelete(1)
           .build(),
           Usergroup.builder()
           .id("5555")
           .users(users)
-          .name("sample2 group")
+          .name("sample2_group")
           .dateDelete(0)
           .build()
     );
@@ -108,10 +108,10 @@ class UsergroupHandlerTest {
   }
 
   @Test
-  @DisplayName("Add user to empty group")
+  @DisplayName("Add user to empty_group")
   void addUserToEmptyGroup() {
     String userId = "user4";
-    String userInput = "join empty group";
+    String userInput = "join empty_group";
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
     
     verify(mockCtx).ack();
@@ -121,7 +121,7 @@ class UsergroupHandlerTest {
   @DisplayName("Add user back to group they left from as last member")
   void addUserBackToDisabledGroup() {
     String userId = "user1";
-    String userInput = "join disabled group";
+    String userInput = "join disabled_group";
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
     verify(groupUtil)
@@ -133,7 +133,7 @@ class UsergroupHandlerTest {
   @DisplayName("Try adding duplicate user to group")
   void addDuplicateUserToGroup() {
     String userId = "user1";
-    String userInput = "join sample group";
+    String userInput = "join sample_group";
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
     verify(msgUtil).sendEphemeralResponse(
@@ -145,7 +145,7 @@ class UsergroupHandlerTest {
   @DisplayName("Remove user from a group they're in")
   void removeUserFromGroup() {
     String userId = "user1";
-    String userInput = "leave sample group";
+    String userInput = "leave sample_group";
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
     verify(mockCtx).ack();
@@ -155,7 +155,7 @@ class UsergroupHandlerTest {
   @DisplayName("Try to remove user from a group they're not in")
   void removeUserFromGroupAbsent() {
     String userId = "user4";
-    String userInput = "leave sample group";
+    String userInput = "leave sample_group";
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
     verify(msgUtil).sendEphemeralResponse(
@@ -167,7 +167,7 @@ class UsergroupHandlerTest {
   @DisplayName("Remove the last user from a group")
   void removeLastUserFromGroup() {
     String userId = "user1";
-    String userInput = "leave single group";
+    String userInput = "leave single_group";
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
     verify(groupUtil).disableUsergroup("3333");
@@ -211,11 +211,11 @@ class UsergroupHandlerTest {
   @DisplayName("Invalid command fails")
   void invalidCommandFails() {
     String userId = "user1";
-    String userInput = "jnoin sample group";
+    String userInput = "jnoin sample_group";
 
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
     
-    verify(msgUtil).sendEphemeralResponse(anyString(), eq(userId), eq("channel_id"));
+    verify(msgUtil).sendEphemeralResponse(anyList(), anyString(), eq(userId), eq("channel_id"));
     verify(mockCtx).ack();
   }
 
@@ -223,7 +223,7 @@ class UsergroupHandlerTest {
   @DisplayName("Enabling group fails")
   void groupEnableFailure() {
     String userId = "user1";
-    String userInput = "join disabled group";
+    String userInput = "join disabled_group";
 
     when(groupUtil.enableUsergroup(any())).thenReturn(false);
 
@@ -238,7 +238,7 @@ class UsergroupHandlerTest {
   @DisplayName("Joining group fails")
   void groupJoinFailure() {
     String userId = "user4";
-    String userInput = "join sample group";
+    String userInput = "join sample_group";
 
     when(groupUtil.updateUsergroupUserlist(anyList(), anyString())).thenReturn(false);
 
@@ -266,7 +266,7 @@ class UsergroupHandlerTest {
   @DisplayName("Similar group doesn't prevent joining an existing one")
   void typoAllowsExisting() {
     String userId = "user";
-    String userInput = "join sample group";
+    String userInput = "join sample_group";
 
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
