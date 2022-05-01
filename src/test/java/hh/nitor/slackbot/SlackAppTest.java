@@ -1,4 +1,4 @@
-package hh.slackbot.slackbot;
+package hh.nitor.slackbot;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;

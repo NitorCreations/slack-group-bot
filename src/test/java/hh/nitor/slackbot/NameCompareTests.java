@@ -1,6 +1,6 @@
-package hh.slackbot.slackbot;
+package hh.nitor.slackbot;
 
-import hh.slackbot.slackbot.util.NameCompare;
+import hh.nitor.slackbot.util.NameCompare;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

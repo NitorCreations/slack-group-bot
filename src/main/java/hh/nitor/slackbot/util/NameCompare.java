@@ -1,4 +1,4 @@
-package hh.slackbot.slackbot.util;
+package hh.nitor.slackbot.util;
 
 import java.util.ArrayList;
 import java.util.List;

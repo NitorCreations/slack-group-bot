@@ -1,4 +1,4 @@
-package hh.slackbot.slackbot.util;
+package hh.nitor.slackbot.util;
 
 import com.slack.api.methods.MethodsClient;
 import com.slack.api.methods.SlackApiException;

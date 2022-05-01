@@ -1,14 +1,14 @@
-package hh.slackbot.slackbot;
+package hh.nitor.slackbot;
 
 import com.slack.api.app_backend.slash_commands.payload.SlashCommandPayload;
 import com.slack.api.bolt.context.builtin.SlashCommandContext;
 import com.slack.api.bolt.request.builtin.SlashCommandRequest;
 import com.slack.api.bolt.response.Response;
 import com.slack.api.model.Usergroup;
-import hh.slackbot.slackbot.util.BlockMessager;
-import hh.slackbot.slackbot.util.MessageUtil;
-import hh.slackbot.slackbot.util.NameCompare;
-import hh.slackbot.slackbot.util.UsergroupUtil;
+import hh.nitor.slackbot.util.BlockMessager;
+import hh.nitor.slackbot.util.MessageUtil;
+import hh.nitor.slackbot.util.NameCompare;
+import hh.nitor.slackbot.util.UsergroupUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
