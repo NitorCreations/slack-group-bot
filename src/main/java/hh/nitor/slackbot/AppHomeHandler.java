@@ -17,6 +17,7 @@ import com.slack.api.model.Usergroup;
 import com.slack.api.model.block.LayoutBlock;
 import com.slack.api.model.event.AppHomeOpenedEvent;
 import com.slack.api.model.view.View;
+import hh.nitor.slackbot.util.BlockMessager;
 import hh.nitor.slackbot.util.UsergroupUtil;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,6 +39,9 @@ public class AppHomeHandler {
 
   @Autowired
   private MethodsClient client;
+
+  @Autowired
+  private BlockMessager blockMessager;
 
   public Response handleEvent(EventsApiPayload<AppHomeOpenedEvent> req, EventContext ctx) {
     Response resp = ctx.ack();
@@ -74,6 +78,8 @@ public class AppHomeHandler {
   private View generateView(String userId) {
     List<LayoutBlock> layout = new ArrayList<>();
     List<Usergroup> groups = util.getUserGroups();
+    layout.addAll(blockMessager.helpText(false));
+    layout.add(divider());
     layout.addAll(groupsToElements(groups, userId));
     View view = View
         .builder()
