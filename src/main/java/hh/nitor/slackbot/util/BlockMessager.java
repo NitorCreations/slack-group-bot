@@ -77,34 +77,25 @@ public class BlockMessager {
         .collect(Collectors.toList());
   }
   
-  public List<LayoutBlock> helpText(boolean commandFailed) {
+  public List<LayoutBlock> helpText(boolean showFailInfo) {
     List<LayoutBlock> helpLayout = new ArrayList<>();
 
-    if (!commandFailed) {
-      helpLayout.add(section(section -> section.text(markdownText(String.format(
-          "This bot helps you to join or leave Slack user groups. "
-          + "A new user group can be automatically created "
-          + "when trying to join a non-existing group. "
-          + "You will be notified if similar group names already exist. "
-          ))).blockId("botInfo"))
-      );
-          
-      helpLayout.add(divider());
-          
-      helpLayout.add(section(section -> section.text(plainText(pt -> pt.text(
-          "Available slash commands below:"
-          ))).blockId("commands"))
-      );
-
-      helpLayout.add(section(section -> section.text(plainText(pt -> pt.text(
-          "/groups join [group_name]"
-          ))).blockId("joinCommand"))
-      );
-          
-      helpLayout.add(section(section -> section.text(plainText(pt -> pt.text(
-          "/groups leave [group_name]"
-          ))).blockId("leaveCommand"))
-      );
+    if (!showFailInfo) {
+      helpLayout.add(section(s -> s.fields(
+          List.of(
+            plainText(
+              "This bot helps you to join or leave Slack user groups. "
+              + "A new user group can be automatically created "
+              + "when trying to join a non-existing group. "
+              + "You will be notified if similar group names already exist."
+            ),
+            plainText(
+              "Available slash commands below:\n"
+              + "/groups join [group_name]\n"
+              + "/groups leave [group_name]\n"
+            )
+          )
+      ).blockId("botInfo")));
         
     } else {
         
