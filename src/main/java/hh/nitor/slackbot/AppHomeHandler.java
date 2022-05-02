@@ -89,7 +89,15 @@ public class AppHomeHandler {
     return view;
   }
 
-  private List<LayoutBlock> groupsToElements(List<Usergroup> groups, String userId) {
+  /**
+   * Generates a list of layoutblocks based on the current state of the usergroups
+   * and the user that sent the request.
+   *
+   * @param groups list of usergroups
+   * @param userId id of the user to generate the view for
+   * @return a list of layoutblocks that contain all usergroups and info.
+   */
+  public List<LayoutBlock> groupsToElements(List<Usergroup> groups, String userId) {
     List<LayoutBlock> elements = new ArrayList<>();
     List<Usergroup> enabled = new ArrayList<>();
     List<Usergroup> disabled = new ArrayList<>();
@@ -133,8 +141,12 @@ public class AppHomeHandler {
             button(b -> b.text(plainText("Leave group")).value(name).actionId("leave_" + name))
           ).blockId(g.getId())));
 
-      elements.add(divider());
+      if (i < isMember.size() - 1) {
+        elements.add(divider());
+      }
     }
+
+    elements.add(divider());
 
     elements.add(
         section(section -> section.text(
@@ -165,8 +177,12 @@ public class AppHomeHandler {
             button(b -> b.text(plainText("Join group")).value(name).actionId("join_" + name))
           ).blockId(g.getId())));
 
-      elements.add(divider());
+      if (i < enabled.size() - 1) {
+        elements.add(divider());
+      }
     }
+
+    elements.add(divider());
 
     elements.add(
         section(section -> section.text(

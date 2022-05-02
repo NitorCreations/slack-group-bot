@@ -31,7 +31,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UsergroupHandlerTest {
   @Autowired
-  UsergroupHandler groupHandler;
+  private UsergroupHandler groupHandler;
 
   @MockBean
   private UsergroupUtil groupUtil;
