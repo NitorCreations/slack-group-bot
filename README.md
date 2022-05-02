@@ -28,7 +28,7 @@
 
 <div align="center">
   <a href="https://api.slack.com/" target="_blank">
-    <img src="https://raw.githubusercontent.com/NitorCreations/slack-group-bot/docs/readme-images/Slack_Mark_Web.png" alt="Logo" width="80" height="80">
+    <img src="https://i.ibb.co/1Zy5Xwd/Slack-Mark-Web.png" alt="Slack logo" width="80" height="80">
   </a>
 
 <h3 align="center">Nitor Slack group bot</h3>
