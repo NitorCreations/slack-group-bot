@@ -63,7 +63,7 @@ public class UsergroupHandler {
     }
 
     String[] params = payload.getText().split(" ", 2);
-    command = params[0];
+    command = params[0].toLowerCase();
     
     if (!(command.equalsIgnoreCase("join") || command.equalsIgnoreCase("leave"))) {
       messageUtil.sendEphemeralResponse(
@@ -85,7 +85,7 @@ public class UsergroupHandler {
       return resp;
     }
 
-    String usergroupName = params[1];
+    String usergroupName = params[1].toLowerCase();
     // "/groups join/leave group_name"
     if (!finalizeUsergroupCommand(userId, command, usergroupName, responseChannel)) {
       messageUtil.sendEphemeralResponse(
