@@ -26,13 +26,7 @@
   </ol>
 </details>
 
-<div align="center">
-  <p align="center"> 
-    <a href="https://github.com/tuomasvalkamo/news-app/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/github/github-icon.svg" alt="github" width="40" height="40"/> 
-  </p>
-  
-  <h3 align="center">Nitor Slack group bot</h3>
-</div>
+# Nitor Slack group bot
 
 ## About the project
 
