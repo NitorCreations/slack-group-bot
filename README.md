@@ -27,8 +27,10 @@
 </details>
 
 <div align="center">
-  <a href="https://api.slack.com/"><img src="https://i.ibb.co/1Zy5Xwd/Slack-Mark-Web.png" alt="Slack-Mark-Web" border="0" /></a>
-
+  <p align="center"> 
+    <a href="https://github.com/tuomasvalkamo/news-app/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/github/github-icon.svg" alt="github" width="40" height="40"/> 
+  </p>
+  
   <h3 align="center">Nitor Slack group bot</h3>
 </div>
 
