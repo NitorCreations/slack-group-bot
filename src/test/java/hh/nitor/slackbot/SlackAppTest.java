@@ -1,6 +1,7 @@
 package hh.nitor.slackbot;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 
 import com.slack.api.app_backend.events.payload.EventsApiPayload;
@@ -48,7 +49,7 @@ class SlackAppTest {
     // mockReq and mockCtx are defined with @MockBean
     slackApp.mentionResponse(mockReq, mockCtx);
 
-    verify(mockCtx).say("Greetings :wave:");
+    verify(mockCtx).say(anyString());
     verify(mockCtx).ack();
   }
 }

@@ -2,10 +2,8 @@ package hh.nitor.slackbot.util;
 
 import com.slack.api.methods.MethodsClient;
 import com.slack.api.methods.SlackApiException;
-import com.slack.api.methods.request.chat.ChatDeleteRequest;
 import com.slack.api.methods.request.chat.ChatPostEphemeralRequest;
 import com.slack.api.methods.request.chat.ChatPostMessageRequest;
-import com.slack.api.methods.response.chat.ChatDeleteResponse;
 import com.slack.api.methods.response.chat.ChatPostEphemeralResponse;
 import com.slack.api.model.block.LayoutBlock;
 import java.io.IOException;

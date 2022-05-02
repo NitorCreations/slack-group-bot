@@ -76,4 +76,68 @@ public class BlockMessager {
         ))
         .collect(Collectors.toList());
   }
+  
+  public List<LayoutBlock> helpText(boolean commandFailed) {
+    List<LayoutBlock> helpLayout = new ArrayList<>();
+
+    if (!commandFailed) {
+      helpLayout.add(section(section -> section.text(markdownText(String.format(
+          "This bot helps you to join or leave Slack user groups. "
+          + "A new user group can be automatically created "
+          + "when trying to join a non-existing group. "
+          + "You will be notified if similar group names already exist. "
+          ))).blockId("botInfo"))
+      );
+          
+      helpLayout.add(divider());
+          
+      helpLayout.add(section(section -> section.text(plainText(pt -> pt.text(
+          "Available slash commands below:"
+          ))).blockId("commands"))
+      );
+
+      helpLayout.add(section(section -> section.text(plainText(pt -> pt.text(
+          "/groups join [group_name]"
+          ))).blockId("joinCommand"))
+      );
+          
+      helpLayout.add(section(section -> section.text(plainText(pt -> pt.text(
+          "/groups leave [group_name]"
+          ))).blockId("leaveCommand"))
+      );
+        
+    } else {
+        
+      helpLayout.add(section(section -> section.text(markdownText(String.format(
+          "Command failed to execute :x:"
+          ))).blockId("fail"))
+      );
+      
+      helpLayout.add(divider());
+      
+      helpLayout.add(section(section -> section.text(plainText(pt -> pt.text(
+          "Available slash commands below:"
+          ))).blockId("commands"))
+      );
+      
+      helpLayout.add(section(section -> section.text(plainText(pt -> pt.text(
+          "/groups help"
+          ))).blockId("help"))
+      );
+
+      helpLayout.add(section(section -> section.text(plainText(pt -> pt.text(
+          "/groups join [group_name]"
+          ))).blockId("joinCommand"))
+      );
+      
+      helpLayout.add(section(section -> section.text(plainText(pt -> pt.text(
+          "/groups leave [group_name]"
+          ))).blockId("leaveCommand"))
+      );
+      
+      helpLayout.add(divider());
+    }
+
+    return helpLayout;
+  }
 }

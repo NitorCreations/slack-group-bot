@@ -45,8 +45,7 @@ public class SlackApp {
 
   public Response mentionResponse(EventsApiPayload<AppMentionEvent> req, EventContext ctx)
       throws IOException, SlackApiException {
-    logger.info("Starting MentionResponse...");
-    ctx.say("Greetings :wave:");
+    ctx.say("Greetings :wave:\nLearn more about me by typing: /groups help");
     return ctx.ack();
   }
 }
