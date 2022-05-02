@@ -63,13 +63,9 @@ public class BlockActionHandler {
       messageUtil.sendEphemeralResponse(
           String.format("You could not not be addded to the group %s. "
           + "The group does not exist :x:", groupName), userId, channelId);
-    } else if (!usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
-      messageUtil.sendEphemeralResponse(
-          String.format("Failed to add you to the group %s :x:", groupName),
-          userId, channelId);
       return resp;
     }
-
+    
     if (!usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
       return resp;
     }
