@@ -92,7 +92,7 @@ Write the following command in the Slack channel's message input:
 - If the group does not exist, you can not leave it (the removing will fail)
 - If you are the only member of the group, it will be disabled after you have left it successfully
 - Remember: there will be no interactive list for similar group names when you are trying to leave a group
-    - Make sure you write group's name correctly
+  - Make sure you write group's name correctly
 
 #### Help message ####
 
@@ -103,8 +103,8 @@ Write the following command in the Slack channel's message input:
 
 - The command will show you a help message which contains all the available commands of the bot
 - The command is also launched automatically if: 
-      - your join/leave command has failed due to missing parameters
-      - you have used a command that does not exist in the bot
+  - Your join/leave command has failed due to missing parameters
+  - You have used a command that does not exist in the bot
 
 
 
