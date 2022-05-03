@@ -70,6 +70,7 @@ Write the following command in the Slack channel's message input:
 ```Slack input
     /groups join [group_name]
 ```
+
 - If the group exists, and you are not currently in it, you will be added to it successfully
 - If the group does not exist, it will be created before you are added to it successfully
 - If you already are in the group, you can not join it (the joining will fail)
@@ -101,6 +102,11 @@ Write the following command in the Slack channel's message input:
 ```
 
 - The command will show you a help message which contains all the available commands of the bot
+- The command is also launched automatically if: 
+      - your join/leave command has failed due to missing parameters
+      - you have used a command that does not exist in the bot
+
+
 
 
 ## Technologies
