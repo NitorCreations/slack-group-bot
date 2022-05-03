@@ -89,9 +89,9 @@ Write the following command in the Slack channel's message input:
 
 - If you are in the group, you will be removed from it successfully
 - If the group does not exist, you can not leave it (the removing will fail)
-- If the group has no members after you have left the group, it will be disabled
-- Remember: there will be no check for similar group names when trying to leave the group
-    - Make sure you write the group's name correctly
+- If you are the only member of the group, it will be disabled after you have left it successfully
+- Remember: there will be no interactive list for similar group names when you are trying to leave a group
+    - Make sure you write group's name correctly
 
 #### Help message ####
 
