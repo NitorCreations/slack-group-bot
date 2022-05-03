@@ -65,9 +65,43 @@ Use this space to show useful examples of how a project can be used. Additional 
 
 ### Commands
 
-- Add to group: /groups join [group_name]
-- Remove from group: /groups leave [group_name]
-- Help: /groups help
+#### Joining / creating the user group: ####
+Write the following command in the Slack channel's message input: 
+```Slack input
+    /groups join [group_name]
+```
+- If the group exists, and you are not currently in it, you will be added to it successfully
+- If the group does not exist, it will be created before you are added to it successfully
+- If you already are in the group, you can not join it (the joining will fail)
+- If the user group is disabled, it will be enabled again before you are added to it successfully
+- If the group's name is similar with other group names, an interactive list will be shown to you:
+  - The list contains:
+    - All the groups that have similar names with the given group name
+    - "Join" buttons, which you can press in order to join any of those similar groups
+    - "Create and Join" button, which you can press to create and join the new group
+
+#### Leaving the user group: ####
+
+Write the following command in the Slack channel's message input:
+```Slack input
+   /groups leave [group_name]
+```
+
+- If you are in the group, you will be removed from it successfully
+- If the group does not exist, you can not leave it (the removing will fail)
+- If the group has no members after you have left the group, it will be disabled
+- Remember: there will be no check for similar group names when trying to leave the group
+    - Make sure you write the group's name correctly
+
+#### Help message ####
+
+Write the following command in the Slack channel's message input:
+```Slack input
+   /groups help
+```
+
+- The command will show you a help message which contains all the available commands of the bot
+
 
 ## Technologies
 
