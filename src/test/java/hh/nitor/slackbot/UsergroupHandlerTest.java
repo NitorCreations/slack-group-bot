@@ -31,7 +31,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UsergroupHandlerTest {
   @Autowired
-  UsergroupHandler groupHandler;
+  private UsergroupHandler groupHandler;
 
   @MockBean
   private UsergroupUtil groupUtil;
@@ -138,7 +138,7 @@ class UsergroupHandlerTest {
 
     verify(msgUtil).sendEphemeralResponse(
         anyString(), eq(userId), eq("channel_id"));
-    verify(mockCtx).ack(anyString());
+    verify(mockCtx).ack();
   }
 
   @Test
@@ -204,7 +204,7 @@ class UsergroupHandlerTest {
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
     verify(msgUtil).sendEphemeralResponse(anyString(), eq(userId), eq("channel_id"));
-    verify(mockCtx).ack(anyString());
+    verify(mockCtx).ack();
   }
 
   @Test
@@ -231,7 +231,7 @@ class UsergroupHandlerTest {
 
     verify(msgUtil).sendEphemeralResponse(
         anyString(), eq(userId), eq("channel_id"));
-    verify(mockCtx).ack(anyString());
+    verify(mockCtx).ack();
   }
 
   @Test
@@ -246,7 +246,7 @@ class UsergroupHandlerTest {
 
     verify(msgUtil).sendEphemeralResponse(
         anyString(), eq(userId), eq("channel_id"));
-    verify(mockCtx).ack(anyString());
+    verify(mockCtx).ack();
   }
 
   @Test

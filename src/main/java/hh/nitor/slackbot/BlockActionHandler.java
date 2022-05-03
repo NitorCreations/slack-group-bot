@@ -31,6 +31,9 @@ public class BlockActionHandler {
   @Autowired
   private RestService restService;
 
+  @Autowired
+  private AppHomeHandler homeHandler;
+
   private static final Logger logger = LoggerFactory.getLogger(BlockActionHandler.class);
   
   public Response handleBlockJoinAction(BlockActionRequest req, ActionContext ctx) {
@@ -45,32 +48,38 @@ public class BlockActionHandler {
     }
 
     String userId = payload.getUser().getId();
-    String channelId = payload.getChannel().getId();
     String groupName = actions.get(0).getValue();
     Usergroup usergroup = usergroupUtil.getGroupByName(groupName);
+    String channelId;
+
+    if (payload.getChannel() == null) {
+      channelId = userId;
+    } else {
+      channelId = payload.getChannel().getId();
+    }
 
     if (usergroup == null) {
       logger.error("The group {} does not exist", groupName);
       messageUtil.sendEphemeralResponse(
           String.format("You could not not be addded to the group %s. "
           + "The group does not exist :x:", groupName), userId, channelId);
-    } else if (!usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
-      messageUtil.sendEphemeralResponse(
-          String.format("Failed to add you to the group %s :x:", groupName),
-          userId, channelId);
       return resp;
     }
-    logger.info("Creating a Json Object with properties...");
-    JsonObject json = new JsonObject();
-    json.addProperty("response_type", "ephemeral");
-    json.addProperty("text", "");
-    json.addProperty("replace_original", true);
-    json.addProperty("delete_original", true);
+    
+    if (!usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
+      return resp;
+    }
 
-    logger.info("Calling Rest Service's PostSlackResponse");
-    restService.postSlackResponse(req.getResponseUrl(), json);
-
-    logger.info("Returning response...");
+    // Deleting the ephemeral blockkit message if event came from a channel
+    if (userId != channelId) {
+      if (!deleteMessage(req.getResponseUrl())) {
+        logger.error("Failed to delete ephemeral message");
+      }
+    } else {
+      // else refresh home view
+      homeHandler.publishView(userId);
+    }
+    
     return resp;
   }
 
@@ -82,7 +91,7 @@ public class BlockActionHandler {
     BlockActionPayload payload = req.getPayload();
     List<Action> actions = payload.getActions();
     if (actions.isEmpty()) {
-      logger.error("Payload contained no actions: unable to proceed with request");
+      logger.error("Payload contained no actions, unable to proceed with the request");
       return resp;
     }
 
@@ -99,23 +108,77 @@ public class BlockActionHandler {
     }
 
     if (!usergroupHandler.addUserToGroup(userId, usergroup, channelId)) {
-      messageUtil.sendEphemeralResponse(
-          String.format("You could not join the group %s :x:", groupName), userId, channelId);
       return resp;
     }
     
 
-    logger.info("Creating a Json Object with properties...");
+    // Deleting the ephemeral blockkit message if event came from a channel
+    if (userId != channelId) {
+      if (!deleteMessage(req.getResponseUrl())) {
+        logger.error("Failed to delete ephemeral message");
+      }
+    } else {
+      // else refresh home view
+      homeHandler.publishView(userId);
+    }
+
+    return resp;
+  }
+
+  public Response handleBlockLeaveAction(BlockActionRequest req, ActionContext ctx) {
+    Response resp = ctx.ack();
+    BlockActionPayload payload = req.getPayload();
+    List<Action> actions = payload.getActions();
+    if (actions.isEmpty()) {
+      logger.error("payload contained no actions, unable to proceed with request");
+      return resp;
+    }
+
+    String userId = payload.getUser().getId();
+    String groupName = actions.get(0).getValue();
+    Usergroup usergroup = usergroupUtil.getGroupByName(groupName);
+    String channelId;
+
+    if (payload.getChannel() == null) {
+      channelId = userId;
+    } else {
+      channelId = payload.getChannel().getId();
+    }
+    
+    if (usergroup == null) {
+      messageUtil.sendDirectMessage(
+          String.format("You could not leave the group %s. "
+          + "This might happen if the group does not exist "
+          + "or there has been an "
+          + "unexpected I/O or Slack API error :x:", groupName), userId);
+      return resp;
+    }
+
+    if (!usergroupHandler.removeUserFromGroup(userId, usergroup, userId)) {
+      return resp;
+    }
+
+    // Deleting the ephemeral blockkit message if event came from a channel
+    if (userId != channelId) {
+      if (!deleteMessage(req.getResponseUrl())) {
+        logger.error("Failed to delete ephemeral message");
+      }
+    } else {
+      // else refresh home view
+      homeHandler.publishView(userId);
+    }
+    
+    return resp;
+  }
+
+  private boolean deleteMessage(String responseUrl) {
     JsonObject json = new JsonObject();
     json.addProperty("response_type", "ephemeral");
     json.addProperty("text", "");
     json.addProperty("replace_original", true);
     json.addProperty("delete_original", true);
 
-    logger.info("Calling Rest Service's PostSlackResponse");
-    restService.postSlackResponse(req.getResponseUrl(), json);
-
-    logger.info("Returning response...");
-    return resp;
+    return restService.postSlackResponse(responseUrl, json);
   }
+  
 }
