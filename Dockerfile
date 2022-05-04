@@ -20,7 +20,10 @@ WORKDIR /usr/src/app
 
 COPY --from=build target/*.jar slackbot.jar
 
-RUN useradd -m botuser
+RUN touch mylog.txt && \
+    useradd -m botuser && \
+    chown botuser mylog.txt
+
 USER botuser
 
 # jar file needs to be named according to build target name in pom.xml

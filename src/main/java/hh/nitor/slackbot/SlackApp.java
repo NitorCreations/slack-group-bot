@@ -5,6 +5,7 @@ import com.slack.api.bolt.App;
 import com.slack.api.bolt.context.builtin.EventContext;
 import com.slack.api.bolt.response.Response;
 import com.slack.api.methods.SlackApiException;
+import com.slack.api.model.event.AppHomeOpenedEvent;
 import com.slack.api.model.event.AppMentionEvent;
 import java.io.IOException;
 import java.util.regex.Pattern;
@@ -23,17 +24,27 @@ public class SlackApp {
   @Autowired
   private BlockActionHandler blockActionHandler;
 
+  @Autowired
+  private AppHomeHandler appHomeHandler;
+
   private static Logger logger = LoggerFactory.getLogger(SlackApp.class);
 
   @Bean
   public App initSlackApp() {
+
+    logger.info("Receiving interaction from the user...");
+    
     App app = new App();
 
     app.command("/groups", userGroupHandler::handleUsergroupCommand);
 
     app.event(AppMentionEvent.class, (req, ctx) -> mentionResponse(req, ctx));
 
+    app.event(AppHomeOpenedEvent.class, (req, ctx) -> appHomeHandler.handleEvent(req, ctx));
+
     app.blockAction(Pattern.compile("^join_.+$"), blockActionHandler::handleBlockJoinAction);
+
+    app.blockAction(Pattern.compile("^leave_.+$"), blockActionHandler::handleBlockLeaveAction);
 
     app.blockAction(Pattern.compile("btn_create"), blockActionHandler::handleBlockCreateAction);
 
@@ -42,7 +53,7 @@ public class SlackApp {
 
   public Response mentionResponse(EventsApiPayload<AppMentionEvent> req, EventContext ctx)
       throws IOException, SlackApiException {
-    ctx.say("Greetings :wave:");
+    ctx.say("Greetings :wave:\nLearn more about me by typing: /groups help");
     return ctx.ack();
   }
 }

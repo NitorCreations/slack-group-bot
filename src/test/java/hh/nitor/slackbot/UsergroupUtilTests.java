@@ -1,7 +1,6 @@
 package hh.nitor.slackbot;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.slack.api.methods.MethodsClient;
