@@ -5,15 +5,15 @@ First create a new app from the link above and give it a name and a workspace wh
 
 ![name](name.png)
 
-After creating the bot, check the signing secret from the **Basic Information** tab and use it in the env file.
+After creating the bot, scroll down to the App Credentials in **Basic Information.** The Signing Secret is used in the env file.
 
 ![signing-secret](signing-secret.png)
 
-Then go to the **OAuth and Permissions** tab and add the following permissions for this bot to work.
+Then go to the **OAuth & Permissions** tab and scroll down. Add the following permissions for this bot to work.
 
 ![permissions](permissions.png)
 
-On the same tab, scroll down to view the OAuth token that will be set in the env file
+On the same tab, scroll up to the OAuth Tokens section and press Install to Workspace. Allow all permissions. The Token will be used in the env file.
 
 ![oauth-token](oauth-token.png)
 
