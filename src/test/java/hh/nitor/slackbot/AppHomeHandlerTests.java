@@ -1,7 +1,6 @@
 package hh.nitor.slackbot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 import com.slack.api.model.Usergroup;
 import com.slack.api.model.block.LayoutBlock;
@@ -84,11 +83,7 @@ public class AppHomeHandlerTests {
    * </p>
    * 
    * <p>
-   * title, group, divider, group, divider,
-   * </p>
-   * 
-   * <p>
-   * title, group
+   * title, group, divider, group
    * </p>
    */
   @Test
@@ -97,7 +92,7 @@ public class AppHomeHandlerTests {
     String userId = "user2";
     List<Usergroup> groups = initUserGroups();
     List<LayoutBlock> blocks = handler.groupsToElements(groups, userId);
-    assertEquals(12, blocks.size(), "Incorrect amount of blocks");
+    assertEquals(9, blocks.size(), "Incorrect amount of blocks");
   }
   
 }

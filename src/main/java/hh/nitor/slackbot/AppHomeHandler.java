@@ -100,16 +100,15 @@ public class AppHomeHandler {
   public List<LayoutBlock> groupsToElements(List<Usergroup> groups, String userId) {
     List<LayoutBlock> elements = new ArrayList<>();
     List<Usergroup> enabled = new ArrayList<>();
-    List<Usergroup> disabled = new ArrayList<>();
     List<Usergroup> isMember = new ArrayList<>();
 
     for (Usergroup g : groups) {
-      if (g.getDateDelete() != 0) {
-        disabled.add(g);
-      } else if (g.getUsers().contains(userId)) {
-        isMember.add(g);
-      } else {
-        enabled.add(g);
+      if (g.getDateDelete() == 0) {
+        if (g.getUsers().contains(userId)) {
+          isMember.add(g);
+        } else {
+          enabled.add(g);
+        }
       }
     }
 
@@ -178,41 +177,6 @@ public class AppHomeHandler {
           ).blockId(g.getId())));
 
       if (i < enabled.size() - 1) {
-        elements.add(divider());
-      }
-    }
-
-    elements.add(divider());
-
-    elements.add(
-        section(section -> section.text(
-          markdownText(
-            "*Usergroups that have currently no members*\n"
-            + "Bring some life to these groups :seedling:"
-          )
-        ).blockId("disabled"))
-    );
-
-    if (disabled.isEmpty()) {
-      elements.add(
-          section(section -> section.text(
-            markdownText(
-              "~~~~~~~~~~:leaves:"
-            )
-          ).blockId("empty_disabled"))
-      );
-    }
-
-    for (int i = 0; i < disabled.size(); i++) {
-      Usergroup g = disabled.get(i);
-      String name = g.getName();
-      elements.add(section(section ->
-          section.text(
-            plainText(String.format("%s is currently disabled", name, g.getUsers().size()))
-          ).accessory(
-            button(b -> b.text(plainText("Join group")).value(name).actionId("join_" + name))
-          ).blockId(g.getId())));
-      if (i < disabled.size() - 1) {
         elements.add(divider());
       }
     }
