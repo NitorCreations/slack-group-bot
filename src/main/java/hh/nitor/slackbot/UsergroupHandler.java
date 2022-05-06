@@ -86,9 +86,9 @@ public class UsergroupHandler {
     
     if (usergroupName.contains(" ")) {
       logger.info("The group name {} contains spaces or is empty. "
-        + "The operation has failed.", usergroupName);
+          + "The operation has failed.", usergroupName);
       messageUtil.sendEphemeralResponse("The group name can not contain spaces. "
-          + "Find more info by typing: /groups help" , userId, responseChannel);
+          + "Find more info by typing: /groups help", userId, responseChannel);
       return resp;
     }
     
