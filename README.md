@@ -44,19 +44,37 @@ This is an example of how to list things you need to use the software and how to
 
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/github_username/repo_name.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
+- PLACEHOLDER
+
+### Running the image
+
+The bot needs a SLACK_BOT_TOKEN and SLACK_SIGNING_SECRET as environment variables from your own slack app to run. They can be given in an environment file or as cli parameters.
+
+*Image name for dockerhub hosted image is "hhbot/slackbot:latest". Use the name you assign if you build the image yourself*
+*The slackbot runs on port 8080 unless specified otherwise by PORT env variable.*
+
+```bash
+# .env
+PORT=specified_port # Optional, defaults to 8080
+SLACK_BOT_TOKEN=your_token
+SLACK_SIGNING_SECRET=your_secret
+```
+
+```bash
+# run from source
+docker build -t NAME .
+docker run --env-file .env -p LOCAL_PORT:CONTAINER_PORT NAME
+
+# run from dockerhub image
+docker run --env-file .env -p LOCAL_PORT:CONTAINER_PORT hhbot/slackbot:latest
+
+# run with cli env variables
+docker run -e PORT=specified_port \
+    -e SLACK_BOT_TOKEN=your_token \
+    -e SLACK_SIGNING_SECRET=your_secret \
+    -p LOCAL_PORT:CONTAINER_PORT \
+    hhbot/slackbot:latest
+```
 
 <!-- USAGE EXAMPLES -->
 ## Usage
