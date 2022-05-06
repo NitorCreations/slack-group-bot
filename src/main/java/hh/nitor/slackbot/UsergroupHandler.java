@@ -76,7 +76,7 @@ public class UsergroupHandler {
     // "/groups"
     if (params.length < 2) {
       logger.error("There was no group name in the input. "
-            + "Activating Help message...");
+            + "Sending the Help message...");
       messageUtil.sendEphemeralResponse(
           "Missing group name. Find more info by typing: /groups help", userId, responseChannel);
       return resp;
@@ -94,7 +94,7 @@ public class UsergroupHandler {
     
     // "/groups help"
     if (command.equalsIgnoreCase("help")) {
-      logger.info("The command was: help. Activating the Help message...");
+      logger.info("The command was: help. Sending the Help message...");
       messageUtil.sendEphemeralResponse(
           blockMessager.helpText(false), "help", userId, responseChannel);
       return resp;
@@ -206,7 +206,7 @@ public class UsergroupHandler {
       messageUtil.sendEphemeralResponse(
           String.format("You are already in the group %s. "
           + "You can only join groups "
-          + " you are not a part of :warning:", group.getName()),
+          + "you are not a part of :warning:", group.getName()),
           userId,
           responseChannel
       );
