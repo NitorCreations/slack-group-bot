@@ -218,6 +218,20 @@ class UsergroupHandlerTest {
     verify(msgUtil).sendEphemeralResponse(anyList(), anyString(), eq(userId), eq("channel_id"));
     verify(mockCtx).ack();
   }
+  
+  @Test
+  @DisplayName("The command fails due to the spaces in the group's name")
+  void groupNameHasSpacesFails() {
+    String userId = "user";
+    String userInput = "join sample group";
+
+    SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
+
+    verify(msgUtil).sendEphemeralResponse(
+            anyString(), eq(userId), eq("channel_id"));
+
+    verify(mockCtx).ack();
+  }
 
   @Test
   @DisplayName("Enabling group fails")
@@ -269,20 +283,6 @@ class UsergroupHandlerTest {
     String userInput = "join sample_group";
 
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
-
-    verify(mockCtx).ack();
-  }
-  
-  @Test
-  @DisplayName("The command fails due to the spaces in the group's name")
-  void groupNameHasSpacesFails() {
-    String userId = "user";
-    String userInput = "join sample group";
-
-    SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
-
-    verify(msgUtil).sendEphemeralResponse(
-            anyString(), eq(userId), eq("channel_id"));
 
     verify(mockCtx).ack();
   }
