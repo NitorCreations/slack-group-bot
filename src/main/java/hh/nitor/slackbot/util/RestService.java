@@ -15,6 +15,15 @@ public class RestService {
     this.restTemplate = new RestTemplate();
   }
 
+  /**
+   * Sends an HTTP POST request to specified response URL.
+   * 
+   * Can be used to send responses to actions happening in
+   * ephemeral messages.
+   * @param responseUrl
+   * @param body
+   * @return
+   */
   public boolean postSlackResponse(String responseUrl, JsonElement body) {
     ResponseEntity<String> response
         = restTemplate.postForEntity(responseUrl, body.toString(), String.class);

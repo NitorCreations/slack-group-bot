@@ -33,6 +33,13 @@ public class BlockActionHandler {
 
   private static final Logger logger = LoggerFactory.getLogger(BlockActionHandler.class);
   
+  /**
+   * Handler for block actions that users use to join usergroups.
+   * 
+   * @param req Slack API BlockActionRequest
+   * @param ctx Slack API ActionContext
+   * @return Response - acknowledgement to the Slack server that the request was handled.
+   */
   public Response handleBlockJoinAction(BlockActionRequest req, ActionContext ctx) {
     logger.info("Starting HandleBlockJoinAction...");
     logger.info("Processing the payload...");
@@ -74,6 +81,13 @@ public class BlockActionHandler {
     return resp;
   }
 
+  /**
+   * Handler for block actions that users use to create new usergroups.
+   * 
+   * @param req Slack API BlockActionRequest
+   * @param ctx Slack API ActionContext
+   * @return Response - acknowledgement to the Slack server that the request was handled.
+   */
   public Response handleBlockCreateAction(BlockActionRequest req, ActionContext ctx) {
 
     logger.info("Starting handleBlockCreateAction...");

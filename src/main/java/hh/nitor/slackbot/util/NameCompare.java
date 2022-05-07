@@ -14,6 +14,13 @@ public class NameCompare {
   private static final Logger logger = LoggerFactory.getLogger(NameCompare.class);
   private static final float THRESHOLD = 0.8f;
 
+  /**
+   * Relative similarity between names using damerauLevenshtein algorithm.
+   * 
+   * @param name1
+   * @param name2
+   * @return value between 0-1 where 1 means they are the same.
+   */
   public float compareNames(String name1, String name2) {
     StringMetric metric = StringMetrics.damerauLevenshtein();
     float result = metric.compare(name1, name2);
@@ -21,6 +28,13 @@ public class NameCompare {
     return result;
   }
 
+  /**
+   * Compares a single name to a list of names.
+   * @param name
+   * @param names
+   * @return List of similar names. Returns empty list if expected name
+   * is part of search list.
+   */
   public List<String> compareToList(String name, List<String> names) {
     if (names.contains(name)) {
       return new ArrayList<>();

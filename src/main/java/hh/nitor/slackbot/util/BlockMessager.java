@@ -25,6 +25,17 @@ public class BlockMessager {
 
   private static final Logger logger = LoggerFactory.getLogger(BlockMessager.class);
 
+  /**
+   * Attempts to send a response to user trying to join a
+   * usergroup that doesn't exist but is similar to already existing
+   * usergroups.
+   * 
+   * @param actual name specified by user
+   * @param similar names already found
+   * @param channelId where user sent the command
+   * @param userId Slack ID of user
+   * @return whether message was sent to user successfully.
+   */
   public boolean similarGroupsMessage(
       String actual,
       List<String> similar,
@@ -36,6 +47,14 @@ public class BlockMessager {
     return msgUtil.sendEphemeralResponse(blocks, "Groups with similar names", userId, channelId);
   }
   
+  /**
+   * Generates a Slack Block layout for responding to users
+   * attempting to join new usergroups with similar names to existing ones.
+   * 
+   * @param actual usergroup name specified by user
+   * @param similar list of similar names
+   * @return LayoutBlock list
+   */
   private List<LayoutBlock> similarGroupsLayout(String actual, List<String> similar) {
     List<LayoutBlock> layout = new ArrayList<>();
     logger.info("Creating an Interactive Block Message of similar group names...");
@@ -45,13 +64,11 @@ public class BlockMessager {
             .text(markdownText(String.format("Given group was *%s*", actual)))
             .accessory(
               button(b -> 
-                b.text(plainText(pt -> pt.text("Create and join")))
-                
-                    .value(actual).actionId("btn_create")
-                    
+                b.text(
+                  plainText(pt -> pt.text("Create and join"))
+                ).value(actual).actionId("btn_create")
               )
-            ).blockId("header"))
-            
+            ).blockId("header"))    
     );
 
     layout.add(divider());
@@ -61,13 +78,19 @@ public class BlockMessager {
         ).blockId("similar"))
     );
     
-    List<BlockElement> blocks = stringsToButtons(similar);
+    List<BlockElement> blocks = stringsToJoinButtons(similar);
     layout.add(actions(actions -> actions.elements(blocks).blockId("asdf")));
 
     return layout;
   }
 
-  private List<BlockElement> stringsToButtons(List<String> strings) {
+  /**
+   * Maps a list of strings to Slack Block buttons with actions to join
+   * groups with names equal to the strings.
+   * @param strings
+   * @return BlockElement list
+   */
+  private List<BlockElement> stringsToJoinButtons(List<String> strings) {
     return strings
         .stream()
         .map(string -> 
@@ -77,6 +100,13 @@ public class BlockMessager {
         .collect(Collectors.toList());
   }
   
+  /**
+   * Generates help text for user regarding the use of commands
+   * provided by the bot.
+   * 
+   * @param commandFailed
+   * @return a Slack Block layout based on whether responding to a failed command.
+   */
   public List<LayoutBlock> helpText(boolean commandFailed) {
     List<LayoutBlock> helpLayout = new ArrayList<>();
 
