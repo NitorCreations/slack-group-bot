@@ -29,7 +29,7 @@ public class BlockMessager {
    * Attempts to send a response to user trying to join a
    * usergroup that doesn't exist but is similar to already existing
    * usergroups.
-   * 
+   *
    * @param actual name specified by user
    * @param similar names already found
    * @param channelId where user sent the command
@@ -50,7 +50,7 @@ public class BlockMessager {
   /**
    * Generates a Slack Block layout for responding to users
    * attempting to join new usergroups with similar names to existing ones.
-   * 
+   *
    * @param actual usergroup name specified by user
    * @param similar list of similar names
    * @return LayoutBlock list
@@ -87,7 +87,8 @@ public class BlockMessager {
   /**
    * Maps a list of strings to Slack Block buttons with actions to join
    * groups with names equal to the strings.
-   * @param strings
+   *
+   * @param strings list of strings to turn into buttons
    * @return BlockElement list
    */
   private List<BlockElement> stringsToJoinButtons(List<String> strings) {
@@ -103,8 +104,8 @@ public class BlockMessager {
   /**
    * Generates help text for user regarding the use of commands
    * provided by the bot.
-   * 
-   * @param showFailInfo
+   *
+   * @param showFailInfo should fail-specific info should show
    * @return a Slack Block layout based on whether responding to a failed command.
    */
   public List<LayoutBlock> helpText(boolean showFailInfo) {

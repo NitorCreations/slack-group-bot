@@ -16,9 +16,9 @@ public class NameCompare {
 
   /**
    * Relative similarity between names using damerauLevenshtein algorithm.
-   * 
-   * @param name1
-   * @param name2
+   *
+   * @param name1 to compare
+   * @param name2 to compare
    * @return value between 0-1 where 1 means they are the same.
    */
   public float compareNames(String name1, String name2) {
@@ -30,10 +30,10 @@ public class NameCompare {
 
   /**
    * Compares a single name to a list of names.
-   * @param name
-   * @param names
-   * @return List of similar names. Returns empty list if expected name
-   * is part of search list.
+   *
+   * @param name to compare to list
+   * @param names list
+   * @return List of similar names. Returns empty list if expected name is part of search list.
    */
   public List<String> compareToList(String name, List<String> names) {
     if (names.contains(name)) {

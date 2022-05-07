@@ -38,7 +38,7 @@ public class BlockActionHandler {
   
   /**
    * Handler for block actions that users use to join usergroups.
-   * 
+   *
    * @param req Slack API BlockActionRequest
    * @param ctx Slack API ActionContext
    * @return Response - acknowledgement to the Slack server that the request was handled.
@@ -92,7 +92,7 @@ public class BlockActionHandler {
 
   /**
    * Handler for block actions that users use to create new usergroups.
-   * 
+   *
    * @param req Slack API BlockActionRequest
    * @param ctx Slack API ActionContext
    * @return Response - acknowledgement to the Slack server that the request was handled.

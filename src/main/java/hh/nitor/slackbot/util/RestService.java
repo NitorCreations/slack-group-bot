@@ -17,12 +17,12 @@ public class RestService {
 
   /**
    * Sends an HTTP POST request to specified response URL.
-   * 
    * Can be used to send responses to actions happening in
    * ephemeral messages.
-   * @param responseUrl
-   * @param body
-   * @return
+   *
+   * @param responseUrl Slack API URL to send request to
+   * @param body in JSON
+   * @return if succeeded
    */
   public boolean postSlackResponse(String responseUrl, JsonElement body) {
     ResponseEntity<String> response
