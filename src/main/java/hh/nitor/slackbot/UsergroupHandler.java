@@ -57,15 +57,17 @@ public class UsergroupHandler {
     logger.info("Processing the usergroup command's parameters...");
 
     if (payload.getText() == null) {
+      logger.info("There was no text input. Sending the Help message...");
       messageUtil.sendEphemeralResponse(
           blockMessager.helpText(false), "help", userId, responseChannel);
       return resp;
     }
 
     String[] params = payload.getText().split(" ", 2);
-    command = params[0];
+    command = params[0].toLowerCase();
     
     if (!(command.equalsIgnoreCase("join") || command.equalsIgnoreCase("leave"))) {
+      logger.info("The command {} does not exist. Sending the Help message...", command);
       messageUtil.sendEphemeralResponse(
           blockMessager.helpText(false), "help", userId, responseChannel);
       return resp;
@@ -73,19 +75,31 @@ public class UsergroupHandler {
 
     // "/groups"
     if (params.length < 2) {
+      logger.error("There was no group name in the input. "
+            + "Sending the Help message...");
       messageUtil.sendEphemeralResponse(
           "Missing group name. Find more info by typing: /groups help", userId, responseChannel);
       return resp;
     }
-
+    
+    String usergroupName = params[1].toLowerCase();
+    
+    if (usergroupName.contains(" ")) {
+      logger.info("The group name {} contains spaces or is empty. "
+          + "The operation has failed.", usergroupName);
+      messageUtil.sendEphemeralResponse("The group name can not contain spaces. "
+          + "Find more info by typing: /groups help", userId, responseChannel);
+      return resp;
+    }
+    
     // "/groups help"
     if (command.equalsIgnoreCase("help")) {
+      logger.info("The command was: help. Sending the Help message...");
       messageUtil.sendEphemeralResponse(
           blockMessager.helpText(false), "help", userId, responseChannel);
       return resp;
     }
 
-    String usergroupName = params[1];
     // "/groups join/leave group_name"
     if (!finalizeUsergroupCommand(userId, command, usergroupName, responseChannel)) {
       messageUtil.sendEphemeralResponse(
@@ -93,8 +107,7 @@ public class UsergroupHandler {
 
       logger.error("The operation to {} the group {} has failed", command, usergroupName);
 
-      return ctx.ack("The operation has failed: please check "
-          + "that you have written the command correctly :x:");
+      return resp;
     }
     
     logger.info("The operation to {} the group {} has been successful", command, usergroupName);
@@ -162,18 +175,9 @@ public class UsergroupHandler {
 
     } else if (command.equalsIgnoreCase("leave")) {
       return removeUserFromGroup(userId, usergroup, responseChannel);
-
-    } else {
-      logger.error("The command {} does not exist", command);
-      messageUtil.sendEphemeralResponse(
-          String.format("The command %s is incorrect or does not exist. "
-           + "Please write \"/groups help\" to see the accurate commands", command),
-          userId,
-          responseChannel
-      );
-
-      return false;
     }
+    
+    return false;
   }
 
   /**
@@ -202,7 +206,7 @@ public class UsergroupHandler {
       messageUtil.sendEphemeralResponse(
           String.format("You are already in the group %s. "
           + "You can only join groups "
-          + " you are not a part of :warning:", group.getName()),
+          + "you are not a part of :warning:", group.getName()),
           userId,
           responseChannel
       );

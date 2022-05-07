@@ -31,7 +31,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UsergroupHandlerTest {
   @Autowired
-  UsergroupHandler groupHandler;
+  private UsergroupHandler groupHandler;
 
   @MockBean
   private UsergroupUtil groupUtil;
@@ -138,7 +138,7 @@ class UsergroupHandlerTest {
 
     verify(msgUtil).sendEphemeralResponse(
         anyString(), eq(userId), eq("channel_id"));
-    verify(mockCtx).ack(anyString());
+    verify(mockCtx).ack();
   }
 
   @Test
@@ -204,7 +204,7 @@ class UsergroupHandlerTest {
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 
     verify(msgUtil).sendEphemeralResponse(anyString(), eq(userId), eq("channel_id"));
-    verify(mockCtx).ack(anyString());
+    verify(mockCtx).ack();
   }
 
   @Test
@@ -216,6 +216,20 @@ class UsergroupHandlerTest {
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
     
     verify(msgUtil).sendEphemeralResponse(anyList(), anyString(), eq(userId), eq("channel_id"));
+    verify(mockCtx).ack();
+  }
+  
+  @Test
+  @DisplayName("The command fails due to the spaces in the group's name")
+  void groupNameHasSpacesFails() {
+    String userId = "user";
+    String userInput = "join sample group";
+
+    SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
+
+    verify(msgUtil).sendEphemeralResponse(
+            anyString(), eq(userId), eq("channel_id"));
+
     verify(mockCtx).ack();
   }
 
@@ -231,7 +245,7 @@ class UsergroupHandlerTest {
 
     verify(msgUtil).sendEphemeralResponse(
         anyString(), eq(userId), eq("channel_id"));
-    verify(mockCtx).ack(anyString());
+    verify(mockCtx).ack();
   }
 
   @Test
@@ -246,14 +260,14 @@ class UsergroupHandlerTest {
 
     verify(msgUtil).sendEphemeralResponse(
         anyString(), eq(userId), eq("channel_id"));
-    verify(mockCtx).ack(anyString());
+    verify(mockCtx).ack();
   }
 
   @Test
   @DisplayName("Typo sends a blockit message")
   void typoFails() {
     String userId = "user";
-    String userInput = "join sample gruop";
+    String userInput = "join sample_gruop";
 
     SlashCommandContext mockCtx = callWithMockValues(userId, userInput);
 

@@ -13,6 +13,7 @@ import com.slack.api.methods.response.usergroups.UsergroupsDisableResponse;
 import com.slack.api.methods.response.usergroups.UsergroupsEnableResponse;
 import com.slack.api.methods.response.usergroups.UsergroupsListResponse;
 import com.slack.api.methods.response.usergroups.users.UsergroupsUsersListResponse;
+import com.slack.api.methods.response.usergroups.users.UsergroupsUsersUpdateResponse;
 import com.slack.api.model.Usergroup;
 import java.io.IOException;
 import java.util.List;
@@ -44,6 +45,11 @@ public class UsergroupUtil {
     try {
       UsergroupsListResponse resp = client.usergroupsList(UsergroupsListRequest.builder()
           .token(TOKEN).includeDisabled(true).includeUsers(true).build());
+      if (!resp.isOk()) {
+        logger.warn("Failure getting usergroups: {}", resp.getError());
+      } else {
+        usergroups = resp.getUsergroups();
+      }
       logger.info("All groups retrieved successfully");
       return resp.getUsergroups();
     } catch (IOException e) {
@@ -90,6 +96,11 @@ public class UsergroupUtil {
       UsergroupsUsersListResponse resp = client.usergroupsUsersList(
           UsergroupsUsersListRequest.builder().token(TOKEN).usergroup(groupId).build());
 
+      if (!resp.isOk()) {
+        logger.warn("Failure getting usergroup users: {}", resp.getError());
+      } else {
+        users = resp.getUsers();
+      }
       logger.info("The group's users retrieved successfully");
       users = resp.getUsers();
 
@@ -173,6 +184,10 @@ public class UsergroupUtil {
       logger.info("Trying to enable the group...");
       UsergroupsEnableResponse resp = client
           .usergroupsEnable(UsergroupsEnableRequest.builder().token(TOKEN).usergroup(id).build());
+
+      if (!resp.isOk()) {
+        logger.warn("Failure enabling usergroup: {}", resp.getError());
+      }
       logger.info("The group successfully enabled");
       return resp.isOk();
     } catch (IOException e) {
@@ -196,6 +211,10 @@ public class UsergroupUtil {
       logger.info("Trying to disable the group...");
       UsergroupsDisableResponse resp = client
           .usergroupsDisable(UsergroupsDisableRequest.builder().token(TOKEN).usergroup(id).build());
+
+      if (!resp.isOk()) {
+        logger.warn("Failure disabling usergroup: {}", resp.getError());
+      }
       logger.info("The group successfully disabled");
       return resp.isOk();
     } catch (IOException e) {
@@ -237,10 +256,14 @@ public class UsergroupUtil {
   public boolean updateUsergroupUserlist(List<String> users, String groupId) {
     logger.info("Trying to update the group's user list...");
     try {
-      client.usergroupsUsersUpdate(UsergroupsUsersUpdateRequest.builder()
+      UsergroupsUsersUpdateResponse resp =
+          client.usergroupsUsersUpdate(UsergroupsUsersUpdateRequest.builder()
           .token(System.getenv("SLACK_BOT_TOKEN")).usergroup(groupId).users(users).build());
+      if (!resp.isOk()) {
+        logger.warn("Failure updating usergroup users: {}", resp.getError());
+      }
       logger.info("The group's user list successfully updated");
-      return true;
+      return resp.isOk();
     } catch (IOException e) {
       logger.error(String.format("Failed to update the group's "
              + "user list due to IO Error: %n %s", e.getMessage()));

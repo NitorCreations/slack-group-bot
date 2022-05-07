@@ -18,10 +18,13 @@ FROM openjdk:11-jre-slim-buster
 
 WORKDIR /usr/src/app
 
-COPY --from=build target/*.jar .
+COPY --from=build target/*.jar slackbot.jar
 
-RUN useradd -m botuser
+RUN touch mylog.txt && \
+    useradd -m botuser && \
+    chown botuser mylog.txt
+
 USER botuser
 
 # jar file needs to be named according to build target name in pom.xml
-CMD java -jar -Dserver.port=$PORT slackbot-0.0.1-SNAPSHOT.jar
+CMD java -jar -Dserver.port=${PORT:-8080} slackbot.jar
