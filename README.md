@@ -124,8 +124,29 @@ Write the following command in the Slack channel's message input:
   - Your join/leave command has failed due to missing parameters
   - You have used a command that does not exist in the bot
 
+## Handlers
 
+``` 
+public Response handleUsergroupCommand 
+```
+- Breaks the command's name and target from user input. Calls finalizeUsergroup
+   to finalize the user group method and calls messageUtil to send the correct
+   message to the user. 
 
+```
+public boolean addUserToGroup
+```
+- Adds the user into a new user group, if the certain conditions allow it.
+- Uses userID to detect the particular user.
+- Uses the group object to add the user to wanted usergroup.
+- Return true if the user was added to user group successfully. Returns false
+  if the user already is in the user group or error accures.
+
+```
+public boolean removeUserFromGroup
+```
+- Removes the user from user group, if certain conditions allow it.
+- Uses the same principale as addUserToGroup except instead of joining it removes.
 
 ## Technologies
 
