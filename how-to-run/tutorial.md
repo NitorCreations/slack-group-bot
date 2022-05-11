@@ -17,11 +17,15 @@ On the same tab, scroll up to the OAuth Tokens section and press Install to Work
 
 ![oauth-token](oauth-token.png)
 
+Next navigate to the **App Home** tab and enable all three settings. You can also change the bot's name here.
+
+![AppHome](AppHome.png)
+
 Now, run the bot (and ngrok if needed and keep note of the URL) before setting up the rest of the bot functionality.
 
-Got to the **Event Subscriptions** tab and write the URL where your VM is accessible (either the ngrok URL or your own public one) with the **/slack/events** endpoint specified.
+Got to the **Event Subscriptions** tab and write the URL where your VM is accessible (either the ngrok URL or your own public one) with the **/slack/events** endpoint specified. Then scroll down to **Subscribe to bot events** and add "app_home_opened" and "app_mention" to the bot events.
 
-![event-sub](event-sub.png)
+![EnableEvents](EnableEvents.png)
 
 After that, copy that same URL to the Request URL in **Interactivity & Shortcuts**. You may need to enable Interactivity to see this view.
 
