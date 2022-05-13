@@ -12,10 +12,16 @@
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
+        <li><a href="#setup-bot-on-slacks-website">Setup bot on Slack's website</a></li>
         <li><a href="#running-the-image">Installation</a></li>
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
+      <ul>
+        <li><a href="#commands">Commands</a></li>
+      </ul>
+    <li><a href="#handlers">Handlers</a></li>
+    <li><a href="#technologies">Technologies</a></li>
     <li><a href="#license">License</a></li>
   </ol>
 </details>
@@ -35,7 +41,7 @@ To run the bot locally you need either a Java runtime or Docker installed along 
 
 ## Installation
 
-## Setup bot on Slack's [website](https://api.slack.com/apps)
+### Setup bot on Slack's [website](https://api.slack.com/apps)
 First create a new app from the link above and give it a name and a workspace where it will be working in.
 
 ![new](images/new.png)
