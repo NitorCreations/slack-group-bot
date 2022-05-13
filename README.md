@@ -30,15 +30,54 @@ This project is a Slack application that helps users join and leave user groups.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+To run the bot locally you need either a Java runtime or Docker installed along with ngrok to ge a tunnel for getting a public url.
 
-### Installation
 
-- PLACEHOLDER
+## Installation
+
+## Setup bot on Slack's [website](https://api.slack.com/apps)
+First create a new app from the link above and give it a name and a workspace where it will be working in.
+
+![new](images/new.png)
+
+![name](images/name.png)
+
+After creating the bot, scroll down to the App Credentials in **Basic Information.** The Signing Secret is used in the env file.
+
+![signing-secret](images/signing-secret.png)
+
+Then go to the **OAuth & Permissions** tab and scroll down. Add the following permissions for this bot to work.
+
+![permissions](images/permissions.png)
+
+On the same tab, scroll up to the OAuth Tokens section and press Install to Workspace. Allow all permissions. The Token will be used in the env file.
+
+![oauth-token](images/oauth-token.png)
+
+Next navigate to the **App Home** tab and enable all three settings. You can also change the bot's name here.
+
+![AppHome](images/AppHome.png)
+
+Now, run the bot (and ngrok if needed and keep note of the URL) before setting up the rest of the bot functionality.
+
+Got to the **Event Subscriptions** tab and write the URL where your VM is accessible (either the ngrok URL or your own public one) with the **/slack/events** endpoint specified. Then scroll down to **Subscribe to bot events** and add "app_home_opened" and "app_mention" to the bot events.
+
+![EnableEvents](images/EnableEvents.png)
+
+After that, copy that same URL to the Request URL in **Interactivity & Shortcuts**. You may need to enable Interactivity to see this view.
+
+![interactivity](images/interactivity.png)
+
+Then create a new command in the **Slash Commands** tab with the **Create New Command** button.
+
+![commands](images/commands.png)
+
+The command should be **\*/groups\*** and the URL the same as before. The rest of the options don't matter in regards of the bots functionality.
+
+![groups-command](images/groups-command.png)
+
+Now just invite the bot to a channel with **@APPNAME** where you want to use it.
+
 
 ### Running the image
 
