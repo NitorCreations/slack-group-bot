@@ -8,7 +8,7 @@
 		<version>2.7.0-M1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>hh.slackbot</groupId>
+	<groupId>hh.nitor.slackbot</groupId>
 	<artifactId>slackbot</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>slackbot</name>
@@ -44,6 +44,12 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<version>4.3.1</version>
+		</dependency>
+
+		<dependency>
+  			<groupId>ch.qos.logback</groupId>
+  			<artifactId>logback-classic</artifactId>
+  			<version>1.2.11</version>
 		</dependency>
 
 		<dependency>

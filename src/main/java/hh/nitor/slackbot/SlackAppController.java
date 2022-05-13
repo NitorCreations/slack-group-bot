@@ -1,4 +1,4 @@
-package hh.slackbot.slackbot;
+package hh.nitor.slackbot;
 
 import com.slack.api.bolt.App;
 import com.slack.api.bolt.servlet.SlackAppServlet;

@@ -1,4 +1,4 @@
-package hh.slackbot.slackbot;
+package hh.nitor.slackbot;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -10,7 +10,7 @@ import com.slack.api.methods.request.chat.ChatPostEphemeralRequest;
 import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import com.slack.api.methods.response.chat.ChatPostEphemeralResponse;
 import com.slack.api.methods.response.chat.ChatPostMessageResponse;
-import hh.slackbot.slackbot.util.MessageUtil;
+import hh.nitor.slackbot.util.MessageUtil;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -101,7 +101,7 @@ public class MessageUtilTests {
   }
 
   @Test
-  @DisplayName("Ephemeral message IOException returns false")
+  @DisplayName("Ephemeral message Exceptions return false")
   public void ephemeralMessageIoException() throws IOException, SlackApiException {
     when(client.chatPostEphemeral(any(ChatPostEphemeralRequest.class)))
         .thenThrow(new IOException());
@@ -110,8 +110,14 @@ public class MessageUtilTests {
     String userId = "12345";
     String channelId = "54321";
 
+    // IOException, just text message body
     boolean result = msgUtil.sendEphemeralResponse(msg, userId, channelId);
     
+    Assertions.assertFalse(result, "Return false after error");
+
+    // IOException, blocks message body
+    result = msgUtil.sendEphemeralResponse(null, msg, userId, channelId);
+
     Assertions.assertFalse(result, "Return false after error");
   }
 }

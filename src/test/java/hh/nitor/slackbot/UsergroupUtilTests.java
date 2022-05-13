@@ -1,7 +1,6 @@
-package hh.slackbot.slackbot;
+package hh.nitor.slackbot;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.slack.api.methods.MethodsClient;
@@ -9,7 +8,7 @@ import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.request.usergroups.UsergroupsListRequest;
 import com.slack.api.methods.response.usergroups.UsergroupsListResponse;
 import com.slack.api.model.Usergroup;
-import hh.slackbot.slackbot.util.UsergroupUtil;
+import hh.nitor.slackbot.util.UsergroupUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;

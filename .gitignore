@@ -5,6 +5,8 @@ target/
 !**/src/test/**/target/
 .env
 bin
+*.txt
+.metadata
 
 ### STS ###
 .apt_generated
